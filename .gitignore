@@ -32,6 +32,11 @@ htmlcov/
 # local Odoo runtime data
 .odoo-data/
 odoo-dev.log
+backups/
+*.dump
+
+# private project documents
+*.pdf
 
 # local imports / exports kept at repository root
 /*.csv

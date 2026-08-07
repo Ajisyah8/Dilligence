@@ -91,6 +91,8 @@ Featuring
             'website_slides/static/src/js/slides_course_join.js',
             'website_slides/static/src/js/slides_course_quiz.js',
             'website_slides/static/src/js/slides_course_quiz_question_form.js',
+            'website_slides_youtube_clean/static/src/js/clean_video_controls.js',
+            'website_slides_youtube_clean/static/src/scss/clean_video_controls.scss',
             'website_slides/static/src/xml/website_slides_sidebar.xml',
             'website_slides/static/src/xml/website_slides_fullscreen.xml',
             'website_slides/static/src/xml/slide_management.xml',

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="website.slides.fullscreen.video.youtube" t-inherit-mode="extension">
+        <xpath expr="//iframe" position="attributes">
+            <attribute name="title">eLearning video</attribute>
+            <attribute name="allow">autoplay; encrypted-media; picture-in-picture</attribute>
+        </xpath>
+    </t>
+</templates>

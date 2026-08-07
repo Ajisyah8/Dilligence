@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="payment_provider_form_qris_static" model="ir.ui.view">
+        <field name="name">Static QRIS Provider Form</field>
+        <field name="model">payment.provider</field>
+        <field name="inherit_id" ref="payment_custom.payment_provider_form"/>
+        <field name="arch" type="xml">
+            <field name="custom_mode" position="attributes">
+                <attribute name="invisible">code != 'custom'</attribute>
+            </field>
+            <field name="qr_code" position="after">
+                <field name="qris_image" invisible="custom_mode != 'qris_static'"/>
+                <field name="qris_instructions" invisible="custom_mode != 'qris_static'"/>
+            </field>
+        </field>
+    </record>
+</odoo>

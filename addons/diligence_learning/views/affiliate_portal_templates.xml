@@ -1,0 +1,32 @@
+<odoo>
+    <template id="portal_my_affiliate" name="My Affiliate Dashboard">
+        <t t-call="portal.portal_layout">
+            <div class="container my-5">
+                <h2>Affiliate Dashboard</h2>
+                <p class="text-muted">Your referral link and cashback history.</p>
+                <div class="alert alert-info">
+                    <strong>Your referral link:</strong>
+                    <code t-out="referral_link"/>
+                </div>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4"><div class="card card-body"><small>Total Referrals</small><h3 t-out="len(referrals)"/></div></div>
+                    <div class="col-md-4"><div class="card card-body"><small>Total Cashback</small><h3 t-out="sum(item['cashback'] for item in referrals)"/></div></div>
+                    <div class="col-md-4"><div class="card card-body"><small>Settlements</small><h3 t-out="len(settlements)"/></div></div>
+                </div>
+                <h4>Referral History</h4>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead><tr><th>Reference</th><th>Student</th><th>Program</th><th>Payment</th><th>Cashback</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <tr t-foreach="referrals" t-as="referral">
+                                <td t-out="referral['name']"/><td t-out="referral['student']"/><td t-out="referral['program']"/>
+                                <td t-out="referral['payment']"/><td t-out="referral['cashback']"/><td t-out="referral['status']"/>
+                            </tr>
+                            <tr t-if="not referrals"><td colspan="6" class="text-muted">No referral activity yet.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

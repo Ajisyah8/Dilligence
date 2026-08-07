@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="payment.payment_provider_transfer" model="payment.provider">
+        <field name="name">QRIS Statis</field>
+        <field name="custom_mode">qris_static</field>
+        <field name="state">enabled</field>
+        <field name="payment_method_ids" eval="[Command.set([ref('payment_custom.payment_method_wire_transfer')])]"/>
+        <field name="pending_msg" eval="False"/>
+        <field name="qris_instructions"><![CDATA[
+            <p>Scan QRIS di atas, bayar sesuai total order, lalu upload bukti pembayaran.</p>
+            <p><strong>Pembayaran akan langsung dianggap berhasil setelah bukti dikirim.</strong></p>
+        ]]></field>
+    </record>
+</odoo>

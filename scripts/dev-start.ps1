@@ -1,23 +1,21 @@
 param(
     [string]$Database = "odoo_dev",
-    [string[]]$DevFlags = @("xml", "assets", "qweb", "reload")
+    [string[]]$DevFlags = @()
 )
 
 $ErrorActionPreference = "Stop"
 
 $root = Split-Path -Parent $PSScriptRoot
 $python = Join-Path $root ".venv\Scripts\python.exe"
-$globalPython = "C:\Users\SOULMATE PLUS IP\AppData\Local\Programs\Python\Python312\python.exe"
-$odooBin = Join-Path $root "odoo-bin"
 $config = Join-Path $root "odoo.conf"
-$devMode = [string]::Join(",", $DevFlags)
 
 if (-not (Test-Path $python)) {
-    if (Test-Path $globalPython) {
-        $python = $globalPython
-    } else {
-        throw "Python runtime not found. Checked: $python and $globalPython"
-    }
+    throw "Python venv not found: $python"
 }
 
-& $python $odooBin -c $config -d $Database --dev=$devMode
+$args = @("-m", "odoo", "-c", $config, "-d", $Database)
+if ($DevFlags.Count -gt 0) {
+    $args += "--dev=$([string]::Join(",", $DevFlags))"
+}
+
+& $python @args

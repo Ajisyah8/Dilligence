@@ -1,0 +1,96 @@
+<odoo>
+    <!-- Finance: operational views over Odoo's accounting data. The standard
+         Accounting reports remain available for Balance Sheet and General Ledger. -->
+    <record id="action_diligence_finance_dashboard" model="ir.actions.act_window">
+        <field name="name">Finance Dashboard</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="domain">[('state', '=', 'posted')]</field>
+        <field name="context">{'group_by': ['journal_id', 'date:month']}</field>
+    </record>
+
+    <record id="action_diligence_general_ledger" model="ir.actions.act_window">
+        <field name="name">General Ledger Entries</field>
+        <field name="res_model">account.move.line</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="domain">[('parent_state', '=', 'posted')]</field>
+        <field name="context">{'group_by': ['account_id', 'date:month']}</field>
+    </record>
+
+    <menuitem id="menu_diligence_finance_dashboard"
+              name="Finance Dashboard"
+              parent="account.menu_finance"
+              action="action_diligence_finance_dashboard"
+              sequence="5"
+              groups="account.group_account_user"/>
+    <menuitem id="menu_diligence_general_ledger"
+              name="General Ledger Entries"
+              parent="account.menu_finance"
+              action="action_diligence_general_ledger"
+              sequence="6"
+              groups="account.group_account_user"/>
+
+    <!-- Academic summary: one pivot gives per-course and grand-total enrolments. -->
+    <record id="action_diligence_academic_enrollment_summary" model="ir.actions.act_window">
+        <field name="name">Enrollment by Course</field>
+        <field name="res_model">slide.channel.partner</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="search_view_id" ref="diligence_learning.view_diligence_academic_enrollment_search"/>
+        <field name="context">{'group_by': ['channel_id', 'member_status']}</field>
+    </record>
+    <menuitem id="menu_diligence_academic_enrollment_summary"
+              name="Enrollment by Course"
+              parent="website_slides.website_slides_menu_report"
+              action="action_diligence_academic_enrollment_summary"
+              sequence="6"
+              groups="website_slides.group_website_slides_officer"/>
+
+    <record id="action_diligence_marketing_funnel" model="ir.actions.act_window">
+        <field name="name">Marketing Funnel</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">pivot,graph,list,kanban</field>
+        <field name="context">{'group_by': ['stage_id', 'source_id']}</field>
+    </record>
+    <menuitem id="menu_diligence_marketing_funnel" name="Marketing Funnel"
+              parent="crm.crm_menu_report" action="action_diligence_marketing_funnel"
+              sequence="5" groups="sales_team.group_sale_salesman"/>
+
+    <!-- HR standby dashboards, now available once the HR modules are installed. -->
+    <record id="action_diligence_employee_dashboard" model="ir.actions.act_window">
+        <field name="name">Employee Dashboard</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">list,kanban</field>
+    </record>
+    <record id="action_diligence_attendance_dashboard" model="ir.actions.act_window">
+        <field name="name">Attendance Dashboard</field>
+        <field name="res_model">hr.attendance</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="context">{'group_by': ['employee_id', 'check_in:month']}</field>
+    </record>
+    <record id="action_diligence_leave_dashboard" model="ir.actions.act_window">
+        <field name="name">Leave Dashboard</field>
+        <field name="res_model">hr.leave</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="context">{'group_by': ['employee_id', 'state']}</field>
+    </record>
+    <menuitem id="menu_diligence_employee_dashboard" name="Employee Dashboard"
+              parent="hr.menu_hr_root" action="action_diligence_employee_dashboard"
+              sequence="5" groups="hr.group_hr_user"/>
+    <menuitem id="menu_diligence_attendance_dashboard" name="Attendance Dashboard"
+              parent="hr.menu_hr_root" action="action_diligence_attendance_dashboard"
+              sequence="6" groups="hr_attendance.group_hr_attendance_user"/>
+    <menuitem id="menu_diligence_leave_dashboard" name="Leave Dashboard"
+              parent="hr.menu_hr_root" action="action_diligence_leave_dashboard"
+              sequence="7" groups="hr_holidays.group_hr_holidays_user"/>
+
+    <!-- Operational standby dashboard. -->
+    <record id="action_diligence_operations_dashboard" model="ir.actions.act_window">
+        <field name="name">Operations Dashboard</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">pivot,graph,list,kanban</field>
+        <field name="context">{'group_by': ['project_id', 'stage_id']}</field>
+    </record>
+    <menuitem id="menu_diligence_operations_dashboard" name="Operations Dashboard"
+              parent="project.menu_main_pm" action="action_diligence_operations_dashboard"
+              sequence="5" groups="project.group_project_user"/>
+</odoo>

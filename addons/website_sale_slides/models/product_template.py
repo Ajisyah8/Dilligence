@@ -20,5 +20,9 @@ class ProductTemplate(models.Model):
     def _get_product_types_allow_zero_price(self):
         return super()._get_product_types_allow_zero_price() + ["course"]
 
+    @api.model
+    def _get_saleable_tracking_types(self):
+        return super()._get_saleable_tracking_types() + ['course']
+
     def _service_tracking_blacklist(self):
         return super()._service_tracking_blacklist() + ['course']

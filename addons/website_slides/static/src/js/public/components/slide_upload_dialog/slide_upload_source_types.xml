@@ -72,7 +72,7 @@
                             class="form-check-label fw-normal"
                             for="source_type_external"
                         >
-                            Retrieve from Google Drive
+                            Retrieve from Link
                         </label>
                     </div>
                 </div>
@@ -105,7 +105,7 @@
                     t-att-name="props.attributes.urlInputName"
                     class="form-control h-100"
                     autocomplete="off"
-                    placeholder='e.g "https://drive.google.com/file/..."'
+                    placeholder='e.g "https://provider.com/embed/video-id"'
                     required="required"
                     t-on-change="() => props.onChangeUrl(state.url)"
                 />

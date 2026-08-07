@@ -1,0 +1,65 @@
+<odoo>
+    <record id="slide_slide_form_diligence_external_quiz" model="ir.ui.view">
+        <field name="name">slide.slide.form.diligence.external.quiz</field>
+        <field name="model">slide.slide</field>
+        <field name="inherit_id" ref="website_slides.view_slide_slide_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='quiz']//group[@name='quiz_details']" position="inside">
+                <group string="External Quiz Form" invisible="slide_category != 'quiz'">
+                    <field name="diligence_external_quiz_url" widget="url"
+                           placeholder="https://forms.gle/..."/>
+                    <field name="diligence_external_quiz_label"
+                           placeholder="e.g. Fill in answers on Google Form"/>
+                    <div class="text-muted" colspan="2">
+                        Paste a Google Form or another external quiz link. Learners can open it from this quiz.
+                    </div>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <template id="lesson_content_quiz_external_form"
+              inherit_id="website_slides.lesson_content_quiz"
+              name="Diligence: External quiz form link">
+        <xpath expr="//div[@id='lessonQuiz']/t[@t-foreach='slide_questions']" position="before">
+            <div t-if="slide.diligence_external_quiz_url" class="alert alert-info d-flex flex-wrap align-items-center gap-2 mb-3">
+                <i class="fa fa-external-link"/>
+                <span>Complete this quiz using the external form.</span>
+                <a t-att-href="slide.diligence_external_quiz_url"
+                   target="_blank" rel="noopener noreferrer"
+                   class="btn btn-primary btn-sm ms-auto">
+                    <i class="fa fa-wpforms me-1"/>
+                    <t t-out="slide.diligence_external_quiz_label or 'Open External Quiz'"/>
+                </a>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="slide_content_detailed_external_quiz_preview"
+              inherit_id="website_slides.slide_content_detailed"
+              name="Diligence: External quiz preview">
+        <xpath expr="//div[@id='quiz_container']/div[@class='row']" position="inside">
+            <t t-if="slide.diligence_external_quiz_url and not slide.question_ids">
+                <div class="col-12 o_diligence_external_quiz_preview">
+                    <div class="card border-primary shadow-sm">
+                        <div class="card-header bg-primary text-white d-flex align-items-center">
+                            <i class="fa fa-wpforms fa-2x me-3"/>
+                            <span t-out="slide.diligence_external_quiz_label or 'External Quiz / Google Form'"/>
+                        </div>
+                        <div class="card-body p-0">
+                            <iframe class="w-100 border-0" style="min-height: 680px;"
+                                    t-att-src="slide.diligence_external_quiz_url"
+                                    title="External quiz form" allow="fullscreen"/>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a class="btn btn-primary" target="_blank" rel="noopener noreferrer"
+                               t-att-href="slide.diligence_external_quiz_url">
+                                <i class="fa fa-external-link me-1"/> Open form in a new tab
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+    </template>
+</odoo>

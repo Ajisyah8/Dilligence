@@ -20,6 +20,7 @@ export class SlideShareDialog extends Component {
         isFullscreen: { type: Boolean, optional: true },
         name: { type: String },
         url: { type: String },
+        sourceUrl: { type: String, optional: true },
     };
 
     setup() {

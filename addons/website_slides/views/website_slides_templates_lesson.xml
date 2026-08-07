@@ -164,6 +164,7 @@
                         </t>
                         <a t-att-href="'/slides/slide/%s' % (slug(aside_slide)) if can_access else '#'"
                             t-attf-class="d-flex text-decoration-none mw-100 overflow-hidden #{'text-muted' if not can_access else ''}">
+                            <i t-attf-class="fa #{aside_slide.slide_icon_class} fa-fw me-1 text-600"/>
                             <div class="o_wslides_lesson_link_name text-truncate" t-att-title="aside_slide.name">
                                 <span t-out="aside_slide.name"/>
                                 <span class="align-items-end" t-if="aside_slide.question_ids">
@@ -280,6 +281,7 @@
             </a>
             <a class="o_wslides_share btn btn-light border ms-2 my-1" role="button" t-att-data-name="slide.name"
                t-att-data-id="slide.id" t-att-data-url="slide.website_share_url" t-att-data-category="slide.slide_category"
+               t-att-data-source-url="slide.video_url if slide.slide_category == 'video' else False"
                t-att-data-email-sharing="bool(slide.channel_id.share_slide_template_id)"
                t-att-data-embed-code="slide.embed_code_external if slide.slide_category in ['video', 'document', 'audio'] else False"
                aria-label="Share">
@@ -323,8 +325,9 @@
                 </a>
             </li>
             <li class="nav-item" role="presentation">
-                <a href="#discuss" aria-controls="discuss" t-att-class="'nav-link active' if comments else 'nav-link'" role="tab" data-bs-toggle="tab">
-                    <i class="fa fa-comments"></i> Comments <t t-if="slide.channel_id.allow_comment">(<span t-out="slide.comments_count"/>)</t>
+                <a t-if="slide.channel_id.allow_comment and request.env.user.partner_id.diligence_forum_access"
+                   href="#discuss" aria-controls="discuss" t-att-class="'nav-link active' if comments else 'nav-link'" role="tab" data-bs-toggle="tab">
+                    <i class="fa fa-comments"></i> Forum Diskusi <t t-if="slide.channel_id.allow_comment">(<span t-out="slide.comments_count"/>)</t>
                 </a>
             </li>
             <li class="nav-item" role="presentation" groups="base.group_user">
@@ -352,7 +355,8 @@
                     </div>
                 </div>
             </div>
-            <div role="tabpanel" t-att-class="comments and 'tab-pane fade in show active' or 'tab-pane fade'" id="discuss">
+            <div t-if="slide.channel_id.allow_comment and request.env.user.partner_id.diligence_forum_access"
+                 role="tabpanel" t-att-class="comments and 'tab-pane fade in show active' or 'tab-pane fade'" id="discuss">
                 <t t-set="enable_slide_comments" t-value="0"/>
                 <p t-if="not slide.channel_id.allow_comment">
                     Commenting is not enabled on this course.

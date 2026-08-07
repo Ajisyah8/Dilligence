@@ -637,7 +637,7 @@ export class WebsiteBuilderClientAction extends Component {
                 );
 
                 this.addListeners(this.websiteContent.el.contentDocument);
-                this.iframefallback.el?.contentDocument.documentElement.replaceChildren();
+                this.iframefallback.el?.contentDocument?.documentElement?.replaceChildren();
                 resolve(this.websiteContent.el);
             };
         });

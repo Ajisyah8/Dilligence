@@ -1,0 +1,32 @@
+<odoo>
+    <record id="sequence_diligence_referral" model="ir.sequence">
+        <field name="name">Diligence Referral</field>
+        <field name="code">diligence.referral</field>
+        <field name="prefix">REF/%(y)s/</field>
+        <field name="padding">5</field>
+    </record>
+    <record id="sequence_diligence_referral_settlement" model="ir.sequence">
+        <field name="name">Diligence Referral Settlement</field>
+        <field name="code">diligence.referral.settlement</field>
+        <field name="prefix">SET/%(y)s/</field>
+        <field name="padding">5</field>
+    </record>
+
+    <record id="ir_cron_diligence_referral_payment_sync" model="ir.cron">
+        <field name="name">Diligence: Refresh Referral Payments</field>
+        <field name="model_id" ref="model_diligence_referral"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_refresh_payments()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record>
+
+    <record id="forum_diligence_community" model="forum.forum">
+        <field name="name">Diligence Learning Community</field>
+        <field name="mode">discussions</field>
+        <field name="privacy">private</field>
+        <field name="authorized_group_id" ref="diligence_learning.group_diligence_community_member"/>
+        <field name="description">A discussion space for Diligence Community and Consultation learners.</field>
+    </record>
+</odoo>

@@ -1,0 +1,27 @@
+<odoo>
+    <record id="crm_lead_view_form_diligence_referral" model="ir.ui.view">
+        <field name="name">crm.lead.form.diligence.referral</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="diligence_student_id"/>
+                <field name="diligence_referral_code"/>
+                <field name="diligence_referrer_id"/>
+                <field name="diligence_program_id"/>
+            </field>
+        </field>
+    </record>
+    <record id="crm_lead_view_search_diligence_referral" model="ir.ui.view">
+        <field name="name">crm.lead.search.diligence.referral</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_leads_filter"/>
+        <field name="arch" type="xml">
+            <search position="inside">
+                <field name="diligence_referral_code"/>
+                <field name="diligence_referrer_id"/>
+                <field name="diligence_program_id"/>
+            </search>
+        </field>
+    </record>
+</odoo>

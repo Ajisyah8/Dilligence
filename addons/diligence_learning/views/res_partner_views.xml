@@ -1,0 +1,41 @@
+<odoo>
+    <record id="res_partner_view_form_diligence_referral" model="ir.ui.view">
+        <field name="name">res.partner.form.diligence.referral</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Diligence Affiliate" name="diligence_affiliate">
+                    <group>
+                        <group string="Affiliate Profile">
+                            <field name="diligence_is_affiliate"/>
+                            <field name="diligence_referral_code" readonly="1"/>
+                            <field name="diligence_referral_link" widget="url" readonly="1" invisible="not diligence_is_affiliate"/>
+                            <field name="diligence_affiliate_type" invisible="not diligence_is_affiliate"/>
+                            <field name="diligence_affiliate_start_date" invisible="not diligence_is_affiliate"/>
+                            <field name="diligence_affiliate_end_date" invisible="not diligence_is_affiliate"/>
+                            <field name="diligence_affiliate_program_ids" widget="many2many_tags" invisible="not diligence_is_affiliate"/>
+                        </group>
+                        <group string="Cashback Rules">
+                            <field name="diligence_cashback_type" invisible="not diligence_is_affiliate"/>
+                            <field name="diligence_cashback_rate" invisible="not diligence_is_affiliate or diligence_cashback_type != 'percent'"/>
+                            <field name="diligence_cashback_fixed" invisible="not diligence_is_affiliate or diligence_cashback_type != 'fixed'"/>
+                            <field name="diligence_affiliate_min_payout" invisible="not diligence_is_affiliate"/>
+                            <field name="diligence_affiliate_waiting_days" invisible="not diligence_is_affiliate"/>
+                        </group>
+                    </group>
+                    <group string="Bank Details" invisible="not diligence_is_affiliate">
+                        <group>
+                            <field name="diligence_affiliate_bank_name"/>
+                            <field name="diligence_affiliate_bank_account"/>
+                        </group>
+                        <group>
+                            <field name="diligence_affiliate_bank_holder"/>
+                            <field name="diligence_affiliate_notes"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

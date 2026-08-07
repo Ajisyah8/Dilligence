@@ -769,7 +769,17 @@
             } else {
                 this.quiz = null;
             }
+            this._bindMediaAutoCompletion();
             return ret;
+        },
+
+        destroy() {
+            this._unbindMediaAutoCompletion();
+            if (this.quiz) {
+                this.quiz.destroy();
+                this.quiz = null;
+            }
+            return this._super(...arguments);
         },
 
         //----------------------------------------------------------------------
@@ -876,6 +886,74 @@
                 });
             });
             return questions;
+        },
+
+        _bindMediaAutoCompletion: function () {
+            this._unbindMediaAutoCompletion();
+
+            const slideId = this._getCurrentSlideId();
+            if (!slideId) {
+                return;
+            }
+            const slide = this._getSlide(slideId);
+            if (!slide || slide.completed || !slide.isMember || !slide.canSelfMarkCompleted) {
+                return;
+            }
+
+            const mediaEl = this.el.querySelector('.o_wslides_lesson_content video, .o_wslides_lesson_content audio');
+            if (!mediaEl) {
+                return;
+            }
+
+            this._autoCompletionTriggered = false;
+            this._boundMediaTimeUpdate = () => {
+                if (this._autoCompletionTriggered) {
+                    return;
+                }
+                if (!mediaEl.duration || !Number.isFinite(mediaEl.duration)) {
+                    return;
+                }
+                if (mediaEl.currentTime >= mediaEl.duration - 30) {
+                    this._autoCompletionTriggered = true;
+                    this.trigger_up('slide_mark_completed', slide);
+                }
+            };
+            this._boundMediaEnded = () => {
+                if (this._autoCompletionTriggered) {
+                    return;
+                }
+                this._autoCompletionTriggered = true;
+                this.trigger_up('slide_mark_completed', slide);
+            };
+
+            mediaEl.addEventListener('timeupdate', this._boundMediaTimeUpdate);
+            mediaEl.addEventListener('ended', this._boundMediaEnded);
+            this._boundMediaEl = mediaEl;
+        },
+
+        _unbindMediaAutoCompletion: function () {
+            if (!this._boundMediaEl) {
+                return;
+            }
+            this._boundMediaEl.removeEventListener('timeupdate', this._boundMediaTimeUpdate);
+            this._boundMediaEl.removeEventListener('ended', this._boundMediaEnded);
+            this._boundMediaEl = null;
+            this._boundMediaTimeUpdate = null;
+            this._boundMediaEnded = null;
+            this._autoCompletionTriggered = false;
+        },
+
+        _getCurrentSlideId: function () {
+            const $active = this.$('.o_wslides_lesson_aside_list_link.active .o_wslides_sidebar_done_button[data-id]');
+            if ($active.length) {
+                return $active.data('id');
+            }
+            const $quiz = this.$('.o_wslides_js_lesson_quiz[data-id]');
+            if ($quiz.length) {
+                return $quiz.data('id');
+            }
+            const match = window.location.pathname.match(/-(\d+)(?:\/)?$/);
+            return match ? parseInt(match[1]) : null;
         },
     });
 

@@ -34,6 +34,7 @@ export class Share extends Interaction {
             isChannel: data.isChannel === 'True',
             name: data.name,
             url: data.url,
+            sourceUrl: data.sourceUrl,
         });
     }
 }

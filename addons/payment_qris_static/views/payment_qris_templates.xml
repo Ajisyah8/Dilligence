@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="qris_status_form" inherit_id="payment.state_header">
+        <xpath expr="//div[@name='o_payment_status_alert']" position="inside">
+            <div t-if="tx.provider_id.sudo().custom_mode == 'qris_static' and tx.state == 'pending'"
+                 class="card mt-3 border-primary">
+                <div class="card-body text-center">
+                    <h4>Bayar dengan QRIS</h4>
+                    <p class="text-muted">Total pembayaran: <strong t-out="tx.amount"/></p>
+                    <img t-if="tx.provider_id.sudo().qris_image"
+                         t-att-src="image_data_uri(tx.provider_id.sudo().qris_image)"
+                         alt="QRIS" class="img-fluid mx-auto d-block mb-3" style="max-height: 360px;"/>
+                    <div t-if="tx.provider_id.sudo().qris_instructions"
+                         t-out="tx.provider_id.sudo().qris_instructions" class="text-start mb-3"/>
+                    <form action="/payment/qris_static/upload" method="post"
+                          enctype="multipart/form-data" class="text-start">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <label for="qris_proof_file" class="form-label">Upload bukti pembayaran</label>
+                        <input id="qris_proof_file" name="proof_file" type="file"
+                               class="form-control" accept="image/*,application/pdf" required="required"/>
+                        <button type="submit" class="btn btn-primary mt-3 w-100">
+                            Kirim Bukti &amp; Selesaikan Pembayaran
+                        </button>
+                    </form>
+                    <small class="text-muted d-block mt-2">
+                        Setelah dikirim, pembayaran akan dikonfirmasi dan akses course diproses otomatis.
+                    </small>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>

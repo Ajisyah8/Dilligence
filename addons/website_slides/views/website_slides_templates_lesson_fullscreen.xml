@@ -41,6 +41,12 @@
                     </a>
                 </div>
                 <div class="d-flex ms-auto">
+                    <button type="button" class="btn btn-link text-white px-3 o_wslides_fs_previous" title="Previous lesson">
+                        <i class="fa fa-chevron-left"/><span class="d-none d-md-inline-block ms-1">Previous</span>
+                    </button>
+                    <button type="button" class="btn btn-link text-white px-3 o_wslides_fs_next" title="Next lesson">
+                        <span class="d-none d-md-inline-block me-1">Next</span><i class="fa fa-chevron-right"/>
+                    </button>
                     <a class="o_wslides_fs_share d-flex align-items-center px-3" href="#" title="Share">
                         <i class="fa fa-share-alt"/>
                         <span class="d-none d-md-inline-block ms-2">Share</span>
@@ -127,6 +133,8 @@
                     t-att-data-slug="slug(slide)"
                     t-att-data-has-question="1 if slide.question_ids else 0"
                     t-att-data-is-quiz="0"
+                    t-att-data-external-quiz-url="slide.diligence_external_quiz_url if slide.slide_category == 'quiz' else False"
+                    t-att-data-external-quiz-label="slide.diligence_external_quiz_label if slide.slide_category == 'quiz' else False"
                     t-att-data-completed="slide_completed"
                     t-att-data-embed-code="slide.embed_code if slide.slide_category in ['video', 'document', 'infographic', 'audio'] else False"
                     t-att-data-can-self-mark-completed="slide.can_self_mark_completed"
@@ -135,11 +143,13 @@
                     t-att-data-is-member-or-invited="is_member_or_invited"
                     t-att-data-session-answers="session_answers"
                     t-att-data-website-share-url="slide.website_share_url"
+                    t-att-data-video-url="slide.video_url if slide.slide_category == 'video' else False"
                     t-att-data-email-sharing="bool(slide.channel_id.share_slide_template_id)">
                     <div class="ms-2 o_wslides_sidebar_content overflow-hidden">
                         <a t-if="can_access" class="d-block" href="#">
                             <div class="d-flex">
                                 <t t-if="is_member" t-call="website_slides.slide_sidebar_done_button"/>
+                                <i t-elif="slide.slide_category == 'audio'" class="fa fa-volume-up me-2" title="Audio"/>
                                 <i t-else="" t-attf-class="fa #{slide.slide_icon_class} me-2"/>
                                 <div class="o_wslides_fs_slide_name text-truncate" t-out="slide.name"/>
                             </div>
@@ -147,6 +157,7 @@
                         <span t-else="" class="d-block" href="#">
                             <div class="d-flex">
                                 <t t-if="is_member" t-call="website_slides.slide_sidebar_done_button"/>
+                                <i t-elif="slide.slide_category == 'audio'" class="fa fa-volume-up me-2 text-600" title="Audio"/>
                                 <i t-else="" t-attf-class="fa #{slide.slide_icon_class} me-2 text-600"/>
                                 <div class="o_wslides_fs_slide_name text-600 text-truncate" t-out="slide.name"/>
                             </div>

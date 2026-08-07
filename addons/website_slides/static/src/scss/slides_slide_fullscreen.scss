@@ -1,5 +1,14 @@
 
 .o_wslides_fs_main {
+
+    // External audio is rendered through a custom provider. Force a clear
+    // speaker glyph in the lesson sidebar even when a stale slide icon class
+    // is still present in a browser session.
+    .o_wslides_fs_sidebar_list_item[data-category="audio"] {
+        .o_wslides_sidebar_done_button .fa::before {
+            content: "\f028";
+        }
+    }
     @include o-position-absolute(0,0,0,0);
     z-index: $zindex-website-header + 1;
     background-image: linear-gradient(120deg, $o-wslides-color-dark2, $o-wslides-color-dark3);

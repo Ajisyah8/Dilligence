@@ -1,0 +1,6 @@
+<odoo>
+    <record id="group_diligence_community_member" model="res.groups">
+        <field name="name">Diligence Community Member</field>
+        <field name="comment">Granted automatically to buyers of Community and Consultation packages.</field>
+    </record>
+</odoo>

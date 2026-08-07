@@ -376,6 +376,8 @@
         events: Object.assign({}, SlideCoursePage.prototype.events, {
             'click .o_wslides_fs_toggle_sidebar': '_onClickToggleSidebar',
             'click .o_wslides_fs_share': '_onClickShareSlide',
+            'click .o_wslides_fs_previous': '_onClickPrevious',
+            'click .o_wslides_fs_next': '_onClickNext',
         }),
         custom_events: Object.assign({}, SlideCoursePage.prototype.custom_events, {
             'change_slide': '_onChangeSlideRequest',
@@ -477,11 +479,20 @@
                 // compute embed url
                 if (slideData.category === 'video' && slideData.embedCode?.includes('<video')) {
                     slideData.embedCode = markup(slideData.embedCode);
+                } else if (slideData.category === 'video' && ['external', 'cloudflare_stream'].includes(slideData.videoSourceType)) {
+                    slideData.embedCode = markup(slideData.embedCode);
                 } else if (slideData.category === 'video' && slideData.videoSourceType !== 'vimeo') {
                     slideData.embedCode = $(slideData.embedCode).attr('src') || ""; // embedCode contains an iframe tag, where src attribute is the url (youtube or embed document from odoo)
                     var separator = slideData.embedCode.indexOf("?") !== -1 ? "&" : "?";
                     var scheme = slideData.embedCode.indexOf('//') === 0 ? 'https:' : '';
-                    var params = { rel: 0, enablejsapi: 1, origin: window.location.origin };
+                    var params = {
+                        rel: 0,
+                        modestbranding: 1,
+                        iv_load_policy: 3,
+                        playsinline: 1,
+                        enablejsapi: 1,
+                        origin: window.location.origin,
+                    };
                     if (slideData.embedCode.indexOf("//drive.google.com") === -1) {
                         params.autoplay = 1;
                     }
@@ -550,6 +561,11 @@
                 // display quiz slide, or quiz attached to a slide
                 if (slide.category === 'quiz' || slide.isQuiz) {
                     $content.addClass('bg-white');
+                    if (slide.externalQuizUrl) {
+                        $content.empty().append(renderToElement('website.slides.fullscreen.external_quiz', {widget: this}));
+                        unhideConditionalElements();
+                        return;
+                    }
                     var QuizWidget = new Quiz(this, slide, this.channel);
                     return await QuizWidget.appendTo($content);
                 }
@@ -559,6 +575,8 @@
                     $content.empty().append(renderToElement('website.slides.fullscreen.content', {widget: this}));
                 } else if (slide.category === 'audio' || (slide.category === 'video' && !slide.videoSourceType)) {
                     $content.empty().append(renderToElement('website.slides.fullscreen.media.local', {widget: this}));
+                } else if (slide.category === 'video' && ['external', 'cloudflare_stream'].includes(slide.videoSourceType)) {
+                    $content.empty().append(renderToElement('website.slides.fullscreen.video.external', {widget: this}));
                 } else if (slide.category === 'video' && slide.videoSourceType === 'youtube') {
                     this.videoPlayer = new VideoPlayerYouTube(this, slide);
                     return await this.videoPlayer.appendTo($content);
@@ -574,6 +592,17 @@
                     this.trigger_up('widgets_start_request', {
                         $target: $content,
                     });
+                }
+                // Native audio and direct external video expose an `ended` event.
+                // Keep navigation available, but only mark the lesson complete
+                // after the learner reaches the end of the media.
+                const mediaElement = $content[0].querySelector('audio, video');
+                if (mediaElement) {
+                    mediaElement.addEventListener('ended', () => {
+                        if (slide.isMember && !slide.hasQuestion && !slide.completed) {
+                            this._toggleSlideCompleted(slide);
+                        }
+                    }, {once: true});
                 }
                 unhideConditionalElements();
             } finally {
@@ -689,6 +718,16 @@
             this._toggleSidebar();
         },
 
+        _onClickPrevious: function (ev) {
+            ev.preventDefault();
+            this.sidebar.goPrevious();
+        },
+
+        _onClickNext: function (ev) {
+            ev.preventDefault();
+            this.sidebar.goNext();
+        },
+
         _onClickShareSlide: function (ev) {
             const slide = this._slideValue;
             this.call("dialog", "add", SlideShareDialog, {
@@ -703,6 +742,7 @@
                 isFullscreen: true,
                 name: slide.name,
                 url: slide.websiteShareUrl,
+                sourceUrl: slide.videoUrl,
             });
         },
 

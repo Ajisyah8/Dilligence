@@ -1,0 +1,25 @@
+<odoo>
+    <record id="product_template_form_diligence_package" model="ir.ui.view">
+        <field name="name">product.template.form.diligence.package</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Diligence Package" invisible="not sale_ok">
+                    <group>
+                        <field name="diligence_package_type"/>
+                        <field name="list_price"/>
+                        <field name="diligence_early_bird_price"/>
+                        <field name="diligence_benefit_text" widget="text" placeholder="One benefit per line..."/>
+                        <field name="diligence_access_duration_days"/>
+                    </group>
+                    <group string="Access Benefits">
+                        <field name="diligence_course_ids" widget="many2many_tags"/>
+                        <field name="diligence_forum_access"/>
+                        <field name="diligence_consultation"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

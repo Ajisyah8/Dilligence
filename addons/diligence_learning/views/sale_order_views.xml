@@ -1,0 +1,29 @@
+<odoo>
+    <record id="sale_order_form_diligence_learning" model="ir.ui.view">
+        <field name="name">sale.order.form.diligence.learning</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Diligence Learning">
+                    <group string="Referral &amp; Cashback">
+                        <field name="diligence_referral_code"/>
+                        <field name="diligence_referrer_id"/>
+                        <field name="diligence_referral_id"/>
+                        <field name="diligence_commission_amount"/>
+                        <field name="diligence_commission_status"/>
+                        <button name="action_refresh_diligence_referral_payment" type="object" string="Refresh Payment &amp; Cashback" invisible="not diligence_referral_id"/>
+                        <button name="action_mark_diligence_cashback_paid" type="object" string="Mark Cashback Paid" invisible="not diligence_referrer_id or diligence_commission_status == 'paid'"/>
+                    </group>
+                    <group string="Consultation">
+                        <field name="diligence_consultation_status"/>
+                        <field name="diligence_coach_id"/>
+                        <field name="diligence_next_coaching_date"/>
+                        <field name="diligence_coaching_link" widget="url"/>
+                        <field name="diligence_coaching_note"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

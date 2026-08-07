@@ -14,6 +14,18 @@
                         <CopyButton content="this.props.url" copyText="copyUrlText" className="'btn-primary'" successText="successText"/>
                     </div>
                 </div>
+                <div class="col-12 mt-4" t-if="this.props.sourceUrl">
+                    <h5 class="mt-0 mb-2">Original Video Link</h5>
+                    <div class="input-group">
+                        <input type="text" class="form-control text-center" t-att-value="this.props.sourceUrl"
+                               readonly="readonly" onClick="this.select();"/>
+                        <CopyButton content="this.props.sourceUrl" copyText="copyUrlText" className="'btn-primary'" successText="successText"/>
+                        <a t-att-href="this.props.sourceUrl" target="_blank" rel="noopener noreferrer"
+                           class="btn btn-outline-primary" title="Open original video">
+                            <i class="fa fa-external-link"/>
+                        </a>
+                    </div>
+                </div>
                 <div class="col-12 mt-4">
                     <h5 class="mt-0 mb-2">Share on Social Media</h5>
                     <div class="btn-group" role="group">

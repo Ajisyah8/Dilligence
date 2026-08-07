@@ -1,0 +1,68 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: diligence_learning\n"
+"Language: id\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "My Courses"
+msgstr "Kursus Saya"
+
+msgid "Back to My Account"
+msgstr "Kembali ke Akun Saya"
+
+msgid "Open Course"
+msgstr "Buka Kursus"
+
+msgid "Paket:"
+msgstr "Paket:"
+
+msgid "Akses sampai:"
+msgstr "Akses sampai:"
+
+msgid "Buka course dan lihat materi pembelajaran Anda"
+msgstr "Buka kursus dan lihat materi pembelajaran Anda"
+
+msgid "My Consultation"
+msgstr "Konsultasi Saya"
+
+msgid "Jadwal berikutnya"
+msgstr "Jadwal berikutnya"
+
+msgid "Buka Link Consultation"
+msgstr "Buka Link Konsultasi"
+
+msgid "Lihat jadwal, coach, dan link konsultasi"
+msgstr "Lihat jadwal, coach, dan link konsultasi"
+
+msgid "There are no active courses on this account. Please make sure the package payment has been confirmed."
+msgstr "Belum ada kursus aktif pada akun ini. Pastikan pembayaran paket sudah dikonfirmasi."
+
+msgid "Package:"
+msgstr "Paket:"
+
+msgid "Access until:"
+msgstr "Akses sampai:"
+
+msgid "Open Course"
+msgstr "Buka Kursus"
+
+msgid "There is no confirmed Consultation package purchase on this account."
+msgstr "Belum ada pembelian paket Consultation yang dikonfirmasi pada akun ini."
+
+msgid "Next schedule"
+msgstr "Jadwal berikutnya"
+
+msgid "Open Consultation Link"
+msgstr "Buka Link Konsultasi"
+
+msgid "Coach note"
+msgstr "Catatan coach"
+
+msgid "The coach will arrange the schedule and contact you."
+msgstr "Coach akan mengatur jadwal dan menghubungi Anda."
+
+msgid "Open your courses and learning materials"
+msgstr "Buka kursus dan materi pembelajaran Anda"
+
+msgid "View your coach, schedule, and consultation link"
+msgstr "Lihat coach, jadwal, dan link konsultasi Anda"
