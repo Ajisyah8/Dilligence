@@ -1,6 +1,6 @@
 {
     'name': 'Diligence Learning Packages',
-    'version': '1.0.0',
+    'version': '1.0.16',
     'summary': 'Learning packages, bundle access, community, coaching, and referrals',
     'category': 'Website/eLearning',
     'author': 'Project ADS',
@@ -21,12 +21,10 @@
         'security/diligence_learning_security.xml',
         'security/ir.model.access.csv',
         'data/diligence_learning_data.xml',
-        'data/package_page_template.xml',
+        'data/package_shop_template.xml',
         'views/product_template_views.xml',
         'views/product_website_templates.xml',
         'views/package_product_tile_templates.xml',
-        'views/package_checkout_templates.xml',
-        'views/package_checkout_urls.xml',
         'views/res_partner_views.xml',
         'views/sale_order_views.xml',
         'views/referral_views.xml',
@@ -45,9 +43,8 @@
     'assets': {
         'web.assets_frontend': [
             'diligence_learning/static/src/scss/academy_website.scss',
-            'diligence_learning/static/src/js/package_cart_links.js',
-            'diligence_learning/static/src/xml/package_cart_notification.xml',
         ],
     },
     'installable': True,
+    'post_init_hook': 'post_init_hook',
 }

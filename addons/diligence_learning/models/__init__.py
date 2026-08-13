@@ -1,5 +1,4 @@
 from . import product_template
-from . import website
 from . import product_product
 from . import res_partner
 from . import referral
@@ -9,3 +8,5 @@ from . import academic
 from . import sale_order
 from . import slide_slide
 from . import session
+from . import website_menu
+from . import website

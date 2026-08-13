@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<templates xml:space="preserve">
-    <t t-inherit="website_sale.addToCartNotification" t-inherit-mode="extension">
-        <xpath expr="//a[@href='/shop/cart']" position="attributes">
-            <attribute name="href">/paket-belajar/cart</attribute>
-        </xpath>
-    </t>
-</templates>
