@@ -44,12 +44,19 @@ class SlideSlide(models.Model):
                 # the built-in audio-file icon consistently.
                 slide.slide_type = 'local_audio'
 
-    @api.depends('slide_type', 'slide_category', 'source_type')
+    @api.depends('slide_type', 'slide_category', 'source_type', 'video_source_type')
     def _compute_slide_icon_class(self):
         super()._compute_slide_icon_class()
         for slide in self:
-            if slide.slide_category == 'audio' and slide.source_type == 'external':
-                slide.slide_icon_class = 'fa-volume-up'
+            # Odoo normally derives the icon from ``slide_type``. Draft/local
+            # audio and video lessons do not have a slide type until a media
+            # file is uploaded, which made their course-list icon fall back to
+            # the generic (and visually empty) file icon. The content category
+            # is already known, so it is the stable source for these icons.
+            if slide.slide_category == 'audio':
+                slide.slide_icon_class = 'fa-file-audio-o'
+            elif slide.slide_category == 'video':
+                slide.slide_icon_class = 'fa-file-video-o'
 
     @api.depends('slide_category', 'source_type', 'binary_content', 'url', 'google_drive_id',
                  'video_url', 'video_source_type', 'youtube_id', 'vimeo_id')

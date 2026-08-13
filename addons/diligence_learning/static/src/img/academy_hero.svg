@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 620" role="img" aria-labelledby="title desc">
+  <title id="title">Diligence Academy learning illustration</title>
+  <desc id="desc">A student learning languages with a book and global education symbols.</desc>
+  <rect width="720" height="620" fill="#f8f7ef"/>
+  <circle cx="390" cy="305" r="220" fill="#e8f3f1"/>
+  <circle cx="390" cy="305" r="176" fill="#fff" stroke="#17344a" stroke-width="4"/>
+  <path d="M216 438c68-74 146-111 236-111 79 0 145 29 202 86" fill="none" stroke="#c7a86b" stroke-width="15" stroke-linecap="round"/>
+  <circle cx="410" cy="218" r="62" fill="#f3caa5" stroke="#17344a" stroke-width="5"/>
+  <path d="M354 208c12-64 110-76 137-17-49-8-89-4-137 17Z" fill="#17344a"/>
+  <path d="M353 224c-15-12-35 3-26 24 7 16 22 19 35 9" fill="#f3caa5" stroke="#17344a" stroke-width="5"/>
+  <circle cx="432" cy="223" r="5" fill="#17344a"/>
+  <path d="M432 252c15 9 31 5 40-8" fill="none" stroke="#17344a" stroke-width="4" stroke-linecap="round"/>
+  <path d="M346 317c29-26 61-39 96-39 48 0 91 23 126 68l-50 166H321l-29-128c-8-35 15-58 54-67Z" fill="#0d6078" stroke="#17344a" stroke-width="5"/>
+  <path d="M347 323c-37 4-74 34-104 81-9 15-5 34 10 44 16 10 36 4 45-12l60-93" fill="#f3caa5" stroke="#17344a" stroke-width="5" stroke-linecap="round"/>
+  <path d="M548 341c38 26 63 58 76 96 6 17-3 35-20 41-17 6-36-3-42-20l-43-103" fill="#f3caa5" stroke="#17344a" stroke-width="5" stroke-linecap="round"/>
+  <path d="M348 392c58-18 115-18 172 0l-16 142H363Z" fill="#fff" stroke="#17344a" stroke-width="5"/>
+  <path d="M434 392v142" stroke="#17344a" stroke-width="4"/>
+  <path d="M370 419c20-6 40-8 60-6M370 441c20-6 40-8 60-6M442 413c19-2 37 0 54 6M442 435c19-2 37 0 54 6" fill="none" stroke="#c7a86b" stroke-width="5" stroke-linecap="round"/>
+  <g transform="translate(102 112)">
+    <rect width="122" height="76" rx="18" fill="#fff" stroke="#17344a" stroke-width="4"/>
+    <text x="61" y="49" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" font-weight="700" fill="#0d6078">EN</text>
+  </g>
+  <g transform="translate(520 94)">
+    <rect width="106" height="90" rx="18" fill="#fff" stroke="#17344a" stroke-width="4"/>
+    <text x="53" y="58" text-anchor="middle" font-family="Arial,sans-serif" font-size="34" font-weight="700" fill="#8a6634">汉</text>
+  </g>
+  <g transform="translate(550 500)">
+    <circle cx="46" cy="46" r="43" fill="#c7a86b" stroke="#17344a" stroke-width="4"/>
+    <path d="M21 41 46 28l25 13-25 13Z" fill="#fff" stroke="#17344a" stroke-width="3"/>
+    <path d="M29 50v15c12 8 23 8 35 0V50" fill="none" stroke="#17344a" stroke-width="3"/>
+  </g>
+  <path d="M172 252c-16-12-29-26-39-43M157 270c-25-3-47-10-66-22M583 245c19-15 34-31 44-49" fill="none" stroke="#17344a" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="121" cy="194" r="12" fill="#c7a86b"/>
+  <circle cx="646" cy="179" r="13" fill="#0d6078"/>
+  <circle cx="103" cy="470" r="17" fill="#e8f3f1" stroke="#17344a" stroke-width="4"/>
+</svg>

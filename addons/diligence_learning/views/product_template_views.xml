@@ -9,14 +9,42 @@
                     <group>
                         <field name="diligence_package_type"/>
                         <field name="list_price"/>
-                        <field name="diligence_early_bird_price"/>
+                        <group string="Early Bird Pricing">
+                            <field name="diligence_early_bird_enabled"/>
+                            <field name="diligence_early_bird_price"/>
+                            <field name="diligence_early_bird_start_date"/>
+                            <field name="diligence_early_bird_duration_days"/>
+                            <field name="diligence_early_bird_end_date" readonly="1"/>
+                        </group>
                         <field name="diligence_benefit_text" widget="text" placeholder="One benefit per line..."/>
                         <field name="diligence_access_duration_days"/>
                     </group>
                     <group string="Access Benefits">
                         <field name="diligence_course_ids" widget="many2many_tags"/>
-                        <field name="diligence_forum_access"/>
-                        <field name="diligence_consultation"/>
+                        <group string="Included Support">
+                            <label for="diligence_forum_access" string="Community Forum Access"/>
+                            <field name="diligence_forum_access" nolabel="1"/>
+                            <div class="text-muted" colspan="2">Allow the learner to join the community discussion forum.</div>
+                            <label for="diligence_consultation" string="Coach Consultation Included"/>
+                            <field name="diligence_consultation" nolabel="1"/>
+                            <div class="text-muted" colspan="2">Enable progress guidance and coaching follow-up.</div>
+                            <label for="diligence_teacher_feedback" string="Teacher Feedback Included"/>
+                            <field name="diligence_teacher_feedback" nolabel="1"/>
+                            <div class="text-muted" colspan="2">Enable direct feedback from an experienced teacher.</div>
+                            <label for="diligence_live_qna" string="Monthly Live Q&amp;A Included"/>
+                            <field name="diligence_live_qna" nolabel="1"/>
+                            <div class="text-muted" colspan="2">Include one live Q&amp;A session every month.</div>
+                        </group>
+                        <group string="Class Delivery">
+                            <label for="diligence_delivery_mode" string="Delivery Mode"/>
+                            <field name="diligence_delivery_mode" nolabel="1"/>
+                            <label for="diligence_session_frequency" string="Sessions per Week" invisible="diligence_delivery_mode == 'self'"/>
+                            <field name="diligence_session_frequency" nolabel="1" invisible="diligence_delivery_mode == 'self'"/>
+                            <label for="diligence_session_duration_minutes" string="Session Duration (Minutes)" invisible="diligence_delivery_mode == 'self'"/>
+                            <field name="diligence_session_duration_minutes" nolabel="1" invisible="diligence_delivery_mode == 'self'"/>
+                            <label for="diligence_max_participants" string="Maximum Participants" invisible="diligence_delivery_mode == 'self'"/>
+                            <field name="diligence_max_participants" nolabel="1" invisible="diligence_delivery_mode == 'self'"/>
+                        </group>
                     </group>
                 </page>
             </xpath>

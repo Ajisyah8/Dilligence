@@ -11,7 +11,9 @@ class DiligenceReferralController(http.Controller):
             ('diligence_referral_code', '=', referral_code),
         ], limit=1)
         if referrer:
-            order = request.website.sale_get_order(force_create=True)
+            # Odoo 19 exposes the current cart through ``request.cart``;
+            # ``website.sale_get_order`` was removed from the website API.
+            order = request.cart or request.website._create_cart()
             order.sudo().write({'diligence_referral_code': referral_code})
             request.session['diligence_referral_code'] = referral_code
-        return request.redirect('/shop')
+        return request.redirect('/paket-belajar')

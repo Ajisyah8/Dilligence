@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="package_page_template_view" model="ir.ui.view">
+        <field name="name">Paket Belajar — Diligence Academy</field>
+        <field name="key">diligence_learning.page_template_package</field>
+        <field name="type">qweb</field>
+        <field name="mode">primary</field>
+        <field name="website_id" ref="website.default_website"/>
+        <field name="arch" type="xml">
+            <t t-name="diligence_learning.page_template_package">
+                <t t-call="website.layout">
+                    <div id="wrap" class="oe_structure">
+                        <section class="academy-inner-page diligence-package-page o_colored_level">
+                            <div class="academy-page-hero">
+                                <div class="container">
+                                    <span class="academy-kicker">DILIGENCE ACADEMY</span>
+                                    <h1 class="fw-bold mt-3 mb-3">Pilih Paket Belajar Anda</h1>
+                                    <p class="lead mb-0">Temukan jalur belajar yang sesuai dengan kebutuhan dan dukungan yang Anda inginkan.</p>
+                                </div>
+                            </div>
+                        </section>
+                        <section class="academy-packages py-5 o_colored_level">
+                            <div class="container py-4">
+                                <div class="row g-4">
+                                    <div class="col-lg-4 o_colored_level">
+                                        <article class="academy-package-card h-100">
+                                            <span class="academy-package-label">SELF LEARNING</span>
+                                            <h2 class="h3 mt-4">Starter Pack</h2>
+                                            <p class="text-muted">Belajar mandiri dengan materi dan latihan terstruktur.</p>
+                                            <div class="academy-package-price my-3">Rp129.000</div>
+                                            <ul><li><i class="fa fa-check"/> Materi PDF, audio, video, dan quiz</li><li><i class="fa fa-check"/> Belajar fleksibel secara mandiri</li></ul>
+                                            <a href="/paket-belajar" class="btn academy-btn-secondary rounded-pill w-100">Pilih Starter Pack</a>
+                                        </article>
+                                    </div>
+                                    <div class="col-lg-4 o_colored_level">
+                                        <article class="academy-package-card academy-package-card--featured h-100">
+                                            <span class="academy-package-label">COMMUNITY</span>
+                                            <h2 class="h3 mt-4">Starter Pack + Community</h2>
+                                            <p class="text-muted">Belajar bersama teman seperjuangan dan senior.</p>
+                                            <div class="academy-package-price my-3">Rp269.000</div>
+                                            <ul><li><i class="fa fa-check"/> Seluruh fasilitas Starter Pack</li><li><i class="fa fa-check"/> Forum diskusi komunitas</li></ul>
+                                            <a href="/paket-belajar" class="btn academy-btn-primary rounded-pill w-100">Pilih Community</a>
+                                        </article>
+                                    </div>
+                                    <div class="col-lg-4 o_colored_level">
+                                        <article class="academy-package-card h-100">
+                                            <span class="academy-package-label">TEACHER GUIDANCE</span>
+                                            <h2 class="h3 mt-4">Starter Pack + Coaching</h2>
+                                            <p class="text-muted">Dapatkan arahan profesional dan evaluasi progres belajar.</p>
+                                            <div class="academy-package-price my-3">Rp399.000</div>
+                                            <ul><li><i class="fa fa-check"/> Teacher feedback dan arahan belajar</li><li><i class="fa fa-check"/> Live Q&amp;A setiap bulan</li></ul>
+                                            <a href="/paket-belajar" class="btn academy-btn-secondary rounded-pill w-100">Pilih Coaching</a>
+                                        </article>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <section class="py-5 o_colored_level">
+                            <div class="container text-center py-4">
+                                <h2>Masih bingung memilih paket?</h2>
+                                <p class="lead text-muted">Tambahkan informasi konsultasi, FAQ, atau CTA Anda di sini.</p>
+                                <a href="/contactus" class="btn academy-btn-primary rounded-pill">Konsultasi Gratis</a>
+                            </div>
+                        </section>
+                    </div>
+                </t>
+            </t>
+        </field>
+    </record>
+
+    <record id="package_page_template_page" model="website.page">
+        <field name="name">Paket Belajar — Diligence Academy</field>
+        <field name="url">/template-paket-belajar</field>
+        <field name="view_id" ref="package_page_template_view"/>
+        <field name="website_id" ref="website.default_website"/>
+        <field name="is_new_page_template">True</field>
+        <field name="website_published">False</field>
+    </record>
+</odoo>

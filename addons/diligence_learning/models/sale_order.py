@@ -105,6 +105,22 @@ class SaleOrder(models.Model):
                     note=_('Arrange coaching, learning-progress review, and live Q&A via WhatsApp or Zoom.'),
                 )
 
+            session_packages = package_products.filtered(
+                lambda package: package.diligence_delivery_mode != 'self'
+            )
+            for package in session_packages:
+                session = self.env['diligence.session'].search([
+                    ('package_id', '=', package.id),
+                    ('state', '=', 'scheduled'),
+                    ('start_datetime', '>=', fields.Datetime.now()),
+                ], order='start_datetime asc', limit=1)
+                if session and (not session.capacity or session.attendee_count < session.capacity):
+                    self.env['diligence.session.attendee'].create({
+                        'session_id': session.id,
+                        'partner_id': order.partner_id.id,
+                        'sale_order_id': order.id,
+                    })
+
     def _action_confirm(self):
         result = super()._action_confirm()
         self._diligence_apply_referral()
@@ -125,3 +141,21 @@ class SaleOrder(models.Model):
             raise ValidationError(_('This order has no referral attribution.'))
         self.diligence_referral_id.action_refresh_payment()
         self.diligence_commission_amount = self.diligence_referral_id.cashback_amount
+
+
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    def _get_display_price_ignore_combo(self):
+        price = super()._get_display_price_ignore_combo()
+        self.ensure_one()
+        product = self.product_id.product_tmpl_id
+        early_bird_price = product._diligence_early_bird_price_for_date(self._get_order_date())
+        if early_bird_price:
+            return product.currency_id._convert(
+                early_bird_price,
+                self.currency_id,
+                self.company_id,
+                self._get_order_date(),
+            )
+        return price
