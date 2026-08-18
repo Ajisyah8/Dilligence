@@ -7,6 +7,62 @@
                     <h3 class="mb-0" t-translation="yes">My Courses</h3>
                     <a href="/my/home" class="btn btn-outline-secondary" t-translation="yes">Back to My Account</a>
                 </div>
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-lg-3">
+                        <div class="card h-100 border-0 bg-primary-subtle"><div class="card-body">
+                            <div class="text-muted small" t-translation="yes">Active courses</div>
+                            <div class="fs-3 fw-semibold" t-out="len(dashboard_courses)"/>
+                        </div></div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card h-100 border-0 bg-success-subtle"><div class="card-body">
+                            <div class="text-muted small" t-translation="yes">Current streak</div>
+                            <div class="fs-3 fw-semibold"><t t-out="current_streak"/> <small t-translation="yes">days</small></div>
+                        </div></div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card h-100 border-0 bg-warning-subtle"><div class="card-body">
+                            <div class="text-muted small" t-translation="yes">Best streak</div>
+                            <div class="fs-3 fw-semibold"><t t-out="best_streak"/> <small t-translation="yes">days</small></div>
+                        </div></div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card h-100 border-0 bg-info-subtle"><div class="card-body">
+                            <div class="text-muted small" t-translation="yes">Activities (90 days)</div>
+                            <div class="fs-3 fw-semibold" t-out="len(activities)"/>
+                        </div></div>
+                    </div>
+                </div>
+                <div class="card shadow-sm mb-4" t-if="dashboard_courses">
+                    <div class="card-body">
+                        <h5 t-translation="yes">Learning progress</h5>
+                        <t t-foreach="dashboard_courses" t-as="course">
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between small mb-1">
+                                    <span t-out="course['membership'].channel_id.name"/>
+                                    <span><t t-out="round(course['progress'])"/>%</span>
+                                </div>
+                                <div class="progress" role="progressbar" t-att-aria-valuenow="course['progress']" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar" t-att-style="'width: %s%%' % course['progress']"/>
+                                </div>
+                                <div class="text-muted small mt-1"><t t-out="course['completed']"/> / <t t-out="course['total']"/> <span t-translation="yes">lessons completed</span></div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+                <div class="card shadow-sm mb-4" t-if="upcoming_sessions">
+                    <div class="card-body">
+                        <h5 t-translation="yes">Upcoming sessions</h5>
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item px-0" t-foreach="upcoming_sessions" t-as="session">
+                                <div class="d-flex justify-content-between gap-3">
+                                    <div><strong t-out="session.name"/><br/><span class="text-muted" t-field="session.start_datetime"/></div>
+                                    <a t-if="session.meeting_url" class="btn btn-sm btn-outline-primary align-self-center" t-att-href="session.meeting_url" target="_blank" t-translation="yes">Join</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div t-if="not memberships" class="alert alert-info">
                     <span t-translation="yes">There are no active courses on this account. Please make sure the package payment has been confirmed.</span>
                 </div>

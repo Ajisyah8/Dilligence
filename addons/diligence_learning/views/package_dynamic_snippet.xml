@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="s_diligence_package_columns" name="Diligence Package Columns">
+        <section class="s_diligence_package_columns s_dynamic_snippet pt64 pb64 o_colored_level"
+                 data-snippet="s_diligence_package_columns"
+                 data-name="Diligence Learning Packages"
+                 data-filter-id="13"
+                 data-template-key="diligence_learning.dynamic_filter_template_product_product_diligence_package_columns_item"
+                 data-number-of-elements="3"
+                 data-number-of-elements-small-devices="1"
+                 data-number-of-records="12">
+            <div class="s_dynamic_snippet_container container">
+                <div class="row s_nb_column_fixed">
+                    <section class="s_dynamic_snippet_title d-flex flex-column mb-lg-0 pb-3 s_col_no_resize text-center">
+                        <div>
+                            <p class="text-uppercase fw-bold text-primary mb-2">Learning packages</p>
+                            <h2 class="display-5 fw-bold">Pilih Paket Belajar Anda</h2>
+                            <p class="lead">Paket, benefit, harga, dan Early Bird terhubung langsung ke Sales.</p>
+                        </div>
+                    </section>
+                    <section class="s_dynamic_snippet_content o_not_editable col s_col_no_resize">
+                        <div class="dynamic_snippet_template"/>
+                    </section>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <template id="dynamic_filter_template_product_product_diligence_package_columns_item" name="Diligence Package Columns Item">
+        <t t-foreach="records" t-as="data">
+            <t t-set="product" t-value="data['_record']"/>
+            <t t-set="package" t-value="product.product_tmpl_id"/>
+            <t t-set="package_description" t-value="package.description_sale or ''"/>
+            <t t-set="early_price" t-value="package._diligence_early_bird_price_for_date()"/>
+            <article class="h-100 w-100 p-4 bg-white border rounded-4 shadow-sm d-flex flex-column">
+                <span class="badge rounded-pill text-bg-light align-self-start mb-3">
+                    <t t-if="package.diligence_package_type == 'starter'">SELF LEARNING</t>
+                    <t t-elif="package.diligence_package_type == 'community'">MOST POPULAR</t>
+                    <t t-else="">TEACHER GUIDANCE</t>
+                </span>
+                <h3 class="h4 mb-3"><a class="text-decoration-none text-reset" t-att-href="product.website_url" t-out="product.display_name"/></h3>
+                <p class="mb-3" t-if="package_description">
+                    <t t-out="package_description.splitlines()[0]"/>
+                </p>
+                <div class="mt-3">
+                    <t t-if="early_price">
+                        <del class="text-muted me-2" t-out="package.list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                        <strong class="fs-3" t-out="early_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                    </t>
+                    <strong t-else="" class="fs-3" t-out="package.list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                </div>
+                <ul class="list-unstyled my-4">
+                    <t t-foreach="package_description.splitlines()[1:]" t-as="benefit">
+                        <li t-if="benefit.strip()" class="mb-3"><i class="fa fa-check text-primary me-2"/><span t-out="benefit.lstrip('?• ').strip()"/></li>
+                    </t>
+                </ul>
+                <a class="btn btn-outline-primary rounded-pill w-100 mt-auto" t-att-href="product.website_url">View Package</a>
+            </article>
+        </t>
+    </template>
+
+    <template id="diligence_package_snippet_registration" inherit_id="website.snippets" name="Diligence Package Snippet Registration">
+        <xpath expr="//snippets[@id='snippet_structure']" position="inside">
+            <t t-snippet="diligence_learning.s_diligence_package_columns"
+               string="Diligence Package Columns"
+               group="content"
+               t-thumbnail="/website/static/src/img/snippets_thumbs/s_three_columns.svg"/>
+        </xpath>
+    </template>
+</odoo>

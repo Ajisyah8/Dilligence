@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="slide.slide.quiz" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'o_wslides_fs_quiz_container')]" position="attributes">
+            <attribute name="class" add="o_diligence_fs_quiz" separator=" "/>
+            <attribute name="t-att-data-id">widget.slide.id</attribute>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'o_wslides_js_lesson_quiz_question')]" position="attributes">
+            <attribute name="t-att-data-question-type">question.question_type</attribute>
+            <attribute name="t-att-data-audio-url">question.audio_url</attribute>
+        </xpath>
+    </t>
+</templates>

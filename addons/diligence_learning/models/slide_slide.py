@@ -3,16 +3,30 @@ import re
 from markupsafe import Markup, escape
 
 from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
 class SlideSlide(models.Model):
     _inherit = 'slide.slide'
+
+    quiz_passing_score = fields.Float('Quiz passing score (%)', default=70.0)
+    quiz_max_attempts = fields.Integer('Maximum quiz attempts', default=0)
+    quiz_randomize_questions = fields.Boolean('Randomize questions')
+    quiz_randomize_answers = fields.Boolean('Randomize answers')
 
     diligence_external_quiz_url = fields.Char('External Quiz / Google Form Link')
     diligence_external_quiz_label = fields.Char(
         'External Quiz Button Label',
         default='Open External Quiz',
     )
+
+    @api.constrains('quiz_passing_score', 'quiz_max_attempts')
+    def _check_diligence_quiz_settings(self):
+        for slide in self:
+            if not 0 <= slide.quiz_passing_score <= 100:
+                raise ValidationError(_('Quiz passing score must be between 0 and 100.'))
+            if slide.quiz_max_attempts < 0:
+                raise ValidationError(_('Maximum quiz attempts cannot be negative.'))
 
     @api.model_create_multi
     def create(self, vals_list):

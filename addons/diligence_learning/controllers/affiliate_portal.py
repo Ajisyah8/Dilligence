@@ -1,4 +1,6 @@
-from odoo import http
+from datetime import timedelta
+
+from odoo import fields, http
 from odoo.http import request
 
 
@@ -39,9 +41,37 @@ class DiligenceAffiliatePortal(http.Controller):
             ('member_status', '!=', 'invited'),
         ])
         memberships = memberships.filtered(lambda membership: membership._diligence_access_is_valid())
+        activity_model = request.env['diligence.learning.activity'].sudo()
+        dashboard_courses = []
+        for membership in memberships:
+            slides = membership.channel_id.slide_content_ids.filtered(lambda slide: not slide.is_category)
+            completed = request.env['slide.slide.partner'].sudo().search_count([
+                ('slide_id', 'in', slides.ids), ('partner_id', '=', partner.id), ('completed', '=', True),
+            ]) if slides else 0
+            dashboard_courses.append({
+                'membership': membership,
+                'completed': completed,
+                'total': len(slides),
+                'progress': membership.completion,
+            })
+        activities = activity_model.search([
+            ('partner_id', '=', partner.id),
+            ('activity_date', '>=', fields.Date.context_today(request.env.user) - timedelta(days=89)),
+        ])
+        current_streak, best_streak = activity_model.calculate_streak(partner)
+        sessions = request.env['diligence.session'].sudo().search([
+            ('package_id', 'in', memberships.mapped('diligence_package_id').ids),
+            ('start_datetime', '>=', fields.Datetime.now()),
+            ('state', '=', 'scheduled'),
+        ], order='start_datetime asc', limit=5)
         return request.render('diligence_learning.portal_my_courses', {
             'partner': partner,
             'memberships': memberships,
+            'dashboard_courses': dashboard_courses,
+            'activities': activities,
+            'current_streak': current_streak,
+            'best_streak': best_streak,
+            'upcoming_sessions': sessions,
         })
 
     @http.route(['/my/consultation', '/my/consultations'], type='http', auth='user', website=True)

@@ -10,3 +10,5 @@ from . import slide_slide
 from . import session
 from . import website_menu
 from . import website
+from . import quiz
+from . import learning_activity

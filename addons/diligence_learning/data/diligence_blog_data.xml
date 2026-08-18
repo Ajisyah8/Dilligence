@@ -1,0 +1,5 @@
+<odoo>
+    <record id="website_blog.blog_blog_1" model="blog.blog">
+        <field name="name">Diligence Insights</field>
+    </record>
+</odoo>
