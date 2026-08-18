@@ -9,17 +9,6 @@ from odoo.exceptions import ValidationError
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    def _get_product_url(self, category=None, query_params=None, grouped_attributes_values=None):
-        self.ensure_one()
-        url = super()._get_product_url(
-            category=category,
-            query_params=query_params,
-            grouped_attributes_values=grouped_attributes_values,
-        )
-        if self.diligence_package_type and url.startswith('/shop/'):
-            url = '/paket-belajar/' + url[len('/shop/'):]
-        return url
-
     diligence_package_type = fields.Selection([
         ('starter', 'Starter Pack'),
         ('community', 'Community'),

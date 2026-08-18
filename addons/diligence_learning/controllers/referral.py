@@ -16,4 +16,4 @@ class DiligenceReferralController(http.Controller):
             order = request.cart or request.website._create_cart()
             order.sudo().write({'diligence_referral_code': referral_code})
             request.session['diligence_referral_code'] = referral_code
-        return request.redirect('/paket-belajar')
+        return request.redirect('/shop')
