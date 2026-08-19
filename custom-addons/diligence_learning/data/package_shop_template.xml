@@ -1,0 +1,15 @@
+<odoo>
+    <record id="diligence_package_product_filter" model="ir.filters">
+        <field name="name">Diligence Learning Packages</field>
+        <field name="model_id">product.product</field>
+        <field name="user_ids" eval="False"/>
+        <field name="domain">[('product_tmpl_id.diligence_package_type', '!=', False), ('website_published', '=', True)]</field>
+        <field name="sort">["website_sequence asc", "id asc"]</field>
+    </record>
+    <record id="diligence_package_snippet_filter" model="website.snippet.filter">
+        <field name="name">Diligence Learning Packages</field>
+        <field name="filter_id" ref="diligence_learning.diligence_package_product_filter"/>
+        <field name="field_names">name,description_sale,image_512,list_price,website_url</field>
+        <field name="limit">16</field>
+    </record>
+</odoo>

@@ -1,0 +1,196 @@
+<odoo>
+    <record id="sequence_diligence_referral" model="ir.sequence">
+        <field name="name">Diligence Referral</field>
+        <field name="code">diligence.referral</field>
+        <field name="prefix">REF/%(y)s/</field>
+        <field name="padding">5</field>
+    </record>
+    <record id="sequence_diligence_referral_settlement" model="ir.sequence">
+        <field name="name">Diligence Referral Settlement</field>
+        <field name="code">diligence.referral.settlement</field>
+        <field name="prefix">SET/%(y)s/</field>
+        <field name="padding">5</field>
+    </record>
+
+    <record id="ir_cron_diligence_referral_payment_sync" model="ir.cron">
+        <field name="name">Diligence: Refresh Referral Payments</field>
+        <field name="model_id" ref="model_diligence_referral"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_refresh_payments()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record>
+
+    <record id="forum_diligence_community" model="forum.forum">
+        <field name="name">Diligence Learning Community</field>
+        <field name="mode">discussions</field>
+        <field name="privacy">private</field>
+        <field name="authorized_group_id" ref="diligence_learning.group_diligence_community_member"/>
+        <field name="description">A discussion space for Diligence Community and Consultation learners.</field>
+    </record>
+
+    <record id="product_diligence_zoom_group" model="product.template">
+        <field name="name">Zoom Group Learning 6-8 People</field>
+        <field name="type">service</field>
+        <field name="sale_ok">True</field>
+        <field name="list_price">650000</field>
+        <field name="diligence_package_type">zoom_group</field>
+        <field name="diligence_delivery_mode">group_zoom</field>
+        <field name="diligence_session_frequency">1</field>
+        <field name="diligence_session_duration_minutes">60</field>
+        <field name="diligence_max_participants">8</field>
+        <field name="diligence_forum_access">True</field>
+        <field name="diligence_consultation">True</field>
+        <field name="diligence_benefit_text">Unlimited website access
+Group Zoom meeting once a week
+Private WhatsApp group discussion
+Progress review and learning guidance
+Free consultation</field>
+    </record>
+    <record id="product_diligence_zoom_private" model="product.template">
+        <field name="name">Zoom Private Learning 3-5 People</field>
+        <field name="type">service</field>
+        <field name="sale_ok">True</field>
+        <field name="list_price">900000</field>
+        <field name="diligence_package_type">zoom_private</field>
+        <field name="diligence_delivery_mode">private_zoom</field>
+        <field name="diligence_session_frequency">2</field>
+        <field name="diligence_session_duration_minutes">60</field>
+        <field name="diligence_max_participants">5</field>
+        <field name="diligence_forum_access">True</field>
+        <field name="diligence_consultation">True</field>
+        <field name="diligence_benefit_text">Unlimited website access
+Private Zoom meeting twice a week
+Private WhatsApp group discussion
+Progress review and learning guidance
+Free consultation</field>
+    </record>
+    <record id="product_diligence_zoom_coaching" model="product.template">
+        <field name="name">Zoom Private Coaching</field>
+        <field name="type">service</field>
+        <field name="sale_ok">True</field>
+        <field name="list_price">1200000</field>
+        <field name="diligence_package_type">zoom_coaching</field>
+        <field name="diligence_delivery_mode">one_on_one</field>
+        <field name="diligence_session_frequency">1</field>
+        <field name="diligence_session_duration_minutes">120</field>
+        <field name="diligence_max_participants">1</field>
+        <field name="diligence_forum_access">True</field>
+        <field name="diligence_consultation">True</field>
+        <field name="diligence_teacher_feedback">True</field>
+        <field name="diligence_benefit_text">Unlimited website access
+Private 1-on-1 Zoom coaching, 2 hours per week
+Private WhatsApp group discussion
+Direct guidance from an experienced teacher
+Business-focused learning support</field>
+    </record>
+    <record id="product_diligence_business_class" model="product.template">
+        <field name="name">Business Class</field>
+        <field name="type">service</field>
+        <field name="sale_ok">True</field>
+        <field name="list_price">1600000</field>
+        <field name="diligence_package_type">business</field>
+        <field name="diligence_delivery_mode">one_on_one</field>
+        <field name="diligence_session_frequency">1</field>
+        <field name="diligence_session_duration_minutes">120</field>
+        <field name="diligence_max_participants">1</field>
+        <field name="diligence_forum_access">True</field>
+        <field name="diligence_consultation">True</field>
+        <field name="diligence_teacher_feedback">True</field>
+        <field name="diligence_benefit_text">Unlimited website access
+Private 1-on-1 Business Mandarin coaching
+Private WhatsApp group discussion
+Direct guidance from an experienced teacher
+Business-focused materials and support</field>
+    </record>
+
+    <record id="course_diligence_business_mandarin" model="slide.channel">
+        <field name="name">Business Mandarin</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="channel_type">training</field>
+        <field name="enroll">invite</field>
+        <field name="visibility">members</field>
+        <field name="allow_comment">True</field>
+        <field name="is_published">True</field>
+        <field name="description_short">Mandarin for meetings, presentations, email, and professional conversations.</field>
+        <field name="description">Build practical Mandarin skills for business communication. Course content can be uploaded by the academic team through the Odoo course editor.</field>
+    </record>
+    <record id="course_diligence_travel_mandarin" model="slide.channel">
+        <field name="name">Travel Mandarin</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="channel_type">training</field>
+        <field name="enroll">invite</field>
+        <field name="visibility">members</field>
+        <field name="allow_comment">True</field>
+        <field name="is_published">True</field>
+        <field name="description_short">Useful Mandarin for travel, directions, accommodation, and daily needs.</field>
+        <field name="description">Learn practical Mandarin expressions for travelling in China. Course content can be uploaded by the academic team through the Odoo course editor.</field>
+    </record>
+    <record id="course_diligence_hsk_preparation" model="slide.channel">
+        <field name="name">HSK Preparation</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="channel_type">training</field>
+        <field name="enroll">invite</field>
+        <field name="visibility">members</field>
+        <field name="allow_comment">True</field>
+        <field name="is_published">True</field>
+        <field name="description_short">Structured preparation for HSK vocabulary, grammar, listening, reading, and practice tests.</field>
+        <field name="description">Prepare for HSK with a structured learning path. Course content can be uploaded by the academic team through the Odoo course editor.</field>
+    </record>
+
+    <record id="section_business_mandarin_foundations" model="slide.slide">
+        <field name="name">Business Mandarin Foundations</field>
+        <field name="is_category">True</field>
+        <field name="channel_id" ref="course_diligence_business_mandarin"/>
+        <field name="sequence">1</field>
+    </record>
+    <record id="section_business_mandarin_workplace" model="slide.slide">
+        <field name="name">Workplace Conversations</field>
+        <field name="is_category">True</field>
+        <field name="channel_id" ref="course_diligence_business_mandarin"/>
+        <field name="sequence">2</field>
+    </record>
+    <record id="section_business_mandarin_presentations" model="slide.slide">
+        <field name="name">Meetings and Presentations</field>
+        <field name="is_category">True</field>
+        <field name="channel_id" ref="course_diligence_business_mandarin"/>
+        <field name="sequence">3</field>
+    </record>
+    <record id="section_travel_mandarin_foundations" model="slide.slide">
+        <field name="name">Travel Mandarin Foundations</field>
+        <field name="is_category">True</field>
+        <field name="channel_id" ref="course_diligence_travel_mandarin"/>
+        <field name="sequence">1</field>
+    </record>
+    <record id="section_travel_mandarin_transport" model="slide.slide">
+        <field name="name">Transport and Directions</field>
+        <field name="is_category">True</field>
+        <field name="channel_id" ref="course_diligence_travel_mandarin"/>
+        <field name="sequence">2</field>
+    </record>
+    <record id="section_travel_mandarin_daily" model="slide.slide">
+        <field name="name">Accommodation and Daily Needs</field>
+        <field name="is_category">True</field>
+        <field name="channel_id" ref="course_diligence_travel_mandarin"/>
+        <field name="sequence">3</field>
+    </record>
+    <record id="section_hsk_foundations" model="slide.slide">
+        <field name="name">HSK Vocabulary and Grammar</field>
+        <field name="is_category">True</field>
+        <field name="channel_id" ref="course_diligence_hsk_preparation"/>
+        <field name="sequence">1</field>
+    </record>
+    <record id="section_hsk_listening_reading" model="slide.slide">
+        <field name="name">Listening and Reading Practice</field>
+        <field name="is_category">True</field>
+        <field name="channel_id" ref="course_diligence_hsk_preparation"/>
+        <field name="sequence">2</field>
+    </record>
+    <record id="section_hsk_mock_tests" model="slide.slide">
+        <field name="name">Mock Tests and Review</field>
+        <field name="is_category">True</field>
+        <field name="channel_id" ref="course_diligence_hsk_preparation"/>
+        <field name="sequence">3</field>
+    </record>
+</odoo>

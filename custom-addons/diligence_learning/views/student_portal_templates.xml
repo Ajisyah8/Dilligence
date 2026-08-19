@@ -1,0 +1,178 @@
+<odoo>
+    <template id="portal_my_courses" name="My Courses">
+        <t t-call="portal.portal_layout">
+            <t t-set="my_details" t-value="True"/>
+            <div class="container o_portal_wrap py-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="mb-0" t-translation="yes">My Courses</h3>
+                    <a href="/my/home" class="btn btn-outline-secondary" t-translation="yes">Back to My Account</a>
+                </div>
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-lg-3">
+                        <div class="card h-100 border-0 bg-primary-subtle"><div class="card-body">
+                            <div class="text-muted small" t-translation="yes">Active courses</div>
+                            <div class="fs-3 fw-semibold" t-out="len(dashboard_courses)"/>
+                        </div></div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card h-100 border-0 bg-success-subtle"><div class="card-body">
+                            <div class="text-muted small" t-translation="yes">Current streak</div>
+                            <div class="fs-3 fw-semibold"><t t-out="current_streak"/> <small t-translation="yes">days</small></div>
+                        </div></div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card h-100 border-0 bg-warning-subtle"><div class="card-body">
+                            <div class="text-muted small" t-translation="yes">Best streak</div>
+                            <div class="fs-3 fw-semibold"><t t-out="best_streak"/> <small t-translation="yes">days</small></div>
+                        </div></div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card h-100 border-0 bg-info-subtle"><div class="card-body">
+                            <div class="text-muted small" t-translation="yes">Activities (90 days)</div>
+                            <div class="fs-3 fw-semibold" t-out="len(activities)"/>
+                        </div></div>
+                    </div>
+                </div>
+                <div class="card shadow-sm mb-4" t-if="dashboard_courses">
+                    <div class="card-body">
+                        <h5 t-translation="yes">Learning progress</h5>
+                        <t t-foreach="dashboard_courses" t-as="course">
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between small mb-1">
+                                    <span t-out="course['membership'].channel_id.name"/>
+                                    <span><t t-out="round(course['progress'])"/>%</span>
+                                </div>
+                                <div class="progress" role="progressbar" t-att-aria-valuenow="course['progress']" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar" t-att-style="'width: ' + str(course['progress']) + '%'"/>
+                                </div>
+                                <div class="text-muted small mt-1"><t t-out="course['completed']"/> / <t t-out="course['total']"/> <span t-translation="yes">lessons completed</span></div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+                <div class="card shadow-sm mb-4" t-if="upcoming_sessions">
+                    <div class="card-body">
+                        <h5 t-translation="yes">Upcoming sessions</h5>
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item px-0" t-foreach="upcoming_sessions" t-as="session">
+                                <div class="d-flex justify-content-between gap-3">
+                                    <div><strong t-out="session.name"/><br/><span class="text-muted" t-field="session.start_datetime"/></div>
+                                    <a t-if="session.meeting_url" class="btn btn-sm btn-outline-primary align-self-center" t-att-href="session.meeting_url" target="_blank" t-translation="yes">Join</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div t-if="not memberships" class="alert alert-info">
+                    <span t-translation="yes">There are no active courses on this account. Please make sure the package payment has been confirmed.</span>
+                </div>
+                <div class="row g-3">
+                    <t t-foreach="memberships" t-as="membership">
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title" t-out="membership.channel_id.name"/>
+                                    <p class="text-muted mb-2" t-if="membership.diligence_package_id">
+                                        <span t-translation="yes">Package:</span> <span t-out="membership.diligence_package_id.name"/>
+                                    </p>
+                                    <p class="small text-muted" t-if="membership.diligence_access_expires_at">
+                                        <span t-translation="yes">Access until:</span> <span t-field="membership.diligence_access_expires_at"/>
+                                    </p>
+                                    <a class="btn btn-primary mt-auto"
+                                       t-att-href="membership.channel_id.website_absolute_url">
+                                        <span t-translation="yes">Open Course</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_my_consultations" name="My Consultation">
+        <t t-call="portal.portal_layout">
+            <t t-set="my_details" t-value="True"/>
+            <div class="container o_portal_wrap py-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="mb-0" t-translation="yes">My Consultation</h3>
+                    <a href="/my/home" class="btn btn-outline-secondary" t-translation="yes">Back to My Account</a>
+                </div>
+                <div t-if="not orders" class="alert alert-info" t-translation="yes">
+                    <span t-translation="yes">There is no confirmed Consultation package purchase on this account.</span>
+                </div>
+                <div t-foreach="orders" t-as="order" class="card shadow-sm mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between flex-wrap gap-2">
+                            <h5 class="mb-0"><span t-translation="yes">Consultation</span> - <span t-out="order.name"/></h5>
+                            <span class="badge text-bg-info" t-out="dict(order._fields['diligence_consultation_status'].selection).get(order.diligence_consultation_status)"/>
+                        </div>
+                        <hr/>
+                        <div class="row g-3">
+                            <div class="col-md-4" t-if="order.diligence_coach_id">
+                                <strong t-translation="yes">Coach</strong><br/>
+                                <span t-out="order.diligence_coach_id.name"/>
+                            </div>
+                            <div class="col-md-4" t-if="order.diligence_next_coaching_date">
+                                <strong t-translation="yes">Next schedule</strong><br/>
+                                <span t-field="order.diligence_next_coaching_date"/>
+                            </div>
+                            <div class="col-12" t-if="order.diligence_coaching_link">
+                                <a class="btn btn-primary" t-att-href="order.diligence_coaching_link" target="_blank">
+                                    <span t-translation="yes">Open Consultation Link</span>
+                                </a>
+                            </div>
+                            <div class="col-12" t-if="order.diligence_coaching_note">
+                                <strong t-translation="yes">Coach note</strong>
+                                <p class="mb-0" t-out="order.diligence_coaching_note"/>
+                            </div>
+                            <div class="col-12" t-if="not order.diligence_coach_id and not order.diligence_next_coaching_date and not order.diligence_coaching_link and not order.diligence_coaching_note">
+                                <span class="text-muted" t-translation="yes">The coach will arrange the schedule and contact you.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_my_home_courses_entry" inherit_id="portal.portal_my_home">
+        <xpath expr="//div[@id='portal_common_category']" position="before">
+            <t t-set="diligence_has_consultation"
+               t-value="request.env['sale.order'].sudo().search_count([
+                   ('partner_id', 'child_of', request.env.user.partner_id.commercial_partner_id.id),
+                   ('state', 'in', ('sale', 'done')),
+                   ('order_line.product_template_id.diligence_consultation', '=', True)
+               ]) &gt; 0"/>
+            <div class="o_portal_category row g-2 mt-3" id="diligence_student_category">
+                <div class="col-12 col-md-6">
+                    <a href="/my/courses" title="My Courses"
+                       class="d-flex gap-3 py-3 px-3 h-100 rounded text-decoration-none bg-100">
+                        <div class="d-flex align-items-center justify-content-center"
+                             style="width: 56px; height: 56px; min-width: 56px;">
+                            <img src="/account/static/src/img/multi_ledger.svg" alt="" width="56" height="56"/>
+                        </div>
+                        <div>
+                            <div class="mt-0 mb-1 fs-5 fw-normal lh-1" t-translation="yes">My Courses</div>
+                            <div class="text-muted" t-translation="yes">Open your courses and learning materials</div>
+                        </div>
+                    </a>
+                </div>
+                <div t-if="diligence_has_consultation" class="col-12 col-md-6">
+                    <a href="/my/consultation" title="My Consultation"
+                       class="d-flex gap-3 py-3 px-3 h-100 rounded text-decoration-none bg-100">
+                        <div class="d-flex align-items-center justify-content-center"
+                             style="width: 56px; height: 56px; min-width: 56px;">
+                            <img src="/event/static/src/img/google-calendar.svg" alt="" width="56" height="56"/>
+                        </div>
+                        <div>
+                            <div class="mt-0 mb-1 fs-5 fw-normal lh-1" t-translation="yes">My Consultation</div>
+                            <div class="text-muted" t-translation="yes">View your coach, schedule, and consultation link</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>

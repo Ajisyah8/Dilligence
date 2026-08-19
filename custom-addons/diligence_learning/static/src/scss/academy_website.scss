@@ -1,0 +1,1451 @@
+$academy-ink: #17344a;
+$academy-teal: #0d6078;
+$academy-teal-dark: #0a4358;
+$academy-gold: #c7a86b;
+$academy-cream: #f7f4ed;
+$academy-mist: #edf5f5;
+$academy-border: #dce5e8;
+
+.diligence-academy-home {
+    color: $academy-ink;
+    background: #fff;
+
+    h1,
+    h2,
+    h3 {
+        color: $academy-ink;
+        letter-spacing: -0.025em;
+    }
+
+    p {
+        line-height: 1.75;
+    }
+
+    .academy-kicker {
+        color: $academy-teal;
+        font-size: .78rem;
+        font-weight: 800;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+    }
+
+    .academy-btn-primary {
+        border: 1px solid $academy-teal;
+        background: $academy-teal;
+        color: #fff;
+        font-weight: 700;
+        padding: .85rem 1.4rem;
+
+        &:hover,
+        &:focus {
+            border-color: $academy-teal-dark;
+            background: $academy-teal-dark;
+            color: #fff;
+        }
+    }
+
+    .academy-btn-secondary {
+        border: 1px solid rgba($academy-ink, .2);
+        background: #fff;
+        color: $academy-ink;
+        font-weight: 700;
+        padding: .85rem 1.4rem;
+
+        &:hover,
+        &:focus {
+            border-color: $academy-teal;
+            color: $academy-teal;
+        }
+    }
+}
+
+// Button zones intentionally avoid flex alignment so Website Builder's
+// left/center/right text alignment controls can reposition their buttons.
+.academy-editor-button-zone {
+    display: block;
+    width: 100%;
+
+    .btn {
+        margin-right: .65rem;
+        margin-bottom: .65rem;
+    }
+
+    .btn:last-child {
+        margin-right: 0;
+    }
+}
+
+.academy-hero {
+    position: relative;
+    overflow: hidden;
+    background: $academy-cream;
+
+    &::before {
+        position: absolute;
+        top: -12rem;
+        right: -10rem;
+        width: 32rem;
+        height: 32rem;
+        border: 1px solid rgba($academy-teal, .12);
+        border-radius: 50%;
+        content: "";
+    }
+
+    .academy-hero-copy {
+        position: relative;
+        z-index: 1;
+        max-width: 43rem;
+    }
+
+    .container {
+        max-width: 1180px;
+    }
+
+    h1 {
+        max-width: 48rem;
+        font-size: clamp(2.6rem, 4.6vw, 4.45rem);
+        line-height: 1.08;
+    }
+
+    .academy-hero-lead {
+        max-width: 39rem;
+        color: rgba($academy-ink, .75);
+        font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+    }
+
+    .academy-proof {
+        color: rgba($academy-ink, .7);
+        font-size: .92rem;
+    }
+}
+
+.academy-hero-visual {
+    position: relative;
+
+    img {
+        display: block;
+        width: 100%;
+        max-height: 34rem;
+        object-fit: contain;
+    }
+
+    .academy-hero-photo {
+        aspect-ratio: 1 / 1;
+        border: 1px solid rgba($academy-gold, .36);
+        border-radius: 1.35rem;
+        box-shadow: 0 24px 55px rgba($academy-ink, .14);
+        object-fit: cover;
+        object-position: 68% center;
+    }
+
+    .academy-visual-note {
+        position: absolute;
+        right: 0;
+        bottom: 1.75rem;
+        max-width: 15rem;
+        padding: .9rem 1.1rem;
+        border: 1px solid $academy-border;
+        border-radius: .8rem;
+        background: rgba(255, 255, 255, .94);
+        box-shadow: 0 16px 35px rgba($academy-ink, .1);
+        color: $academy-ink;
+        font-size: .9rem;
+    }
+}
+
+.academy-stat-strip {
+    margin-top: 5rem;
+
+    .academy-stat-item {
+        height: 100%;
+        padding: 1.3rem 1.4rem;
+        border: 1px solid $academy-border;
+        border-radius: .85rem;
+        background: #fff;
+        box-shadow: 0 12px 28px rgba($academy-ink, .06);
+    }
+
+    i {
+        display: inline-grid;
+        width: 2.6rem;
+        height: 2.6rem;
+        place-items: center;
+        border-radius: 50%;
+        background: $academy-mist;
+        color: $academy-teal;
+    }
+}
+
+.academy-packages {
+    background: $academy-cream !important;
+
+    .container {
+        max-width: 1180px;
+    }
+
+}
+
+.academy-package-card {
+    position: relative;
+    display: grid;
+    height: 100%;
+    grid-template-rows: auto minmax(5.5rem, auto) minmax(4.25rem, auto) auto 1fr auto;
+    padding: 2rem;
+    border: 1px solid $academy-border;
+    border-radius: 1.25rem;
+    background: #fff;
+    box-shadow: 0 16px 40px rgba($academy-ink, .07);
+
+    &--featured {
+        border: 2px solid $academy-teal;
+        box-shadow: 0 22px 50px rgba($academy-teal, .14);
+    }
+
+    .academy-package-label {
+        align-self: flex-start;
+        padding: .35rem .75rem;
+        border-radius: 999px;
+        background: $academy-mist;
+        color: $academy-teal-dark;
+        font-size: .78rem;
+        font-weight: 700;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+    }
+
+    .academy-package-price {
+        align-self: start;
+        color: $academy-ink;
+        font-size: 2rem;
+        font-weight: 800;
+        line-height: 1.15;
+    }
+
+    > h3 {
+        align-self: start;
+        margin-bottom: .5rem !important;
+    }
+
+    > p {
+        align-self: start;
+        margin-bottom: 0;
+    }
+
+    ul {
+        padding-left: 0;
+        list-style: none;
+    }
+
+    li {
+        display: flex;
+        gap: .65rem;
+        margin-bottom: .8rem;
+        color: rgba($academy-ink, .76);
+
+        i {
+            margin-top: .25rem;
+            color: $academy-teal;
+        }
+    }
+}
+
+#top {
+    position: relative;
+    z-index: 1030;
+    border: 0;
+    background: #fff;
+    box-shadow: 0 1px 0 rgba($academy-ink, .1);
+
+    .navbar {
+        min-height: 82px;
+        border: 0 !important;
+        background: #fff !important;
+        box-shadow: none !important;
+    }
+
+    #o_main_nav {
+        max-width: 1180px;
+        margin: 0 auto;
+    }
+
+    .navbar-brand img {
+        max-height: 56px;
+    }
+
+    .o_nav-link_secondary {
+        display: none !important;
+    }
+
+    .btn_cta {
+        border-color: $academy-gold;
+        background: $academy-gold;
+        color: $academy-ink;
+        font-weight: 700;
+    }
+}
+
+#top + main,
+#wrapwrap > main {
+    border-top: 0;
+}
+
+.academy-hero {
+    margin-top: -1px;
+}
+
+// Homepage header overlays the hero while retaining native Odoo editability.
+body:has(.diligence-academy-home) {
+    #wrapwrap {
+        position: relative;
+    }
+
+    #top {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        width: 100%;
+        background: transparent;
+        box-shadow: none;
+
+        .navbar {
+            background: transparent !important;
+        }
+    }
+
+    .academy-hero {
+        margin-top: 0;
+        padding-top: calc(82px + 1.5rem) !important;
+        padding-bottom: 4rem !important;
+    }
+}
+
+@media (max-width: 991.98px) {
+    body:has(.diligence-academy-home) .academy-hero {
+        padding-top: calc(72px + 1rem) !important;
+        padding-bottom: 3rem !important;
+    }
+}
+
+.academy-hero-panel {
+    position: relative;
+    z-index: 1;
+    min-height: 31rem;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    background: $academy-teal-dark;
+    box-shadow: 0 28px 70px rgba($academy-teal-dark, .2);
+    color: #fff;
+
+    h2,
+    h3 {
+        color: #fff;
+    }
+
+    .academy-program-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .75rem;
+        margin-top: 2.5rem;
+    }
+
+    .academy-program-chip {
+        min-height: 7.5rem;
+        padding: 1rem;
+        border: 1px solid rgba(255, 255, 255, .18);
+        border-radius: .9rem;
+        background: rgba(255, 255, 255, .08);
+        color: #fff;
+        text-decoration: none;
+        transition: transform .2s ease, background .2s ease;
+
+        &:hover,
+        &:focus {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, .14);
+            color: #fff;
+        }
+
+        i {
+            color: #edd9a7;
+        }
+    }
+}
+
+.academy-updates,
+.academy-courses,
+.academy-english-feature,
+.academy-testimonials,
+.academy-teachers,
+.academy-career {
+    padding-top: 6rem !important;
+    padding-bottom: 6rem !important;
+}
+
+.academy-english-feature {
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid rgba($academy-gold, .34);
+    border-bottom: 1px solid rgba($academy-gold, .34);
+    background: #f8f5ee;
+    color: $academy-ink;
+    padding-top: 4rem !important;
+    padding-bottom: 4rem !important;
+
+    &::after {
+        position: absolute;
+        right: -12rem;
+        bottom: -14rem;
+        width: 30rem;
+        height: 30rem;
+        border: 1px solid rgba($academy-gold, .22);
+        border-radius: 50%;
+        content: "";
+    }
+
+    .container {
+        position: relative;
+        z-index: 1;
+        max-width: 1180px;
+    }
+
+    .academy-english-media {
+        position: relative;
+        overflow: hidden;
+        padding: .55rem;
+        max-width: 32.5rem;
+        margin: 0 auto;
+        border: 1px solid rgba($academy-gold, .48);
+        border-radius: 1.15rem;
+        background: #fff;
+        box-shadow: 0 24px 55px rgba($academy-ink, .11);
+
+        img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+        }
+
+        iframe {
+            display: block;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border: 0;
+            border-radius: .75rem;
+        }
+
+        .academy-play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            display: inline-grid;
+            width: 4rem;
+            height: 4rem;
+            place-items: center;
+            border-radius: 50%;
+            background: #fff;
+            color: $academy-teal-dark;
+            box-shadow: 0 14px 34px rgba(0, 0, 0, .2);
+            text-decoration: none;
+            transform: translate(-50%, -50%);
+        }
+    }
+
+    .academy-english-copy {
+        max-width: 36rem;
+
+        .academy-kicker {
+            color: $academy-teal !important;
+        }
+
+        h2 {
+            max-width: 34rem;
+            font-size: clamp(2rem, 3vw, 2.75rem);
+            line-height: 1.12;
+        }
+
+        p,
+        li {
+            color: rgba($academy-ink, .72);
+        }
+
+        ul {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: .45rem 1rem;
+            padding-left: 0 !important;
+            list-style: none;
+        }
+
+        li {
+            display: flex;
+            gap: .7rem;
+            margin-bottom: 0;
+            font-size: .9rem;
+
+            &::before {
+                display: inline-grid;
+                width: 1.35rem;
+                height: 1.35rem;
+                flex: 0 0 1.35rem;
+                margin-top: .1rem;
+                place-items: center;
+                border-radius: 50%;
+                background: rgba($academy-gold, .22);
+                color: $academy-teal;
+                content: "\2713";
+                font-size: .75rem;
+                font-weight: 800;
+            }
+        }
+    }
+
+    .academy-english-stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .75rem;
+        margin: 1.1rem 0 1.25rem;
+    }
+
+    .academy-english-stat {
+        padding: .7rem .85rem;
+        border: 1px solid rgba($academy-gold, .4);
+        border-radius: .75rem;
+        background: rgba(255, 255, 255, .84);
+
+        strong {
+            display: block;
+            color: $academy-teal-dark;
+            font-size: 1.2rem;
+            line-height: 1.15;
+        }
+
+        span {
+            color: rgba($academy-ink, .62);
+            font-size: .78rem;
+        }
+    }
+}
+
+.academy-updates {
+    .academy-program-image {
+        height: 12rem;
+        margin: 0;
+        overflow: hidden;
+        background: $academy-mist;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .25s ease;
+        }
+    }
+
+    .card {
+        border: 1px solid $academy-border !important;
+        border-radius: 1rem !important;
+        box-shadow: none !important;
+        transition: transform .2s ease, box-shadow .2s ease;
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 45px rgba($academy-ink, .09) !important;
+
+            .academy-program-image img {
+                transform: scale(1.025);
+            }
+        }
+    }
+}
+
+.academy-courses {
+    background: #fff !important;
+
+    .academy-course-filter {
+        display: inline-flex;
+        gap: .45rem;
+        padding: .35rem;
+        border: 1px solid $academy-border;
+        border-radius: 999px;
+        background: $academy-cream;
+
+        a {
+            padding: .55rem 1rem;
+            border-radius: 999px;
+            color: rgba($academy-ink, .72);
+            font-size: .9rem;
+            font-weight: 700;
+            text-decoration: none;
+
+            &:hover,
+            &:focus,
+            &.active {
+                background: $academy-teal;
+                color: #fff;
+            }
+        }
+    }
+
+    .academy-course-card {
+        display: grid;
+        height: 100%;
+        overflow: hidden;
+        grid-template-rows: 14rem 1fr;
+        border: 1px solid $academy-border;
+        border-radius: 1rem;
+        background: #fff;
+        box-shadow: 0 14px 34px rgba($academy-ink, .07);
+        transition: transform .2s ease, box-shadow .2s ease;
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 22px 46px rgba($academy-ink, .11);
+        }
+    }
+
+    .academy-course-art {
+        position: relative;
+        display: flex;
+        overflow: hidden;
+        align-items: center;
+        justify-content: center;
+
+        &::before,
+        &::after {
+            position: absolute;
+            border-radius: 50%;
+            content: "";
+        }
+
+        &::before {
+            top: -4rem;
+            right: -2rem;
+            width: 13rem;
+            height: 13rem;
+            border: 1px solid rgba($academy-ink, .13);
+        }
+
+        &::after {
+            bottom: -2.5rem;
+            left: -1.5rem;
+            width: 8rem;
+            height: 8rem;
+            background: rgba(255, 255, 255, .4);
+        }
+
+        &--english {
+            background: #dfeff0;
+        }
+
+        &--mandarin {
+            background: #f3ead7;
+        }
+
+        .academy-course-symbol {
+            position: relative;
+            z-index: 1;
+            color: $academy-ink;
+            font-size: clamp(3.5rem, 6vw, 5.5rem);
+            font-weight: 800;
+            letter-spacing: -.08em;
+        }
+
+        .academy-class-count {
+            position: absolute;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 1;
+            padding: .4rem .7rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .9);
+            color: $academy-ink;
+            font-size: .8rem;
+            font-weight: 700;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        &:has(img)::before,
+        &:has(img)::after {
+            display: none;
+        }
+    }
+
+    .academy-course-content {
+        display: flex;
+        flex-direction: column;
+        padding: 1.75rem;
+    }
+
+    .academy-course-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .55rem;
+
+        span {
+            color: rgba($academy-ink, .62);
+            font-size: .82rem;
+        }
+    }
+
+    .academy-course-footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: auto;
+        padding-top: 1.25rem;
+        border-top: 1px solid $academy-border;
+    }
+
+    article.card {
+        overflow: hidden;
+        border: 0;
+        border-radius: 1rem !important;
+        box-shadow: 0 16px 40px rgba($academy-ink, .08) !important;
+    }
+}
+
+.academy-course-cover {
+    display: flex;
+    min-height: 15rem;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 2.5rem;
+    color: #fff;
+
+    h3 {
+        color: #fff;
+    }
+
+    &--english {
+        background: $academy-teal;
+    }
+
+    &--mandarin {
+        background: #8a6634;
+    }
+}
+
+.academy-testimonials {
+    .border {
+        border-color: $academy-border !important;
+        border-radius: .9rem !important;
+    }
+
+    .academy-testimonial-avatar {
+        width: 3.25rem;
+        height: 3.25rem;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+}
+
+.academy-teachers {
+    background: $academy-cream !important;
+
+    .card {
+        border-radius: 1rem !important;
+        box-shadow: none !important;
+    }
+
+    .academy-teacher-photo {
+        width: 9rem;
+        height: 9rem;
+        margin: 0 auto 1.25rem;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+}
+
+.academy-career {
+    border-top: 1px solid $academy-border;
+}
+
+.academy-floating-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    right: 1.5rem !important;
+    bottom: 1.5rem !important;
+    z-index: 1030;
+    border: 1px solid $academy-gold;
+    background: $academy-gold;
+    color: #162c38;
+    font-weight: 800;
+    padding: .8rem 1.2rem;
+
+    &:hover,
+    &:focus {
+        background: #d4b97f;
+        color: #162c38;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .academy-package-card {
+        grid-template-rows: auto auto auto auto 1fr auto;
+    }
+
+    .academy-hero-panel {
+        min-height: auto;
+    }
+
+    .academy-stat-strip {
+        margin-top: 3rem;
+    }
+
+    .academy-floating-cta {
+        display: inline-block;
+    }
+
+    .academy-updates,
+    .academy-courses,
+    .academy-english-feature,
+    .academy-testimonials,
+    .academy-teachers,
+    .academy-career {
+        padding-top: 4rem !important;
+        padding-bottom: 4rem !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .academy-english-feature .academy-english-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .academy-english-feature .academy-english-copy ul {
+        grid-template-columns: 1fr;
+    }
+
+    .academy-hero {
+        h1 {
+            font-size: 2.55rem;
+        }
+    }
+
+    .academy-hero-panel {
+        padding: 1.25rem;
+
+        .academy-program-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .academy-program-chip {
+            min-height: auto;
+        }
+    }
+
+    .academy-hero-visual .academy-visual-note {
+        position: static;
+        max-width: none;
+        margin-top: .75rem;
+    }
+
+    .academy-floating-cta {
+        right: 1rem !important;
+        bottom: 1rem !important;
+        left: 1rem;
+        text-align: center;
+    }
+
+    .academy-courses {
+        .academy-course-filter {
+            display: flex;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .academy-course-footer {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+}
+
+// Shared visual language for Website Builder pages and standard Odoo routes.
+.academy-inner-page {
+    background: $academy-cream;
+    color: $academy-ink;
+
+    .academy-page-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 6rem 0 5rem;
+        background: $academy-cream;
+
+        &::after {
+            position: absolute;
+            top: -14rem;
+            right: -12rem;
+            width: 34rem;
+            height: 34rem;
+            border: 1px solid rgba($academy-teal, .14);
+            border-radius: 50%;
+            content: "";
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1180px;
+        }
+
+        h1 {
+            max-width: 54rem;
+            font-size: clamp(2.6rem, 5vw, 4.6rem);
+            line-height: 1.08;
+        }
+
+        .lead {
+            max-width: 46rem;
+            color: rgba($academy-ink, .72);
+        }
+    }
+
+    .academy-page-section {
+        padding: 5.5rem 0;
+
+        .container {
+            max-width: 1180px;
+        }
+    }
+}
+
+.academy-content-card,
+.academy-feature-card {
+    height: 100%;
+    padding: 2rem;
+    border: 1px solid $academy-border;
+    border-radius: 1.1rem;
+    background: #fff;
+    box-shadow: 0 14px 36px rgba($academy-ink, .06);
+}
+
+.academy-feature-icon {
+    display: inline-grid;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1.25rem;
+    place-items: center;
+    border-radius: 50%;
+    background: $academy-mist;
+    color: $academy-teal;
+}
+
+.academy-contact-page {
+    .academy-contact-form,
+    .academy-contact-aside {
+        padding: clamp(1.5rem, 3vw, 2.5rem);
+        border: 1px solid $academy-border;
+        border-radius: 1.25rem;
+        background: #fff;
+        box-shadow: 0 16px 40px rgba($academy-ink, .07);
+    }
+
+    .form-control,
+    .form-select {
+        min-height: 3rem;
+        border-color: $academy-border;
+        border-radius: .7rem;
+        background: #fff;
+
+        &:focus {
+            border-color: $academy-teal;
+            box-shadow: 0 0 0 .2rem rgba($academy-teal, .12);
+        }
+    }
+
+    textarea.form-control {
+        min-height: 9rem;
+    }
+}
+
+// Inner informational pages use a neutral white layout, separate from the landing page.
+.academy-about-page,
+.academy-contact-page {
+    background: #fff;
+
+    .academy-page-hero {
+        padding-top: 4.5rem;
+        padding-bottom: 4rem;
+        border-bottom: 1px solid $academy-border;
+        background: #fff;
+
+        &::after {
+            display: none;
+        }
+
+        h1 {
+            max-width: 48rem;
+            font-size: clamp(2.5rem, 4.5vw, 4rem);
+        }
+    }
+
+    .academy-page-section {
+        background: #fff;
+    }
+
+    .academy-content-card,
+    .academy-feature-card,
+    .academy-contact-form,
+    .academy-contact-aside {
+        border-radius: .85rem;
+        box-shadow: 0 8px 24px rgba($academy-ink, .055);
+    }
+}
+
+// eLearning listing and course pages.
+.o_wslides_wrap {
+    min-height: 70vh;
+    background: #fff;
+
+    .o_wslides_home_nav {
+        border-bottom: 1px solid $academy-border;
+        background: #fff;
+    }
+
+    .o_wslides_home_main {
+        padding-top: 3rem;
+    }
+
+    .card,
+    .o_wslides_course_card {
+        overflow: hidden;
+        border-color: $academy-border !important;
+        border-radius: .8rem !important;
+        background: #fff;
+        box-shadow: 0 8px 24px rgba($academy-ink, .055);
+    }
+
+    .o_wslides_course_card {
+        transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+
+        &:hover {
+            border-color: rgba($academy-teal, .45) !important;
+            box-shadow: 0 12px 28px rgba($academy-ink, .09);
+            transform: translateY(-2px);
+        }
+
+        > div:first-child > .badge {
+            top: .75rem !important;
+            left: .75rem !important;
+            margin: 0 !important;
+            padding: .42rem .7rem;
+            border: 1px solid rgba($academy-teal, .18);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .94) !important;
+            box-shadow: 0 4px 14px rgba($academy-ink, .08);
+            color: $academy-teal-dark;
+            font-size: .72rem;
+            font-weight: 700;
+        }
+
+        .card-body {
+            padding: 1.25rem;
+        }
+
+        .card-title {
+            color: $academy-ink;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .card-footer {
+            padding: .85rem 1.25rem;
+            border-top: 1px solid $academy-border;
+            background: #fff;
+            color: rgba($academy-ink, .64);
+        }
+    }
+
+    .o_wslides_home_aside_loggedin.card {
+        overflow: visible;
+        padding: 1.25rem !important;
+        border: 1px solid $academy-border !important;
+        border-radius: .85rem !important;
+        box-shadow: none;
+
+        .row.g-0 {
+            margin: 0 !important;
+        }
+
+        [class*="col-"] {
+            padding-right: 0 !important;
+            padding-left: 0 !important;
+        }
+    }
+
+    .o_wslides_home_aside {
+        padding-top: 1.15rem;
+        border-top: 1px solid $academy-border;
+
+        &:first-child {
+            padding-top: 0;
+            border-top: 0;
+        }
+
+        h2,
+        .h6 {
+            margin-bottom: 1rem !important;
+            color: $academy-ink;
+            font-size: .8rem;
+            font-weight: 800;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
+
+        .d-flex.flex-column.gap-3 {
+            gap: .35rem !important;
+        }
+
+        .d-flex.flex-column.gap-3 > .d-flex {
+            min-height: 3.25rem;
+            align-items: center !important;
+            padding: .55rem .6rem;
+            border-radius: .65rem;
+            background: #f7f9f8;
+        }
+
+        > .d-flex:not(.justify-content-between),
+        > div > .d-flex:not(.justify-content-between) {
+            min-height: 3.25rem;
+            align-items: center !important;
+            margin-bottom: .35rem;
+            padding: .55rem .6rem;
+            border-radius: .65rem;
+            background: #f7f9f8;
+        }
+
+        > .d-flex.justify-content-between a {
+            font-size: .75rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        img.flex-shrink-0,
+        .flex-shrink-0 img {
+            width: 2.25rem !important;
+            height: 2.25rem !important;
+            object-fit: contain;
+        }
+
+        img.rounded-circle,
+        .o_wslides_avatar {
+            width: 2.25rem !important;
+            height: 2.25rem !important;
+            flex: 0 0 2.25rem;
+            object-fit: cover;
+        }
+
+        .lh-1 {
+            overflow: hidden;
+            color: $academy-ink;
+            font-size: .88rem;
+            font-weight: 700;
+            line-height: 1.25 !important;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        small.text-muted {
+            display: block;
+            margin-top: .15rem;
+            font-size: .75rem;
+        }
+
+        .badge {
+            border: 1px solid $academy-border;
+            border-radius: 999px;
+            background: #fff !important;
+            color: $academy-teal-dark !important;
+            font-size: .7rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        > p.text-muted {
+            margin: 0;
+            padding: .75rem;
+            border-radius: .6rem;
+            background: #f7f9f8;
+            font-size: .82rem;
+            text-align: center;
+        }
+    }
+}
+
+body.o_wslides_body {
+    background: #fff;
+
+    #top {
+        position: relative !important;
+        background: #fff !important;
+        box-shadow: 0 1px 0 rgba($academy-ink, .1) !important;
+
+        .navbar {
+            background: #fff !important;
+        }
+    }
+
+    #wrapwrap,
+    main {
+        background: #fff;
+    }
+}
+
+// Forum.
+.website_forum {
+    min-height: 70vh;
+    background: #fff;
+
+    .forum_intro {
+        padding-top: 3.5rem !important;
+        padding-bottom: 3.5rem !important;
+        border-bottom: 1px solid $academy-border;
+        background-color: #f7f9f8 !important;
+
+        .s_parallax_bg,
+        .o_we_bg_filter {
+            display: none !important;
+        }
+
+        h1,
+        h2,
+        h3,
+        p,
+        .text-white {
+            color: $academy-ink !important;
+        }
+
+        .btn-primary {
+            border-color: $academy-teal;
+            background: $academy-teal;
+            color: #fff !important;
+        }
+    }
+
+    .o_wforum_wrapper {
+        padding-top: 2.5rem;
+        padding-bottom: 4rem;
+    }
+
+    .card,
+    .list-group,
+    .o_wforum_sidebar_section {
+        border-color: $academy-border !important;
+        border-radius: .75rem;
+        background: #fff;
+        box-shadow: none;
+    }
+
+    .o_wforum_sidebar_section {
+        padding: 1rem;
+        border: 1px solid $academy-border;
+    }
+
+    .list-group-item {
+        border-color: $academy-border;
+        background: #fff;
+    }
+
+    .badge {
+        border-radius: 999px;
+        font-weight: 700;
+    }
+}
+
+body:has(.academy-about-page),
+body:has(.academy-contact-page),
+body:has(.website_forum) {
+    background: #fff;
+
+    #top {
+        position: relative !important;
+        background: #fff !important;
+        box-shadow: 0 1px 0 rgba($academy-ink, .1) !important;
+
+        .navbar {
+            background: #fff !important;
+        }
+    }
+
+    #wrapwrap,
+    main {
+        background: #fff;
+    }
+}
+
+// Shop listing and product details.
+body:has(.diligence-package-page) {
+    #o_wsale_container {
+        max-width: 1180px;
+        padding-top: 2.5rem;
+        padding-bottom: 5rem;
+    }
+
+    #products_grid_before,
+    #o_wsale_offcanvas,
+    .o_wsale_products_header .o_wsale_products_header_options,
+    .o_wsale_products_header .o_wsale_products_header_right,
+    .o_wsale_products_header .dropdown_sorty_by,
+    .o_wsale_products_header .o_wsale_products_header_filter {
+        display: none !important;
+    }
+
+    .o_wsale_products_main_row {
+        display: block !important;
+    }
+
+    #products_grid {
+        width: 100% !important;
+    }
+
+    #products_grid .oe_product {
+        padding: .75rem;
+    }
+
+    #products_grid .oe_product_cart {
+        height: 100%;
+        overflow: hidden;
+        border: 1px solid $academy-border;
+        border-radius: 1.25rem;
+        background: #fff;
+        box-shadow: 0 14px 36px rgba($academy-ink, .08);
+        transition: transform .2s ease, box-shadow .2s ease;
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 42px rgba($academy-ink, .14);
+        }
+    }
+
+    #products_grid .o_wsale_product_information {
+        padding: 1.35rem 1.5rem 1.5rem;
+    }
+
+    #products_grid .o_wsale_products_item_title a {
+        color: $academy-ink;
+        font-size: 1.35rem;
+        font-weight: 750;
+    }
+
+    #products_grid .oe_subdescription {
+        min-height: 3.5rem;
+        color: rgba($academy-ink, .68) !important;
+        line-height: 1.65;
+    }
+
+    #products_grid .product_price {
+        color: $academy-teal-dark;
+        font-size: 1.35rem;
+    }
+
+    #products_grid .o_wsale_product_btn_primary {
+        border-radius: 999px;
+        border-color: $academy-teal;
+        background: $academy-teal;
+        font-weight: 700;
+    }
+
+    #products_grid .o_wsale_product_btn_primary .o_label {
+        font-size: 0;
+
+        &::after {
+            content: "Daftar Paket";
+            font-size: .875rem;
+        }
+    }
+
+    .oe_website_sale > header {
+        border: 0;
+        background: transparent;
+
+        .breadcrumb,
+        .o_wsale_products_header_title {
+            color: $academy-ink;
+        }
+    }
+}
+.oe_website_sale,
+#o_wsale_container {
+    color: $academy-ink;
+
+    .btn-primary {
+        border-color: $academy-teal;
+        background: $academy-teal;
+    }
+}
+
+#o_wsale_container {
+    padding-top: 3rem;
+    padding-bottom: 5rem;
+
+    .oe_product_cart,
+    .o_wsale_product_grid_wrapper {
+        overflow: hidden;
+        border-color: $academy-border !important;
+        border-radius: 1rem !important;
+        background: #fff;
+        box-shadow: 0 12px 30px rgba($academy-ink, .06);
+    }
+}
+
+#product_detail {
+    margin-top: 0 !important;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+
+    #product_details {
+        padding: clamp(1.5rem, 3vw, 2.5rem);
+        border: 1px solid $academy-border;
+        border-radius: 1.25rem;
+        background: #fff;
+        box-shadow: 0 16px 40px rgba($academy-ink, .07);
+    }
+}
+
+// Authentication and customer portal.
+.oe_login_form,
+.oe_signup_form,
+.oe_reset_password_form {
+    margin-top: 4rem !important;
+    margin-bottom: 4rem !important;
+    padding: 2rem;
+    border: 1px solid $academy-border;
+    border-radius: 1.2rem;
+    background: #fff;
+    box-shadow: 0 18px 45px rgba($academy-ink, .09);
+}
+
+.o_portal_wrap {
+    padding-top: 3rem;
+    padding-bottom: 5rem;
+
+    .card,
+    .list-group-item {
+        border-color: $academy-border;
+        border-radius: .9rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .academy-inner-page .academy-page-hero {
+        padding: 4rem 0 3.5rem;
+    }
+
+    .academy-inner-page .academy-page-section {
+        padding: 4rem 0;
+    }
+
+    #product_detail {
+        padding-top: 2rem;
+    }
+}

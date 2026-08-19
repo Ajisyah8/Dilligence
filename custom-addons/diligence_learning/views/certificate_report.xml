@@ -1,0 +1,48 @@
+<odoo>
+    <template id="report_diligence_certificate_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="membership">
+                <t t-call="web.external_layout">
+                    <div class="page" style="padding: 28mm 20mm; text-align: center;">
+                        <div style="border: 4px solid #0f6b83; padding: 22mm 16mm; min-height: 210mm;">
+                            <div style="color: #b99755; font-size: 18px; letter-spacing: 4px; text-transform: uppercase;">
+                                Diligence Academy
+                            </div>
+                            <h1 style="color: #15334b; font-size: 42px; margin-top: 28px;">Certificate of Completion</h1>
+                            <p style="font-size: 18px; color: #516575; margin-top: 32px;">This certificate is proudly presented to</p>
+                            <h2 style="color: #15334b; font-size: 32px; margin: 18px 0;">
+                                <span t-out="membership.partner_id.name"/>
+                            </h2>
+                            <p style="font-size: 18px; color: #516575;">for successfully completing</p>
+                            <h3 style="color: #0f6b83; font-size: 25px; margin: 18px 0;">
+                                <span t-out="membership.channel_id.name"/>
+                            </h3>
+                            <p style="font-size: 16px; color: #516575;">
+                                Learning level: <strong t-out="dict(membership._fields['diligence_level'].selection).get(membership.diligence_level)"/>
+                            </p>
+                            <div style="margin-top: 55px;">
+                                <p style="margin: 0; color: #516575;">Certificate ID</p>
+                                <strong style="font-size: 16px; color: #15334b;" t-out="membership.diligence_certificate_code"/>
+                            </div>
+                            <div style="margin-top: 42px; color: #516575;">
+                                Diligence Academy<br/>
+                                <span t-out="format_date(membership.write_date.date())"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_diligence_certificate" model="ir.actions.report">
+        <field name="name">Diligence Certificate</field>
+        <field name="model">slide.channel.partner</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">diligence_learning.report_diligence_certificate_document</field>
+        <field name="report_file">diligence_learning.report_diligence_certificate_document</field>
+        <field name="binding_model_id" ref="website_slides.model_slide_channel_partner"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Diligence Certificate - %s' % (object.partner_id.name or 'Learner')</field>
+    </record>
+</odoo>

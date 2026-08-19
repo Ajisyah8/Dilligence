@@ -1,0 +1,7 @@
+<odoo>
+    <record id="mailing_list_diligence_newsletter" model="mailing.list">
+        <field name="name">Diligence Academy Newsletter</field>
+        <field name="is_public">True</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

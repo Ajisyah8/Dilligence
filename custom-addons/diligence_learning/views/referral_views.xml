@@ -1,0 +1,103 @@
+<odoo>
+    <record id="diligence_referral_view_search" model="ir.ui.view">
+        <field name="name">diligence.referral.search</field>
+        <field name="model">diligence.referral</field>
+        <field name="arch" type="xml">
+            <search string="Affiliate Referrals">
+                <field name="name"/>
+                <field name="affiliate_id" string="Affiliate"/>
+                <field name="student_id" string="Student"/>
+                <field name="referral_code"/>
+                <field name="sale_order_id" string="Order"/>
+                <field name="status"/>
+                <group>
+                    <filter name="group_affiliate" string="Affiliate" context="{'group_by': 'affiliate_id'}"/>
+                    <filter name="group_student" string="Student" context="{'group_by': 'student_id'}"/>
+                    <filter name="group_program" string="Program" context="{'group_by': 'program_id'}"/>
+                    <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="diligence_referral_view_list" model="ir.ui.view">
+        <field name="name">diligence.referral.list</field>
+        <field name="model">diligence.referral</field>
+        <field name="arch" type="xml">
+            <list string="Affiliate Referrals">
+                <field name="name"/>
+                <field name="affiliate_id"/>
+                <field name="student_id"/>
+                <field name="program_id"/>
+                <field name="sale_order_id"/>
+                <field name="net_payment" sum="Net Payment"/>
+                <field name="cashback_amount" sum="Cashback"/>
+                <field name="status" widget="badge"/>
+                <field name="waiting_until"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="diligence_referral_view_form" model="ir.ui.view">
+        <field name="name">diligence.referral.form</field>
+        <field name="model">diligence.referral</field>
+        <field name="arch" type="xml">
+            <form string="Affiliate Referral">
+                <header>
+                    <button name="action_refresh_payment" type="object" string="Refresh Payment" class="btn-primary" invisible="status in ('paid', 'cancelled', 'reversed')"/>
+                    <button name="action_approve" type="object" string="Approve" invisible="status not in ('eligible', 'waiting_period')"/>
+                    <button name="action_ready_to_pay" type="object" string="Ready to Pay" invisible="status != 'approved'"/>
+                    <button name="action_mark_paid" type="object" string="Mark Paid" class="btn-primary" invisible="status not in ('approved', 'ready_to_pay')"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="status in ('paid', 'cancelled', 'reversed')"/>
+                    <button name="action_reverse" type="object" string="Reverse" invisible="status != 'paid'"/>
+                    <field name="status" widget="statusbar" statusbar_visible="draft,pending_payment,eligible,waiting_period,approved,ready_to_pay,paid"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Attribution">
+                            <field name="name"/>
+                            <field name="affiliate_id"/>
+                            <field name="student_id"/>
+                            <field name="referral_code"/>
+                            <field name="program_id"/>
+                            <field name="sale_order_id"/>
+                            <field name="invoice_id"/>
+                        </group>
+                        <group string="Payment &amp; Cashback">
+                            <field name="registration_date"/>
+                            <field name="payment_date"/>
+                            <field name="payment_amount"/>
+                            <field name="net_payment"/>
+                            <field name="cashback_type"/>
+                            <field name="cashback_rate" invisible="cashback_type != 'percent'"/>
+                            <field name="cashback_fixed" invisible="cashback_type != 'fixed'"/>
+                            <field name="cashback_amount"/>
+                            <field name="waiting_until"/>
+                            <field name="payout_reference"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Workflow Dates">
+                            <group>
+                                <field name="approved_date"/>
+                                <field name="ready_to_pay_date"/>
+                                <field name="paid_date"/>
+                            </group>
+                        </page>
+                        <page string="Notes"><field name="notes" nolabel="1"/></page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_diligence_referral_management" model="ir.actions.act_window">
+        <field name="name">Affiliate Referrals</field>
+        <field name="res_model">diligence.referral</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="search_view_id" ref="diligence_referral_view_search"/>
+    </record>
+    <menuitem id="menu_diligence_referral_management" name="Affiliate Referrals"
+              parent="sale.menu_sale_report" action="action_diligence_referral_management"
+              sequence="4" groups="sales_team.group_sale_salesman"/>
+</odoo>

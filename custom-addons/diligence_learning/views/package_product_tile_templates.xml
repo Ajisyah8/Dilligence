@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="website_sale_package_product_tile_early_bird"
+              inherit_id="website_sale.products_item"
+              name="Diligence Package Early Bird Price on Cards">
+        <xpath expr="//div[contains(@class, 'product_price')]" position="replace">
+            <t t-set="package_early_price" t-value="product._diligence_early_bird_price_for_date() if product.diligence_package_type else False"/>
+            <div t-if="package_early_price" class="product_price diligence-package-price" aria-label="Package promotional price">
+                <del class="text-muted me-1 mb-0" style="white-space: nowrap;">
+                    <small t-out="product.list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                </del>
+                <span class="mb-0 fw-bold" t-out="package_early_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+            </div>
+            <div t-else="" class="product_price" aria-label="Price information">
+                <span class="mb-0 fw-bold" aria-label="Sale price"
+                      t-if="template_price_vals['price_reduce'] or not website.prevent_zero_price_sale"
+                      t-out="template_price_vals['price_reduce']"
+                      t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                <t t-if="'base_price' in template_price_vals and (template_price_vals['base_price'] &gt; template_price_vals['price_reduce']) and (template_price_vals['price_reduce'] or not website.prevent_zero_price_sale)" name="product_base_price">
+                    <del aria-label="Original price" class="text-muted me-1 mb-0" style="white-space: nowrap;">
+                        <small t-esc="template_price_vals['base_price']" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                    </del>
+                </t>
+            </div>
+        </xpath>
+    </template>
+</odoo>

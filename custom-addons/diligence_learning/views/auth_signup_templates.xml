@@ -1,0 +1,12 @@
+<odoo>
+    <template id="diligence_auth_signup_phone" inherit_id="auth_signup.signup" name="Signup WhatsApp Number">
+        <xpath expr="//div[contains(@class, 'field-login')]" position="after">
+            <div class="mb-3 field-phone">
+                <label for="phone" class="form-label">WhatsApp Number</label>
+                <input type="tel" name="phone" t-att-value="phone" id="phone" class="form-control"
+                       placeholder="e.g. 081234567890" required="required"/>
+                <div class="form-text">Use an active number so our team can contact you about your learning program.</div>
+            </div>
+        </xpath>
+    </template>
+</odoo>

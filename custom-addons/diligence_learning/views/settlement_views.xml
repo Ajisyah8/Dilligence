@@ -1,0 +1,87 @@
+<odoo>
+    <record id="diligence_settlement_view_list" model="ir.ui.view">
+        <field name="name">diligence.referral.settlement.list</field>
+        <field name="model">diligence.referral.settlement</field>
+        <field name="arch" type="xml">
+            <list string="Affiliate Settlements">
+                <field name="name"/>
+                <field name="affiliate_id"/>
+                <field name="period_start"/>
+                <field name="period_end"/>
+                <field name="referral_count"/>
+                <field name="total_payment" sum="Payments"/>
+                <field name="total_cashback" sum="Cashback"/>
+                <field name="status" widget="badge"/>
+            </list>
+        </field>
+    </record>
+    <record id="diligence_settlement_view_form" model="ir.ui.view">
+        <field name="name">diligence.referral.settlement.form</field>
+        <field name="model">diligence.referral.settlement</field>
+        <field name="arch" type="xml">
+            <form string="Affiliate Settlement">
+                <header>
+                    <button name="action_load_eligible" type="object" string="Load Eligible Referrals" class="btn-secondary" invisible="status != 'draft'"/>
+                    <button name="action_approve" type="object" string="Approve Settlement" class="btn-primary" invisible="status != 'draft'"/>
+                    <button name="action_mark_paid" type="object" string="Mark Batch Paid" class="btn-primary" invisible="status != 'approved'"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="status in ('paid', 'cancelled')"/>
+                    <field name="status" widget="statusbar" statusbar_visible="draft,approved,paid"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="affiliate_id"/>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                        </group>
+                        <group>
+                            <field name="referral_count"/>
+                            <field name="total_payment"/>
+                            <field name="total_cashback"/>
+                            <field name="payout_reference"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Referral Lines">
+                            <field name="referral_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="student_id"/>
+                                    <field name="sale_order_id"/>
+                                    <field name="net_payment"/>
+                                    <field name="cashback_amount"/>
+                                    <field name="status" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="diligence_settlement_view_search" model="ir.ui.view">
+        <field name="name">diligence.referral.settlement.search</field>
+        <field name="model">diligence.referral.settlement</field>
+        <field name="arch" type="xml">
+            <search string="Affiliate Settlements">
+                <field name="name"/>
+                <field name="affiliate_id"/>
+                <field name="status"/>
+                <group>
+                    <filter name="group_affiliate" string="Affiliate" context="{'group_by': 'affiliate_id'}"/>
+                    <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="action_diligence_referral_settlements" model="ir.actions.act_window">
+        <field name="name">Affiliate Settlements</field>
+        <field name="res_model">diligence.referral.settlement</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="diligence_settlement_view_search"/>
+    </record>
+    <menuitem id="menu_diligence_referral_settlements" name="Affiliate Settlements"
+              parent="sale.menu_sale_report" action="action_diligence_referral_settlements"
+              sequence="5" groups="sales_team.group_sale_manager"/>
+</odoo>

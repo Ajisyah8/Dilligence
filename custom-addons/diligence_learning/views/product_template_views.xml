@@ -1,0 +1,55 @@
+<odoo>
+    <record id="product_template_form_diligence_package" model="ir.ui.view">
+        <field name="name">product.template.form.diligence.package</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Diligence Package Settings" invisible="not sale_ok">
+                    <div class="alert alert-info" role="alert">
+                        <strong>Petunjuk pengisian paket</strong>
+                        <div>Isi tab ini hanya untuk produk yang memang merupakan paket belajar Diligence. Setelah order dibayar, pengaturan akses di bawah ini menentukan course dan fasilitas yang diterima siswa.</div>
+                    </div>
+                    <group string="1. Identitas dan Harga Paket" col="2">
+                        <field name="diligence_package_type" string="Jenis Paket" help="Pilih jenis paket belajar. Biarkan kosong jika produk ini bukan paket Diligence."/>
+                        <field name="list_price" string="Harga Normal" help="Harga normal paket sebelum potongan Early Bird. Contoh: 169000."/>
+                        <field name="diligence_access_duration_days" string="Masa Akses (Hari)" help="Berapa hari siswa dapat mengakses paket setelah pembayaran dikonfirmasi. Kosong atau 0 berarti tanpa batas waktu."/>
+                    </group>
+                    <group string="2. Harga Early Bird" col="2">
+                        <div class="text-muted" colspan="2">Aktifkan hanya pada paket yang sedang mendapat harga promo. Harga di website akan berubah otomatis selama periode promo.</div>
+                        <field name="diligence_early_bird_enabled" string="Aktifkan Early Bird" help="Centang untuk memakai harga promo pada paket ini. Paket lain yang tidak dicentang tetap memakai harga normal."/>
+                        <field name="diligence_early_bird_price" string="Harga Promo Early Bird" help="Harga jual promo, bukan jumlah potongan. Contoh: isi 129000 jika harga normal 169000."/>
+                        <field name="diligence_early_bird_start_date" string="Mulai Promo (Opsional)" help="Kosongkan agar promo aktif segera. Isi tanggal jika promo baru mulai pada tanggal tertentu."/>
+                        <field name="diligence_early_bird_duration_days" string="Durasi Promo (Hari)" help="Lama promo sejak tanggal mulai. Kosongkan jika promo tidak dibatasi tanggal akhir."/>
+                        <field name="diligence_early_bird_end_date" string="Berakhir Pada" readonly="1" help="Tanggal akhir dihitung otomatis dari tanggal mulai dan durasi promo."/>
+                    </group>
+                    <group string="3. Course yang Didapat Siswa">
+                        <field name="diligence_course_ids" string="Course Termasuk dalam Paket" widget="many2many_tags" help="Pilih semua course yang otomatis boleh diakses siswa setelah pembayaran paket ini dikonfirmasi."/>
+                        <div class="text-muted" colspan="2">Jika tidak ada course yang dipilih, pembelian produk tidak akan memberikan course melalui pengaturan paket ini.</div>
+                    </group>
+                    <group string="4. Fasilitas dan Dukungan" col="2">
+                        <group string="Akses Komunitas">
+                            <field name="diligence_forum_access" string="Forum Diskusi" help="Centang untuk mengizinkan siswa mengikuti forum komunitas."/>
+                            <field name="diligence_consultation" string="Konsultasi/Coaching" help="Centang jika paket mencakup pengecekan progres atau arahan belajar dari coach."/>
+                        </group>
+                        <group string="Fasilitas Pengajar">
+                            <field name="diligence_teacher_feedback" string="Feedback dari Guru" help="Centang jika guru perlu memberikan evaluasi atau feedback langsung kepada siswa."/>
+                            <field name="diligence_live_qna" string="Live Q&amp;A Bulanan" help="Centang jika siswa mendapat sesi Live Q&amp;A satu kali setiap bulan."/>
+                        </group>
+                    </group>
+                    <group string="5. Pengaturan Sesi Kelas" col="2">
+                        <div class="text-muted" colspan="2">Untuk paket belajar mandiri, pilih Belajar Mandiri. Field jadwal di bawah hanya diperlukan untuk paket Zoom/coaching.</div>
+                        <field name="diligence_delivery_mode" string="Cara Belajar" help="Pilih Belajar Mandiri, kelas Zoom grup, Zoom privat, atau sesi 1-on-1."/>
+                        <field name="diligence_session_frequency" string="Frekuensi Sesi per Minggu" invisible="diligence_delivery_mode == 'self'" help="Jumlah sesi terjadwal setiap minggu. Isi hanya jika paket memiliki sesi live."/>
+                        <field name="diligence_session_duration_minutes" string="Durasi Sesi (Menit)" invisible="diligence_delivery_mode == 'self'" help="Durasi setiap sesi live dalam menit."/>
+                        <field name="diligence_max_participants" string="Batas Peserta per Sesi" invisible="diligence_delivery_mode == 'self'" help="Jumlah maksimal peserta pada satu sesi live. Isi 0 atau kosong jika tidak dibatasi."/>
+                    </group>
+                    <group string="6. Benefit yang Tampil di Website">
+                        <field name="diligence_benefit_text" string="Daftar Benefit Paket" widget="text" placeholder="Tulis satu benefit per baris, contoh:\n30 PDF bahan belajar\n30 audio listening\n30 video penjelasan\n30 set quiz + answer key" help="Sumber teks benefit pada kartu paket di website dan deskripsi penawaran. Tulis satu benefit pada setiap baris."/>
+                        <field name="diligence_benefit_html" string="Preview Benefit Otomatis" widget="html" readonly="1" help="Preview HTML benefit yang dibuat otomatis oleh sistem dari daftar benefit di atas."/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

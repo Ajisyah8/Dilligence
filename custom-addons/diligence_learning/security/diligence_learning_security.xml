@@ -1,0 +1,25 @@
+<odoo>
+    <record id="group_diligence_community_member" model="res.groups">
+        <field name="name">Diligence Community Member</field>
+        <field name="comment">Granted automatically to buyers of Community and Consultation packages.</field>
+    </record>
+
+    <record id="rule_diligence_quiz_attempt_student_own" model="ir.rule">
+        <field name="name">Students see their own quiz attempts</field>
+        <field name="model_id" ref="model_diligence_quiz_attempt"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+    </record>
+    <record id="rule_diligence_quiz_response_student_own" model="ir.rule">
+        <field name="name">Students see their own quiz answers</field>
+        <field name="model_id" ref="model_diligence_quiz_response"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="domain_force">[('attempt_id.partner_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+    </record>
+    <record id="rule_diligence_learning_activity_student_own" model="ir.rule">
+        <field name="name">Students see their own learning activity</field>
+        <field name="model_id" ref="model_diligence_learning_activity"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+    </record>
+</odoo>

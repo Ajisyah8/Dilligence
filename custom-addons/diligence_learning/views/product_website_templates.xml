@@ -1,0 +1,16 @@
+<odoo>
+    <template id="website_sale_product_diligence_package_benefits"
+              inherit_id="website_sale.product"
+              name="Diligence Package Benefits">
+        <xpath expr="//div[@id='product_details']" position="inside">
+            <div t-if="product.diligence_package_type" class="card border-primary mb-4 o_diligence_package_benefits">
+                <div class="card-header bg-primary text-white">
+                    <i class="fa fa-graduation-cap me-2"/> Package Benefits
+                </div>
+                <div class="card-body">
+                    <div t-out="product.diligence_benefit_html"/>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>
