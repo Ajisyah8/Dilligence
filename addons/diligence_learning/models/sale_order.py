@@ -28,6 +28,24 @@ class SaleOrder(models.Model):
     diligence_coaching_link = fields.Char('Coaching / Q&A Link', copy=False)
     diligence_coaching_note = fields.Text('Coach Progress Note', copy=False)
 
+    def _verify_updated_quantity(self, order_line, product_id, new_qty, uom_id, **kwargs):
+        quantity, warning = super()._verify_updated_quantity(
+            order_line, product_id, new_qty, uom_id, **kwargs,
+        )
+        product = self.env['product.product'].browse(product_id).exists()
+        if (
+            new_qty > 0
+            and product
+            and product.product_tmpl_id.diligence_package_type
+            and product.product_tmpl_id.diligence_sales_status == 'full'
+        ):
+            current_quantity = order_line.product_uom_qty if order_line else 0
+            return current_quantity, _(
+                'The learning package “%(package)s” is currently full and cannot be purchased.',
+                package=product.display_name,
+            )
+        return quantity, warning
+
     def _diligence_package_lines(self):
         return self.order_line.filtered(lambda line: line.product_template_id._diligence_is_package())
 

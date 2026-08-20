@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="diligence_learning.FullscreenLessonDescription">
+        <section t-if="slide and slide.description"
+                 class="diligence-fs-media-description diligence-fs-template-description"
+                 t-att-data-slide-id="slide.id"
+                 data-description-resolved="true">
+            <div class="diligence-fs-media-description-kicker">ABOUT THIS LESSON</div>
+            <div class="diligence-fs-media-description-body">
+                <t t-out="slide.description"/>
+            </div>
+        </section>
+    </t>
+
+    <t t-inherit="website.slides.fullscreen.content" t-inherit-mode="extension">
+        <xpath expr="//t[@t-if=&quot;widget._slideValue.category === 'document'&quot;]/div" position="attributes">
+            <attribute name="class" add="diligence-media-template-with-description" separator=" "/>
+        </xpath>
+        <xpath expr="//t[@t-if=&quot;widget._slideValue.category === 'document'&quot;]/div" position="inside">
+            <t t-call="diligence_learning.FullscreenLessonDescription">
+                <t t-set="slide" t-value="widget._slideValue"/>
+            </t>
+        </xpath>
+        <xpath expr="//t[@t-if=&quot;widget._slideValue.category === 'infographic'&quot;]/div" position="attributes">
+            <attribute name="class" add="diligence-media-template-with-description" separator=" "/>
+        </xpath>
+        <xpath expr="//t[@t-if=&quot;widget._slideValue.category === 'infographic'&quot;]/div" position="inside">
+            <t t-call="diligence_learning.FullscreenLessonDescription">
+                <t t-set="slide" t-value="widget._slideValue"/>
+            </t>
+        </xpath>
+    </t>
+
+    <t t-inherit="website.slides.fullscreen.media.local" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'o_wslides_fs_player')]" position="attributes">
+            <attribute name="class" add="diligence-media-template-with-description" separator=" "/>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'o_wslides_fs_player')]" position="inside">
+            <t t-call="diligence_learning.FullscreenLessonDescription">
+                <t t-set="slide" t-value="widget._slideValue"/>
+            </t>
+        </xpath>
+    </t>
+
+    <t t-inherit="website.slides.fullscreen.external_quiz" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'o_wslides_fs_player')]" position="attributes">
+            <attribute name="class" add="diligence-media-template-with-description" separator=" "/>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'o_wslides_fs_player')]" position="inside">
+            <t t-call="diligence_learning.FullscreenLessonDescription">
+                <t t-set="slide" t-value="widget._slideValue"/>
+            </t>
+        </xpath>
+    </t>
+
+    <t t-inherit="website.slides.fullscreen.video.google_drive" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'player')]" position="attributes">
+            <attribute name="class" add="diligence-media-template-with-description" separator=" "/>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'player')]" position="inside">
+            <t t-call="diligence_learning.FullscreenLessonDescription">
+                <t t-set="slide" t-value="widget._slideValue"/>
+            </t>
+        </xpath>
+    </t>
+
+    <t t-inherit="website.slides.fullscreen.video.youtube" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'player')]" position="attributes">
+            <attribute name="class" add="diligence-media-template-with-description" separator=" "/>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'player')]" position="inside">
+            <t t-call="diligence_learning.FullscreenLessonDescription">
+                <t t-set="slide" t-value="widget.slide"/>
+            </t>
+        </xpath>
+    </t>
+
+    <t t-inherit="website.slides.fullscreen.video.external" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'player')]" position="attributes">
+            <attribute name="class" add="diligence-media-template-with-description" separator=" "/>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'player')]" position="inside">
+            <t t-call="diligence_learning.FullscreenLessonDescription">
+                <t t-set="slide" t-value="widget.slide"/>
+            </t>
+        </xpath>
+    </t>
+
+    <t t-inherit="website.slides.fullscreen.video.vimeo" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'player')]" position="attributes">
+            <attribute name="class" add="diligence-media-template-with-description" separator=" "/>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'player')]" position="inside">
+            <t t-call="diligence_learning.FullscreenLessonDescription">
+                <t t-set="slide" t-value="widget.slide"/>
+            </t>
+        </xpath>
+    </t>
+
+    <t t-inherit="slide.slide.quiz" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'o_wslides_fs_quiz_container')]/div[1]" position="before">
+            <t t-call="diligence_learning.FullscreenLessonDescription">
+                <t t-set="slide" t-value="widget.slide"/>
+            </t>
+        </xpath>
+    </t>
+</templates>

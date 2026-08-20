@@ -123,7 +123,14 @@ class DiligenceQuizAttempt(models.Model):
     def _compute_final_score(self):
         for attempt in self:
             manually_scored = attempt.response_ids.filtered(lambda response: response.question_type in ('essay', 'speaking'))
-            attempt.final_score = attempt.manual_score if manually_scored else attempt.auto_score
+            # Show the automatically calculated result immediately.  A mixed
+            # quiz may still wait for its essay/speaking grade, but displaying
+            # zero until then is misleading for the learner.
+            attempt.final_score = (
+                attempt.manual_score
+                if manually_scored and attempt.state in ('passed', 'failed')
+                else attempt.auto_score
+            )
 
     def action_grade(self):
         for attempt in self:
@@ -135,8 +142,12 @@ class DiligenceQuizAttempt(models.Model):
                 response.manual_score if response.question_type in ('essay', 'speaking') else response.auto_score
                 for response in attempt.response_ids
             )
-            attempt.manual_score = points / total_weight * 100
-            attempt.state = 'passed' if attempt.final_score >= attempt.passing_score else 'failed'
+            final_score = points / total_weight * 100
+            attempt.write({
+                'manual_score': final_score,
+                'manual_graded': True,
+                'state': 'passed' if final_score >= attempt.passing_score else 'failed',
+            })
 
 
 class DiligenceQuizResponse(models.Model):

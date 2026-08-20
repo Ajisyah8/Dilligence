@@ -9,6 +9,42 @@ from odoo.exceptions import ValidationError
 class SlideSlide(models.Model):
     _inherit = 'slide.slide'
 
+    def _action_mark_completed(self):
+        """Complete media lessons without triggering Odoo quiz validation.
+
+        Odoo's generic implementation always calls ``_action_set_quiz_done``.
+        That helper is correct for quiz attempts, but it rejects an admin
+        previewing a normal PDF/audio/video lesson when the admin is not a
+        student member of the channel.  Keep the native behaviour for quizzes
+        and use the same slide-partner completion record for other lessons.
+        """
+        media_slides = self.filtered(
+            lambda slide: slide.slide_category != 'quiz' and not slide.question_ids
+        )
+        quiz_slides = self - media_slides
+
+        if media_slides:
+            uncompleted = media_slides.filtered(lambda slide: not slide.user_has_completed)
+            partner = self.env.user.partner_id
+            membership_model = self.env['slide.slide.partner'].sudo()
+            existing = membership_model.search([
+                ('slide_id', 'in', uncompleted.ids),
+                ('partner_id', '=', partner.id),
+            ])
+            existing.write({'completed': True})
+            new_slides = uncompleted.sudo() - existing.mapped('slide_id')
+            membership_model.create([{
+                'slide_id': slide.id,
+                'channel_id': slide.channel_id.id,
+                'partner_id': partner.id,
+                'vote': 0,
+                'completed': True,
+            } for slide in new_slides])
+
+        if quiz_slides:
+            return super(SlideSlide, quiz_slides)._action_mark_completed()
+        return True
+
     quiz_passing_score = fields.Float('Quiz passing score (%)', default=70.0)
     quiz_max_attempts = fields.Integer('Maximum quiz attempts', default=0)
     quiz_randomize_questions = fields.Boolean('Randomize questions')

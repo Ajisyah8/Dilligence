@@ -11,4 +11,6 @@ from . import session
 from . import website_menu
 from . import website
 from . import quiz
+from . import mandarin_content
 from . import learning_activity
+from . import payment_transaction

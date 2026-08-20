@@ -23,5 +23,11 @@
                 </t>
             </div>
         </xpath>
+        <xpath expr="//div[contains(@class, 'product_price')]" position="before">
+            <span t-if="product.diligence_package_type and product.diligence_sales_status == 'full'"
+                  class="diligence-full-slot-badge badge rounded-pill mb-2">
+                <i class="fa fa-ban me-1"/> Full Slot
+            </span>
+        </xpath>
     </template>
 </odoo>

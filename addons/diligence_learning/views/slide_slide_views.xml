@@ -74,7 +74,7 @@
               name="Diligence: Multi-type quiz marker">
         <xpath expr="//div[@id='lessonQuiz']" position="attributes">
             <attribute name="class" add="o_diligence_multitype_quiz" separator=" "/>
-            <attribute name="t-att-data-diligence-multitype">"1" if any(question['question_type'] != 'single_choice' for question in slide_questions) else None</attribute>
+            <attribute name="data-diligence-multitype">1</attribute>
         </xpath>
     </template>
 

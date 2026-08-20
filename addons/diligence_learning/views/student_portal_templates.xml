@@ -2,53 +2,109 @@
     <template id="portal_my_courses" name="My Courses">
         <t t-call="portal.portal_layout">
             <t t-set="my_details" t-value="True"/>
-            <div class="container o_portal_wrap py-4">
+            <div class="container o_portal_wrap py-4 diligence-student-dashboard">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="mb-0" t-translation="yes">My Courses</h3>
+                    <div>
+                        <div class="text-uppercase small fw-semibold text-primary" t-translation="yes">Diligence Academy</div>
+                        <h3 class="mb-0" t-translation="yes">My Courses</h3>
+                    </div>
                     <a href="/my/home" class="btn btn-outline-secondary" t-translation="yes">Back to My Account</a>
                 </div>
-                <div class="row g-3 mb-4">
-                    <div class="col-6 col-lg-3">
-                        <div class="card h-100 border-0 bg-primary-subtle"><div class="card-body">
-                            <div class="text-muted small" t-translation="yes">Active courses</div>
-                            <div class="fs-3 fw-semibold" t-out="len(dashboard_courses)"/>
-                        </div></div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-12 col-lg-4">
+                        <div class="diligence-dashboard-card diligence-calendar-card align-self-start">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0" t-translation="yes">Learning Calendar</h5>
+                                <span class="text-muted small" t-out="calendar_month_label"/>
+                            </div>
+                            <div class="diligence-calendar-weekdays">
+                                <span t-translation="yes">Mon</span><span t-translation="yes">Tue</span><span t-translation="yes">Wed</span><span t-translation="yes">Thu</span><span t-translation="yes">Fri</span><span t-translation="yes">Sat</span><span t-translation="yes">Sun</span>
+                            </div>
+                            <div class="diligence-calendar-grid">
+                                <t t-foreach="calendar_weeks" t-as="week">
+                                    <t t-foreach="week" t-as="cell">
+                                        <span t-att-class="'diligence-calendar-day%s%s' % (' is-active' if cell['active'] else '', ' is-today' if cell['today'] else '')">
+                                            <t t-if="cell['day']" t-out="cell['day']"/>
+                                        </span>
+                                    </t>
+                                </t>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-end border-top pt-3 mt-3">
+                                <div>
+                                    <div class="text-muted small" t-translation="yes">Active days this month</div>
+                                    <strong class="fs-4" t-out="monthly_activity_days"/>
+                                </div>
+                                <div class="text-end">
+                                    <div class="text-muted small" t-translation="yes">Total duration this month</div>
+                                    <strong><t t-out="monthly_duration_minutes"/> <span t-translation="yes">minutes</span></strong>
+                                </div>
+                            </div>
+                            <div class="text-muted small mt-2" t-translation="yes">Duration is based on completed lesson duration.</div>
+                        </div>
                     </div>
-                    <div class="col-6 col-lg-3">
-                        <div class="card h-100 border-0 bg-success-subtle"><div class="card-body">
-                            <div class="text-muted small" t-translation="yes">Current streak</div>
-                            <div class="fs-3 fw-semibold"><t t-out="current_streak"/> <small t-translation="yes">days</small></div>
-                        </div></div>
-                    </div>
-                    <div class="col-6 col-lg-3">
-                        <div class="card h-100 border-0 bg-warning-subtle"><div class="card-body">
-                            <div class="text-muted small" t-translation="yes">Best streak</div>
-                            <div class="fs-3 fw-semibold"><t t-out="best_streak"/> <small t-translation="yes">days</small></div>
-                        </div></div>
-                    </div>
-                    <div class="col-6 col-lg-3">
-                        <div class="card h-100 border-0 bg-info-subtle"><div class="card-body">
-                            <div class="text-muted small" t-translation="yes">Activities (90 days)</div>
-                            <div class="fs-3 fw-semibold" t-out="len(activities)"/>
-                        </div></div>
+                    <div class="col-12 col-lg-8">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0" t-translation="yes">Your learning progress</h5>
+                            <span class="text-muted small"><t t-out="len(dashboard_courses)"/> <span t-translation="yes">courses</span></span>
+                        </div>
+                        <div class="d-flex flex-column gap-3">
+                            <t t-foreach="dashboard_courses" t-as="course">
+                                <div class="diligence-dashboard-card diligence-course-card">
+                                    <div class="d-flex justify-content-between gap-3">
+                                        <div class="min-w-0">
+                                            <h5 class="mb-1 text-truncate" t-out="course['membership'].channel_id.name"/>
+                                            <div class="text-muted small"><t t-out="course['completed']"/> / <t t-out="course['total']"/> <span t-translation="yes">lessons completed</span></div>
+                                        </div>
+                                        <strong class="diligence-progress-value"><t t-out="round(course['progress'])"/>%</strong>
+                                    </div>
+                                    <div class="progress mt-3" role="progressbar" t-att-aria-valuenow="course['progress']" aria-valuemin="0" aria-valuemax="100">
+                                        <div class="progress-bar" t-attf-style="width: {{ course['progress'] }}%;"/>
+                                    </div>
+                                    <div class="mt-3">
+                                        <div class="text-muted small mb-2" t-translation="yes">Scores</div>
+                                        <div t-if="course['score_boxes']" class="diligence-score-grid">
+                                            <t t-foreach="course['score_boxes']" t-as="score">
+                                                <span t-att-title="'%s — %s' % (score['name'], dict(passed='Passed', failed='Not passed', pending_review='Waiting for grading', not_started='Not started').get(score['state'], score['state']))"
+                                                      t-att-class="'diligence-score-box%s%s%s' % (' is-passed' if score['state'] == 'passed' else '', ' is-pending' if score['state'] == 'pending_review' else '', ' is-failed' if score['state'] == 'failed' else '')">
+                                                    <t t-if="score['score'] is not None" t-out="score['score']"/>
+                                                    <t t-else="">—</t>
+                                                </span>
+                                            </t>
+                                        </div>
+                                        <div t-else="" class="text-muted small" t-translation="yes">No quizzes in this course yet.</div>
+                                    </div>
+                                    <a class="btn btn-sm btn-outline-primary mt-3 align-self-start" t-att-href="course['membership'].channel_id.website_absolute_url" t-translation="yes">Continue learning</a>
+                                </div>
+                            </t>
+                            <div t-if="not dashboard_courses" class="diligence-dashboard-card text-muted" t-translation="yes">There are no active courses on this account yet.</div>
+                        </div>
                     </div>
                 </div>
-                <div class="card shadow-sm mb-4" t-if="dashboard_courses">
-                    <div class="card-body">
-                        <h5 t-translation="yes">Learning progress</h5>
-                        <t t-foreach="dashboard_courses" t-as="course">
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between small mb-1">
-                                    <span t-out="course['membership'].channel_id.name"/>
-                                    <span><t t-out="round(course['progress'])"/>%</span>
-                                </div>
-                                <div class="progress" role="progressbar" t-att-aria-valuenow="course['progress']" aria-valuemin="0" aria-valuemax="100">
-                                    <div class="progress-bar" t-att-style="'width: %s%%' % course['progress']"/>
-                                </div>
-                                <div class="text-muted small mt-1"><t t-out="course['completed']"/> / <t t-out="course['total']"/> <span t-translation="yes">lessons completed</span></div>
-                            </div>
-                        </t>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-md-4">
+                        <a href="/my/orders" class="diligence-shortcut-card text-decoration-none">
+                            <span class="fa fa-shopping-bag" aria-hidden="true"/><span><strong t-translation="yes">My Orders</strong><small><t t-out="orders_count"/> <span t-translation="yes">orders</span></small></span><span class="fa fa-chevron-right ms-auto" aria-hidden="true"/>
+                        </a>
                     </div>
+                    <div class="col-12 col-md-4">
+                        <a href="/my/invoices" class="diligence-shortcut-card text-decoration-none">
+                            <span class="fa fa-file-text-o" aria-hidden="true"/><span><strong t-translation="yes">My Invoices</strong><small><t t-out="invoices_count"/> <span t-translation="yes">invoices</span></small></span><span class="fa fa-chevron-right ms-auto" aria-hidden="true"/>
+                        </a>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <a href="/shop/cart" class="diligence-shortcut-card text-decoration-none">
+                            <span class="fa fa-shopping-cart" aria-hidden="true"/><span><strong t-translation="yes">My Cart</strong><small><t t-out="cart_count"/> <span t-translation="yes">items</span></small></span><span class="fa fa-chevron-right ms-auto" aria-hidden="true"/>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-lg-3"><div class="diligence-mini-stat"><span t-translation="yes">Active courses</span><strong t-out="len(dashboard_courses)"/></div></div>
+                    <div class="col-6 col-lg-3"><div class="diligence-mini-stat"><span t-translation="yes">Current streak</span><strong><t t-out="current_streak"/> <small t-translation="yes">days</small></strong></div></div>
+                    <div class="col-6 col-lg-3"><div class="diligence-mini-stat"><span t-translation="yes">Best streak</span><strong><t t-out="best_streak"/> <small t-translation="yes">days</small></strong></div></div>
+                    <div class="col-6 col-lg-3"><div class="diligence-mini-stat"><span t-translation="yes">Activities (90 days)</span><strong t-out="len(activities)"/></div></div>
                 </div>
                 <div class="card shadow-sm mb-4" t-if="upcoming_sessions">
                     <div class="card-body">

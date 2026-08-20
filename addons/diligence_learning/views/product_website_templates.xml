@@ -8,9 +8,27 @@
                     <i class="fa fa-graduation-cap me-2"/> Package Benefits
                 </div>
                 <div class="card-body">
+                    <div t-if="product.diligence_sales_status == 'full'" class="alert alert-secondary d-flex align-items-center" role="status">
+                        <i class="fa fa-ban me-2"/>
+                        <div><strong>Full Slot.</strong> Detail paket tetap dapat dilihat, tetapi pendaftaran baru sedang ditutup.</div>
+                    </div>
                     <div t-out="product.diligence_benefit_html"/>
                 </div>
             </div>
+        </xpath>
+    </template>
+
+    <template id="website_sale_diligence_full_slot_cta"
+              inherit_id="website_sale.cta_wrapper"
+              name="Diligence Full Slot Purchase Button">
+        <xpath expr="//a[@id='add_to_cart']" position="attributes">
+            <attribute name="t-if">not (product.diligence_package_type and product.diligence_sales_status == 'full')</attribute>
+        </xpath>
+        <xpath expr="//a[@id='add_to_cart']" position="after">
+            <button t-if="product.diligence_package_type and product.diligence_sales_status == 'full'"
+                    type="button" class="btn btn-secondary flex-grow-1" disabled="disabled">
+                <i class="fa fa-ban me-2"/> Full Slot
+            </button>
         </xpath>
     </template>
 </odoo>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="slide.quiz.question.input" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'o_wslides_quiz_question')]" position="after">
+            <div class="diligence-quiz-type-picker input-group mt-2">
+                <span class="input-group-text"><i class="fa fa-list-alt me-1"/> Question type</span>
+                <select class="form-select diligence-question-type">
+                    <option value="single_choice">Single choice</option>
+                    <option value="multiple_choice">Multiple choice</option>
+                    <option value="true_false">True / False</option>
+                    <option value="short_answer">Short answer</option>
+                    <option value="essay">Essay</option>
+                    <option value="listening">Listening</option>
+                </select>
+            </div>
+            <div class="form-text diligence-quiz-type-help">
+                Choose how the student should answer this question. Audio and advanced settings can be completed after saving from the backend form.
+            </div>
+        </xpath>
+    </t>
+</templates>

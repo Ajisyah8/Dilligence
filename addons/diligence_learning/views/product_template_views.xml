@@ -12,6 +12,7 @@
                     </div>
                     <group string="1. Identitas dan Harga Paket" col="2">
                         <field name="diligence_package_type" string="Jenis Paket" help="Pilih jenis paket belajar. Biarkan kosong jika produk ini bukan paket Diligence."/>
+                        <field name="diligence_sales_status" string="Status Ketersediaan" invisible="not diligence_package_type" help="Pilih Full Slot agar paket tetap tampil, tetapi tidak dapat dibeli."/>
                         <field name="list_price" string="Harga Normal" help="Harga normal paket sebelum potongan Early Bird. Contoh: 169000."/>
                         <field name="diligence_access_duration_days" string="Masa Akses (Hari)" help="Berapa hari siswa dapat mengakses paket setelah pembayaran dikonfirmasi. Kosong atau 0 berarti tanpa batas waktu."/>
                     </group>

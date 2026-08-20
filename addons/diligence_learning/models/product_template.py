@@ -18,6 +18,11 @@ class ProductTemplate(models.Model):
         ('zoom_coaching', 'Zoom Private Coaching'),
         ('business', 'Business Class'),
     ], string='Diligence Package')
+    diligence_sales_status = fields.Selection([
+        ('available', 'Available'),
+        ('full', 'Full Slot'),
+    ], string='Package Availability', default='available', required=True, copy=False,
+       help='Full Slot keeps the package visible on the website, but prevents new purchases.')
     diligence_course_ids = fields.Many2many(
         'slide.channel',
         'diligence_package_slide_channel_rel',

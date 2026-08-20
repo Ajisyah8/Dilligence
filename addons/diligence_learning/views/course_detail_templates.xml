@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="diligence_fullscreen_lesson_description_source"
+              inherit_id="website_slides.slide_fullscreen">
+        <xpath expr="//div[contains(@class, 'o_wslides_fs_main')]" position="before">
+            <div class="diligence-fs-description-source d-none"
+                 t-att-data-slide-id="slide.id"
+                 t-att-data-description="slide.description"/>
+        </xpath>
+    </template>
+
+    <!-- Keep Odoo's native course page and make the learning path easier to scan. -->
+    <template id="diligence_course_main_detail" inherit_id="website_slides.course_main">
+        <xpath expr="//div[contains(@class, 'o_wslides_course_main')]" position="attributes">
+            <attribute name="class" add="diligence-course-main" separator=" "/>
+        </xpath>
+        <xpath expr="//t[@t-call='website_slides.course_nav']" position="after">
+            <div class="container diligence-course-intro">
+                <div class="diligence-course-intro-inner">
+                    <div>
+                        <span class="diligence-eyebrow">DILIGENCE ACADEMY</span>
+                        <h2 class="mb-2">Your structured learning path</h2>
+                        <p class="mb-0 text-muted">
+                            Learn step by step with video explanations, listening practice, documents, and quizzes.
+                        </p>
+                    </div>
+                    <div class="diligence-course-intro-actions">
+                        <div class="diligence-course-intro-stat">
+                            <strong t-out="channel.total_slides"/>
+                            <span>learning materials</span>
+                        </div>
+                        <a t-if="channel.slide_ids.filtered(lambda lesson: not lesson.is_category)[:1]"
+                           class="btn btn-primary diligence-start-button"
+                           t-att-href="'/slides/slide/%s' % slug(channel.slide_ids.filtered(lambda lesson: not lesson.is_category)[:1])">
+                            <i class="fa fa-play-circle me-2"/>Start learning
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="diligence_course_slides_list" inherit_id="website_slides.course_slides_list">
+        <xpath expr="//ul[contains(@class, 'o_wslides_js_slides_list_container')]" position="before">
+            <div class="diligence-material-heading">
+                <div>
+                    <span class="diligence-eyebrow">COURSE CONTENT</span>
+                    <h3 class="mb-1">Explore your lessons</h3>
+                    <p class="text-muted mb-0">Follow each section in order and track your progress as you learn.</p>
+                </div>
+                <div class="diligence-material-legend d-none d-md-flex">
+                    <span><i class="fa fa-file-pdf-o"/> PDF</span>
+                    <span><i class="fa fa-volume-up"/> Audio</span>
+                    <span><i class="fa fa-play-circle"/> Video</span>
+                    <span><i class="fa fa-question-circle"/> Quiz</span>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="diligence_course_slide_list_item" inherit_id="website_slides.course_slides_list_slide">
+        <xpath expr="//li[1]" position="attributes">
+            <attribute name="class" add="diligence-material-row" separator=" "/>
+            <attribute name="t-att-data-diligence-type">slide.slide_category</attribute>
+        </xpath>
+        <xpath expr="//i[@t-attf-class]" position="replace">
+            <div class="diligence-material-icon" t-attf-class="diligence-material-icon diligence-material-icon-#{slide.slide_category}">
+                <i t-attf-class="fa #{slide.slide_icon_class}" aria-hidden="true"/>
+            </div>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'text-truncate')][1]" position="after">
+            <span class="diligence-material-type d-none d-lg-inline-flex">
+                <t t-if="slide.slide_category == 'document'">PDF / Document</t>
+                <t t-elif="slide.slide_category == 'audio'">Audio Listening</t>
+                <t t-elif="slide.slide_category == 'video'">Video Lesson</t>
+                <t t-elif="slide.slide_category == 'quiz'">Quiz / Practice</t>
+                <t t-elif="slide.slide_category == 'article'">Reading</t>
+                <t t-else="">Learning Material</t>
+            </span>
+        </xpath>
+    </template>
+
+    <!-- Lesson viewer: make the page feel like the reference's focused watch/read view. -->
+    <template id="diligence_lesson_viewer" inherit_id="website_slides.slide_main">
+        <xpath expr="//div[@id='wrap']" position="attributes">
+            <attribute name="class" add="diligence-lesson-viewer" separator=" "/>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'o_wslides_lesson_header')]" position="attributes">
+            <attribute name="class" add="diligence-lesson-header" separator=" "/>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'o_wslides_lesson_main')]" position="attributes">
+            <attribute name="class" add="diligence-lesson-main" separator=" "/>
+        </xpath>
+    </template>
+
+    <template id="diligence_fullscreen_viewer_layout" inherit_id="website_slides.slide_fullscreen">
+        <xpath expr="//div[contains(@class, 'o_wslides_fs_main')]" position="attributes">
+            <attribute name="class" add="diligence-fullscreen-viewer" separator=" "/>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'o_wslides_slide_fs_header')]/div[1]" position="inside">
+            <a class="diligence-fullscreen-brand d-flex align-items-center px-3"
+               t-attf-href="/slides/#{slug(slide.channel_id)}" title="Back to course">
+                <img t-attf-src="/web/image/website/#{website.id}/logo"
+                     alt="Diligence Academy"/>
+            </a>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'o_wslides_slide_fs_header')]/div[2]" position="inside">
+            <t t-set="fullscreen_slide_completed" t-value="channel_progress[slide.id].get('completed')"/>
+            <a t-if="slide.channel_id.channel_type == 'training' and (slide.channel_id.is_member or slide.channel_id.can_publish or request.env.user._is_admin())"
+               t-attf-class="diligence-fullscreen-mark-completed d-flex align-items-center px-3 #{'is-completed' if fullscreen_slide_completed else ''}"
+               role="button"
+               t-att-data-slide-id="slide.id"
+               t-att-aria-disabled="'true' if fullscreen_slide_completed else None"
+               t-att-href="False if fullscreen_slide_completed else '/diligence/slides/slide/%s/set_completed' % slide.id"
+               title="Mark lesson as completed">
+                <i class="fa fa-check-circle me-1"/>
+                <span class="d-none d-md-inline-block ms-1">
+                    <t t-if="fullscreen_slide_completed">Completed</t>
+                    <t t-else="">Mark as Completed</t>
+                </span>
+            </a>
+        </xpath>
+    </template>
+
+    <template id="diligence_fullscreen_sidebar_publisher_progress" inherit_id="website_slides.slide_fullscreen_sidebar_category">
+        <xpath expr="//t[@t-call='website_slides.slide_sidebar_done_button']" position="attributes">
+            <attribute name="t-if">is_member or current_slide.channel_id.can_publish or request.env.user._is_admin()</attribute>
+        </xpath>
+        <xpath expr="//li[contains(@class, 'o_wslides_fs_sidebar_list_item')]" position="attributes">
+            <attribute name="t-att-data-description">slide.description</attribute>
+        </xpath>
+        <!-- Keep a description source for every lesson, not only the lesson
+             used to open the fullscreen reader. The native player replaces
+             its content via JavaScript when navigating between lessons. -->
+        <xpath expr="//li[contains(@class, 'o_wslides_fs_sidebar_list_item')]" position="inside">
+            <div class="diligence-fs-description-source d-none"
+                 t-att-data-slide-id="slide.id"
+                 t-att-data-description="slide.description"/>
+        </xpath>
+    </template>
+
+    <!-- Open every section on first load, while keeping Bootstrap collapse so
+         students can still close or reopen a section manually. -->
+    <template id="diligence_fullscreen_sidebar_open_by_default" inherit_id="website_slides.slide_fullscreen_sidebar_category">
+        <xpath expr="//t[@t-set='category_collapsed']" position="attributes">
+            <attribute name="t-value">True</attribute>
+        </xpath>
+    </template>
+
+    <!-- The PDF is rendered in a same-origin Odoo iframe.  Style that iframe
+         from its own document as well, otherwise the dark PDF canvas remains
+         visible even when the lesson wrapper is light. -->
+    <template id="diligence_embed_viewer_theme" inherit_id="website_slides.embed_slide">
+        <xpath expr="//head" position="inside">
+            <style>
+                html, body {
+                    background: #f4f7f7 !important;
+                }
+                #PDFViewer.o_wslides_fs_pdf_viewer {
+                    background: #f4f7f7 !important;
+                }
+                #PDFViewer.o_wslides_fs_pdf_viewer #PDFSlideViewer {
+                    background: #f4f7f7 !important;
+                }
+                #PDFViewer.o_wslides_fs_pdf_viewer canvas {
+                    display: block;
+                    background: #ffffff;
+                    box-shadow: 0 8px 24px rgba(18, 56, 79, .12);
+                }
+                #PDFViewer.o_wslides_fs_pdf_viewer #PDFViewerNav {
+                    background: #263341 !important;
+                    color: #e6edf3 !important;
+                    border-top: 1px solid #3b4b5d;
+                }
+                #PDFViewer.o_wslides_fs_pdf_viewer #PDFViewerNav button,
+                #PDFViewer.o_wslides_fs_pdf_viewer #PDFViewerNav a,
+                #PDFViewer.o_wslides_fs_pdf_viewer #PDFViewerNav span[role="button"],
+                #PDFViewer.o_wslides_fs_pdf_viewer #PDFViewerNav i {
+                    color: #e6edf3 !important;
+                }
+                #PDFViewer.o_wslides_fs_pdf_viewer #PDFViewerNav span[role="button"]:hover,
+                #PDFViewer.o_wslides_fs_pdf_viewer #PDFViewerNav a:hover {
+                    color: #c8a96b !important;
+                }
+                #PDFViewer.o_wslides_fs_pdf_viewer #PDFViewerNav input,
+                #PDFViewer.o_wslides_fs_pdf_viewer #PDFViewerNav .input-group-text {
+                    color: #12384f !important;
+                    background: #ffffff !important;
+                    border-color: #d8e0e4 !important;
+                }
+            </style>
+        </xpath>
+    </template>
+
+    <template id="diligence_lesson_content_label" inherit_id="website_slides.slide_content_detailed">
+        <xpath expr="//div[hasclass('o_wslides_lesson_content_type')]" position="attributes">
+            <attribute name="class" add="diligence-media-preview" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@t-else and hasclass('o_wslides_lesson_content_type')]" position="attributes">
+            <attribute name="class" add="diligence-media-preview" separator=" "/>
+        </xpath>
+        <xpath expr="//div[hasclass('o_wslides_lesson_content_type')][1]" position="before">
+            <div class="diligence-lesson-module-label" t-if="slide.category_id">
+                <span class="diligence-eyebrow" t-out="slide.category_id.name"/>
+            </div>
+        </xpath>
+        <xpath expr="//h1[1]" position="after">
+            <span class="diligence-lesson-type-badge">
+                <t t-if="slide.slide_category == 'document'">PDF / Document</t>
+                <t t-elif="slide.slide_category == 'audio'">Audio Listening</t>
+                <t t-elif="slide.slide_category == 'video'">Video Lesson</t>
+                <t t-elif="slide.slide_category == 'quiz'">Quiz / Practice</t>
+                <t t-else="">Learning Material</t>
+            </span>
+        </xpath>
+    </template>
+
+    <!-- Replace Odoo's native media preview with a Diligence-owned renderer. -->
+    <template id="diligence_custom_media_preview" inherit_id="website_slides.slide_content_detailed">
+        <xpath expr="//div[@t-else and hasclass('o_wslides_lesson_content_type')]" position="replace">
+            <section class="diligence-custom-media-preview" t-att-data-media-type="slide.slide_category">
+                <header class="diligence-custom-media-header">
+                    <span class="diligence-custom-media-icon">
+                        <i t-if="slide.slide_category == 'document'" class="fa fa-file-pdf-o"/>
+                        <i t-elif="slide.slide_category == 'video'" class="fa fa-play-circle"/>
+                        <i t-elif="slide.slide_category == 'audio'" class="fa fa-volume-up"/>
+                        <i t-elif="slide.slide_category == 'article'" class="fa fa-file-text-o"/>
+                        <i t-else="" class="fa fa-book"/>
+                    </span>
+                    <div>
+                        <span class="diligence-custom-media-kicker">DILIGENCE ACADEMY</span>
+                        <strong t-out="slide.name"/>
+                    </div>
+                </header>
+                <div class="diligence-custom-media-stage">
+                    <iframe t-if="slide.slide_category == 'document' and slide.source_type == 'local_file'"
+                            class="diligence-custom-pdf-frame"
+                            t-att-src="'/web/content?model=slide.slide&amp;id=%s&amp;field=document_binary_content#toolbar=0&amp;navpanes=0' % slide.id"
+                            title="PDF lesson preview"/>
+                    <div t-elif="slide.slide_category == 'video'" class="diligence-custom-video-frame">
+                        <t t-out="slide.embed_code"/>
+                    </div>
+                    <div t-elif="slide.slide_category == 'audio'" class="diligence-custom-audio-frame">
+                        <t t-out="slide.embed_code"/>
+                    </div>
+                    <article t-elif="slide.slide_category == 'article'" class="diligence-custom-article-frame">
+                        <div t-field="slide.html_content"/>
+                    </article>
+                    <div t-else="" class="diligence-custom-empty-frame">
+                        <i class="fa fa-book-open fa-2x"/>
+                        <span>Lesson content</span>
+                    </div>
+                </div>
+            </section>
+        </xpath>
+    </template>
+
+    <!-- Turn the native lesson rows into scannable reference-style cards. -->
+    <template id="diligence_lesson_sidebar_cards" inherit_id="website_slides.slide_aside_training_category">
+        <xpath expr="//div[contains(@t-att-class, 'o_wslides_lesson_aside_list_link')]" position="attributes">
+            <attribute name="class" add="diligence-sidebar-lesson-card" separator=" "/>
+        </xpath>
+        <xpath expr="//div[contains(@t-att-class, 'o_wslides_lesson_aside_list_link')]/t[@t-call='website_slides.slide_sidebar_done_button']" position="before">
+            <span class="diligence-sidebar-lesson-number">
+                <t t-out="'%02d' % (category_slide_ids.ids.index(aside_slide.id) + 1)"/>
+            </span>
+        </xpath>
+        <xpath expr="//div[contains(@t-att-class, 'o_wslides_lesson_aside_list_link')]//div[contains(@class, 'o_wslides_lesson_link_name')]" position="after">
+            <span class="diligence-sidebar-lesson-duration" t-if="aside_slide.completion_time">
+                <i class="fa fa-clock-o me-1" aria-hidden="true"/>
+                <span t-field="aside_slide.completion_time" t-options="{'widget': 'duration', 'unit': 'hour', 'round': 'minute', 'format': 'short'}"/>
+            </span>
+        </xpath>
+    </template>
+
+    <!-- Keep Odoo's Quiz shortcut available for lessons with attached questions.
+         The shortcut opens the question view in fullscreen. -->
+    <template id="diligence_hide_attached_quiz_sidebar_row" inherit_id="website_slides.slide_aside_training_category">
+        <xpath expr="//li[contains(@t-if, 'aside_slide.question_ids')]" position="attributes">
+            <attribute name="t-if">aside_slide.question_ids and aside_slide.slide_category != 'quiz'</attribute>
+        </xpath>
+    </template>
+
+    <template id="diligence_hide_attached_quiz_fullscreen_sidebar_row" inherit_id="website_slides.slide_fullscreen_sidebar_category">
+        <xpath expr="//li[contains(@class, 'o_wslides_fs_sidebar_list_item')]" position="attributes">
+            <attribute name="t-if">slide.question_ids and not slide.slide_category == 'quiz'</attribute>
+        </xpath>
+    </template>
+
+    <template id="diligence_sidebar_done_button_for_publishers" inherit_id="website_slides.slide_sidebar_done_button">
+        <xpath expr="//div[@t-if='is_member']" position="attributes">
+            <attribute name="t-if">is_member or slide.channel_id.can_publish or request.env.user._is_admin()</attribute>
+        </xpath>
+    </template>
+
+    <template id="diligence_lesson_explanation_and_completion" inherit_id="website_slides.slide_content_detailed">
+        <!-- Training courses do not receive Odoo's documentation-only Mark Done button. -->
+        <xpath expr="//div[@role='group']/a[last()]" position="before">
+            <a t-if="slide.channel_id.channel_type == 'training' and (slide.channel_id.is_member or slide.channel_id.can_publish)"
+               t-attf-class="diligence-mark-completed btn border text-white me-2 #{'btn-success disabled' if slide_completed else 'btn-primary'}"
+               role="button"
+               t-att-aria-disabled="'true' if slide_completed else None"
+               t-att-href="False if slide_completed else '/diligence/slides/slide/%s/set_completed?next_slide_id=%s' % (slide.id, next_slide.id if next_slide else '')">
+                <i class="fa fa-check-circle me-2"/><t t-if="slide_completed">Completed</t><t t-else="">Mark as Completed</t>
+            </a>
+        </xpath>
+        <!-- Keep the explanation visible below the player instead of hiding it behind About. -->
+        <xpath expr="//div[@id='about']/div[@t-field='slide.description']" position="replace"/>
+        <xpath expr="//ul[hasclass('o_wslides_lesson_nav')]/li[.//a[@href='#about']]" position="replace"/>
+        <xpath expr="//ul[hasclass('o_wslides_lesson_nav')]/li[.//a[@href='#statistic']]" position="replace"/>
+        <xpath expr="//div[@id='about']" position="replace"/>
+        <xpath expr="//div[@id='statistic']" position="replace"/>
+        <xpath expr="//div[contains(@class, 'mb-5 position-relative')]" position="before">
+            <section t-if="slide.description" class="diligence-lesson-explanation">
+                <span class="diligence-eyebrow">ABOUT THIS LESSON</span>
+                <h2>What you will learn</h2>
+                <div t-field="slide.description"/>
+            </section>
+        </xpath>
+    </template>
+
+</odoo>

@@ -1,0 +1,16 @@
+<odoo>
+    <template id="diligence_payment_method_icons" inherit_id="payment.method_form">
+        <xpath expr="//label[contains(@class, 'o_payment_option_label')]" position="before">
+            <span t-if="'qris' in pm_sudo.name.lower()"
+                  class="diligence-payment-method-icon diligence-payment-icon-qris"
+                  title="QRIS">
+                <i class="fa fa-qrcode" aria-hidden="true"/>
+            </span>
+            <span t-elif="'bank' in pm_sudo.name.lower() or 'transfer' in pm_sudo.name.lower()"
+                  class="diligence-payment-method-icon diligence-payment-icon-bank"
+                  title="Transfer Bank">
+                <i class="fa fa-university" aria-hidden="true"/>
+            </span>
+        </xpath>
+    </template>
+</odoo>

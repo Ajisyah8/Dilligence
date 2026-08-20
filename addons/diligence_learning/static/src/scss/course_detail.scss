@@ -1,0 +1,2437 @@
+body,
+.o_wslides_body {
+    .diligence-lesson-viewer {
+        background: #fbfaf7;
+    }
+
+    .diligence-lesson-header {
+        display: none;
+    }
+
+    .diligence-lesson-header .o_wslides_course_nav {
+        border-bottom-color: rgba(18, 56, 79, .10);
+        background: transparent;
+    }
+
+    .diligence-lesson-header .o_wslides_lesson_header_container {
+        padding-top: .75rem;
+        padding-bottom: .75rem;
+    }
+
+    .diligence-lesson-header h1,
+    .diligence-lesson-header h1 a {
+        color: #12384f !important;
+        font-weight: 700 !important;
+    }
+
+    .diligence-lesson-header .o_wslides_channel_completion_progressbar {
+        padding-bottom: .35rem !important;
+    }
+
+    .diligence-lesson-header .o_wslides_progress_percentage,
+    .diligence-lesson-header small {
+        color: #667886 !important;
+    }
+
+    .diligence-lesson-header .progress {
+        background: #e9eff0 !important;
+    }
+
+    .diligence-lesson-main {
+        max-width: 1240px;
+        min-width: 0;
+        overflow-x: hidden;
+        padding-top: 2.5rem;
+        padding-bottom: 4rem;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        padding: 0 1.5rem 2rem;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content_type {
+        order: 1;
+        min-height: 420px;
+        overflow: hidden;
+        border: 1px solid rgba(18, 56, 79, .10);
+        border-radius: .85rem;
+        background: #f4f7f7;
+        box-shadow: 0 14px 35px rgba(18, 56, 79, .08);
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content_type iframe,
+    .diligence-lesson-main .o_wslides_lesson_content_type video,
+    .diligence-lesson-main .o_wslides_lesson_content_type audio {
+        background: #f4f7f7;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content_type iframe.o_wslides_iframe_viewer {
+        display: block;
+        min-height: 600px;
+    }
+
+    /* New media preview treatment: each lesson type sits inside a clean,
+       bounded media card instead of the old full dark canvas. */
+    .diligence-lesson-main .diligence-media-preview {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 26rem;
+        padding: 1rem;
+        border: 1px solid #d9e5e6;
+        border-radius: 1.15rem;
+        background: linear-gradient(145deg, #f8fbfb 0%, #edf5f5 100%);
+        box-shadow: 0 16px 32px rgba(18, 56, 79, .08);
+    }
+
+    .diligence-lesson-main .diligence-media-preview > iframe,
+    .diligence-lesson-main .diligence-media-preview > video,
+    .diligence-lesson-main .diligence-media-preview > audio {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        border: 0;
+        border-radius: .85rem;
+    }
+
+    .diligence-lesson-main .diligence-media-document {
+        padding: .75rem;
+        background: #e8f0f1;
+    }
+
+    .diligence-lesson-main .diligence-media-document > iframe {
+        min-height: 600px;
+        background: #fff;
+        box-shadow: 0 8px 22px rgba(18, 56, 79, .14);
+    }
+
+    .diligence-lesson-main .diligence-media-video {
+        min-height: 0;
+        aspect-ratio: 16 / 9;
+        padding: .75rem;
+    }
+
+    .diligence-lesson-main .diligence-media-video > iframe,
+    .diligence-lesson-main .diligence-media-video > video {
+        height: 100%;
+        min-height: 20rem;
+        object-fit: contain;
+        background: #12384f;
+    }
+
+    .diligence-lesson-main .diligence-media-audio {
+        min-height: 12rem;
+        padding: 2rem;
+        background: linear-gradient(145deg, #eef7f7 0%, #fdfbf5 100%);
+    }
+
+    .diligence-lesson-main .diligence-media-audio > audio {
+        max-width: 46rem;
+        padding: 1rem;
+        background: #fff;
+        box-shadow: 0 8px 22px rgba(18, 56, 79, .10);
+    }
+
+    .diligence-lesson-main .diligence-custom-media-preview {
+        order: 1;
+        width: 100%;
+        overflow: hidden;
+        border: 1px solid #d9e5e6;
+        border-radius: 1.2rem;
+        background: #f3f8f8;
+        box-shadow: 0 16px 34px rgba(18, 56, 79, .09);
+    }
+
+    .diligence-lesson-main .o_wslides_js_quiz_container {
+        order: 5 !important;
+        width: 100%;
+        margin-top: .75rem !important;
+    }
+
+    .diligence-lesson-main .o_wslides_js_quiz_container .o_wslides_js_lesson_quiz_new_question {
+        margin-top: .25rem !important;
+    }
+
+    .diligence-lesson-main .diligence-custom-media-header {
+        display: flex;
+        align-items: center;
+        gap: .8rem;
+        padding: .9rem 1.1rem;
+        border-bottom: 1px solid #d9e5e6;
+        background: #fff;
+        color: #12384f;
+    }
+
+    .diligence-lesson-main .diligence-custom-media-header strong {
+        display: block;
+        font-size: 1rem;
+    }
+
+    .diligence-lesson-main .diligence-custom-media-icon {
+        display: inline-flex;
+        width: 2.5rem;
+        height: 2.5rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: .75rem;
+        background: #e6f3f4;
+        color: #116b83;
+        font-size: 1.15rem;
+    }
+
+    .diligence-lesson-main .diligence-custom-media-kicker {
+        display: block;
+        color: #b7832e;
+        font-size: .65rem;
+        font-weight: 800;
+        letter-spacing: .12em;
+    }
+
+    .diligence-lesson-main .diligence-custom-media-stage {
+        display: flex;
+        min-height: 26rem;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background: #e7f0f1;
+    }
+
+
+    .diligence-lesson-main .diligence-custom-pdf-frame {
+        display: block;
+        width: 100%;
+        height: 600px;
+        border: 0;
+        border-radius: .85rem;
+        background: #fff;
+        box-shadow: 0 8px 24px rgba(18, 56, 79, .14);
+    }
+
+    .diligence-lesson-main .diligence-custom-video-frame,
+    .diligence-lesson-main .diligence-custom-audio-frame {
+        display: flex;
+        width: 100%;
+        min-height: 20rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: .85rem;
+        background: #12384f;
+        overflow: hidden;
+    }
+
+    .diligence-lesson-main .diligence-custom-video-frame iframe,
+    .diligence-lesson-main .diligence-custom-video-frame video {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 20rem;
+        border: 0;
+    }
+
+    .diligence-lesson-main .diligence-custom-audio-frame {
+        min-height: 12rem;
+        padding: 2rem;
+        background: linear-gradient(145deg, #e8f5f5, #fbf7ed);
+    }
+
+    .diligence-lesson-main .diligence-custom-audio-frame audio {
+        width: 100%;
+        max-width: 46rem;
+    }
+
+    .diligence-lesson-main .diligence-custom-article-frame {
+        width: 100%;
+        padding: 2rem;
+        border-radius: .85rem;
+        background: #fff;
+        color: #405968;
+    }
+
+    .diligence-lesson-main .diligence-custom-empty-frame {
+        display: flex;
+        min-height: 12rem;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: .7rem;
+        color: #71818a;
+    }
+
+    /* Apply the new preview treatment to Odoo's native media wrapper as a
+       fallback for document/video/audio branches rendered with t-else. */
+    .diligence-lesson-main .o_wslides_lesson_content > .o_wslides_lesson_content_type {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 0 !important;
+        height: auto !important;
+        padding: .75rem !important;
+        overflow: hidden !important;
+        border: 1px solid #d9e5e6 !important;
+        border-radius: 1.15rem !important;
+        background: #edf5f5 !important;
+        box-shadow: 0 16px 32px rgba(18, 56, 79, .08) !important;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content > .o_wslides_lesson_content_type > .ratio {
+        width: 100% !important;
+        height: 560px !important;
+        max-height: 70vh;
+        padding: .5rem;
+        border-radius: .85rem;
+        background: #fff;
+        box-shadow: 0 8px 22px rgba(18, 56, 79, .12);
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content > .o_wslides_lesson_content_type > .ratio > iframe,
+    .diligence-lesson-main .o_wslides_lesson_content > .o_wslides_lesson_content_type > iframe,
+    .diligence-lesson-main .o_wslides_lesson_content > .o_wslides_lesson_content_type > video,
+    .diligence-lesson-main .o_wslides_lesson_content > .o_wslides_lesson_content_type > audio {
+        width: 100% !important;
+        max-width: 100% !important;
+        border: 0 !important;
+        border-radius: .7rem !important;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content > .o_wslides_lesson_content_type > audio {
+        max-width: 46rem !important;
+        padding: 1rem;
+        background: #fff;
+    }
+
+    @media (max-width: 767.98px) {
+        .diligence-lesson-main .diligence-media-preview {
+            min-height: 15rem;
+            padding: .5rem;
+            border-radius: .8rem;
+        }
+
+        .diligence-lesson-main .diligence-media-document > iframe {
+            min-height: 420px;
+        }
+
+        .diligence-lesson-main .o_wslides_lesson_content > .o_wslides_lesson_content_type > .ratio {
+            height: 420px !important;
+        }
+
+        .diligence-lesson-main .diligence-media-video > iframe,
+        .diligence-lesson-main .diligence-media-video > video {
+            min-height: 12rem;
+        }
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content_type iframe,
+    .diligence-lesson-main .o_wslides_lesson_content_type video,
+    .diligence-lesson-main .o_wslides_lesson_content_type audio {
+        max-width: 100%;
+        border-radius: .75rem;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside_list {
+        position: sticky;
+        top: 1rem;
+        overflow: hidden;
+        border: 1px solid rgba(18, 56, 79, .10);
+        border-radius: 1rem;
+        box-shadow: 0 8px 24px rgba(18, 56, 79, .05);
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 {
+        order: 2;
+        margin-top: 1.25rem !important;
+        margin-bottom: .75rem !important;
+        align-items: center !important;
+    }
+
+    .diligence-lesson-main .diligence-lesson-module-label {
+        order: 3;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content > .oe_structure,
+    .diligence-lesson-main .o_wslides_lesson_content > .o_wslides_lesson_content_type ~ * {
+        order: 4;
+    }
+
+    .diligence-lesson-main .diligence-mark-completed,
+    .diligence-lesson-main .o_wslides_nav_button {
+        min-height: 2.75rem;
+        padding: .65rem 1rem;
+        border-radius: .55rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        min-width: 0;
+        max-width: 100%;
+        justify-content: flex-end;
+        gap: .5rem;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 .btn-group > * {
+        margin-right: 0 !important;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3,
+    .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 > *,
+    .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 .btn-group {
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+
+    @media (min-width: 992px) {
+        .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 {
+            display: block !important;
+            overflow: hidden;
+        }
+
+        .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 > .col-md.order-md-1,
+        .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 > .col-md.order-md-2 {
+            display: flex !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 0;
+            flex: 0 0 100% !important;
+            white-space: normal;
+        }
+
+        .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 > .col-md.order-md-2 {
+            justify-content: flex-start !important;
+            margin-top: .75rem;
+            overflow: hidden;
+        }
+
+        .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 .btn-group {
+            flex-wrap: wrap;
+            flex: 0 1 auto !important;
+        }
+    }
+
+    body:has(.diligence-lesson-main) {
+        overflow-x: hidden;
+    }
+
+    .diligence-lesson-main .diligence-mark-completed {
+        background: #12384f;
+        border-color: #12384f !important;
+    }
+
+    .diligence-lesson-main .diligence-mark-completed:hover {
+        background: #0d2b3d;
+        border-color: #0d2b3d !important;
+    }
+
+    .diligence-lesson-main .diligence-mark-completed.disabled {
+        opacity: 1;
+        cursor: default;
+        background: #198754;
+        border-color: #198754 !important;
+    }
+
+    .diligence-lesson-main .diligence-lesson-explanation {
+        order: 4;
+        margin: 1rem 0 1.5rem;
+        padding: 1.5rem 1.75rem;
+        border: 1px solid #dfe7e9;
+        border-radius: .9rem;
+        background: #fff;
+        color: #405968;
+        box-shadow: 0 8px 22px rgba(18, 56, 79, .05);
+    }
+
+    .diligence-lesson-main .diligence-lesson-explanation h2 {
+        margin: .35rem 0 .65rem;
+        color: #12384f;
+        font-size: 1.35rem;
+    }
+
+    .diligence-lesson-main .diligence-lesson-explanation p:last-child {
+        margin-bottom: 0;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside {
+        padding-right: 1.25rem;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside_list_links {
+        padding-bottom: .5rem;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside_list_link {
+        min-height: 2.7rem;
+        padding: .55rem .85rem !important;
+        color: #405968;
+        line-height: 1.3;
+        border-bottom: 1px solid #e6ecee;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside_list_links > li:last-child > .o_wslides_lesson_aside_list_link,
+    .diligence-lesson-main .o_wslides_lesson_aside_list_links > li:last-child .o_wslides_lesson_aside_list_link:last-child {
+        border-bottom: 0;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside_list_links > li > ul {
+        border-top: 1px solid #eef2f3;
+    }
+
+    /* The native sidebar uses a plain list for sections, so keep the
+       separators on the actual section/list nodes rather than relying on
+       Bootstrap list-group borders. */
+    .diligence-lesson-main .o_wslides_lesson_aside_list > ul > li.o_wslides_fs_sidebar_section {
+        border-bottom: 1px solid #d7e0e3;
+        padding-bottom: .35rem;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside_list > ul > li.o_wslides_fs_sidebar_section:last-child {
+        border-bottom: 0;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside_list > ul > li.o_wslides_fs_sidebar_section > .o_wslides_lesson_aside_list_link {
+        border-bottom: 1px solid #e3eaec !important;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside_list_links > li {
+        border-bottom: 1px solid #edf1f2;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside_list_links > li:last-child {
+        border-bottom: 0;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside_list > ul > li.o_wslides_fs_sidebar_section > ul > li {
+        padding: 0 !important;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside_list > ul > li.o_wslides_fs_sidebar_section > ul > li > .o_wslides_lesson_aside_list_link {
+        display: flex;
+        align-items: center;
+        gap: .65rem;
+        margin: .5rem .65rem;
+        padding: .7rem .75rem !important;
+        border: 1px solid #dfe7e9;
+        border-radius: .85rem;
+        background: #fff;
+        transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside_list > ul > li.o_wslides_fs_sidebar_section > ul > li > .o_wslides_lesson_aside_list_link:hover {
+        border-color: #c6a76b;
+        box-shadow: 0 5px 14px rgba(18, 56, 79, .08);
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside_list > ul > li.o_wslides_fs_sidebar_section > ul > li > .o_wslides_lesson_aside_list_link.active {
+        border-color: #c6a76b;
+        border-left: 1px solid #c6a76b;
+        background: #fbf8f0;
+        box-shadow: 0 5px 14px rgba(18, 56, 79, .07);
+    }
+
+    .diligence-lesson-main .diligence-sidebar-lesson-number {
+        display: inline-flex;
+        flex: 0 0 2.35rem;
+        width: 2.35rem;
+        height: 2.35rem;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #dfe7e9;
+        border-radius: 50%;
+        background: #f6f8f8;
+        color: #12384f;
+        font-size: .78rem;
+        font-weight: 700;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside_list > ul > li.o_wslides_fs_sidebar_section > ul > li > .o_wslides_lesson_aside_list_link > a {
+        display: grid !important;
+        min-width: 0;
+        width: 100%;
+        flex: 1 1 auto;
+        grid-template-columns: 1.35rem minmax(0, 1fr) auto;
+        align-items: start;
+        column-gap: .45rem;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside_list > ul > li.o_wslides_fs_sidebar_section > ul > li > .o_wslides_lesson_aside_list_link > a > i {
+        grid-column: 1;
+        margin-top: .1rem;
+        text-align: center;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside_list > ul > li.o_wslides_fs_sidebar_section > ul > li > .o_wslides_lesson_aside_list_link .o_wslides_lesson_link_name {
+        grid-column: 2;
+        overflow: hidden;
+        min-width: 0;
+        color: #12384f;
+        font-size: .92rem;
+        line-height: 1.3;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside_list > ul > li.o_wslides_fs_sidebar_section > ul > li > .o_wslides_lesson_aside_list_link .diligence-sidebar-lesson-duration {
+        grid-column: 3;
+        min-width: 3.65rem;
+        margin-top: .05rem;
+        text-align: right;
+        white-space: nowrap;
+        display: block;
+        color: #71818a;
+        font-size: .76rem;
+        line-height: 1.2;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_aside_list_link.active {
+        border-left: 3px solid #c6a76b;
+        background: #f8f4ea;
+        color: #12384f;
+        font-weight: 700;
+    }
+
+    .diligence-lesson-type-badge {
+        display: inline-flex;
+        align-items: center;
+        align-self: center;
+        margin-left: .75rem;
+        padding: .35rem .65rem;
+        border-radius: 999px;
+        background: #e7f5f7;
+        color: #116b83;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .02em;
+        white-space: nowrap;
+    }
+
+    .diligence-quiz-type-picker {
+        max-width: 34rem;
+    }
+
+    .diligence-quiz-type-picker .input-group-text {
+        color: #12384f;
+        background: #f1f7f7;
+        font-weight: 600;
+    }
+
+    .diligence-quiz-type-help {
+        max-width: 42rem;
+        color: #667886;
+    }
+
+    .diligence-lesson-module-label {
+        margin-top: 1.5rem;
+        margin-bottom: .35rem;
+    }
+
+    .diligence-lesson-module-label .diligence-eyebrow {
+        margin-bottom: 0;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content h1 {
+        color: #12384f;
+        font-size: clamp(1.5rem, 3vw, 2.15rem);
+        font-weight: 750;
+        letter-spacing: -.025em;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content .o_wslides_nav_button,
+    .diligence-lesson-main .o_wslides_lesson_content .o_wslides_done_button {
+        border-radius: .55rem;
+    }
+
+    .diligence-fullscreen-viewer {
+        position: fixed;
+        z-index: 1040;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        min-height: 100vh;
+        background: #fbfaf7;
+    }
+
+    &:has(.diligence-fullscreen-viewer) {
+        overflow: hidden;
+    }
+
+    &:has(.diligence-fullscreen-viewer) #top {
+        display: none !important;
+    }
+
+    /* Odoo adds text-white/bg-dark classes to the player at runtime.  Keep
+       the Diligence player skin authoritative so the fullscreen layout is
+       stable for PDF, audio, video and quiz lessons. */
+    .diligence-fullscreen-viewer .o_wslides_slide_fs_header,
+    .diligence-fullscreen-viewer .o_wslides_slide_fs_header.bg-dark {
+        flex: 0 0 3.5rem;
+        min-height: 3.5rem;
+        background: #fff !important;
+        color: #12384f !important;
+        border-bottom: 1px solid rgba(18, 56, 79, .12);
+        box-shadow: 0 4px 18px rgba(18, 56, 79, .16);
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_slide_fs_header a,
+    .diligence-fullscreen-viewer .o_wslides_slide_fs_header button,
+    .diligence-fullscreen-viewer .o_wslides_slide_fs_header .text-white,
+    .diligence-fullscreen-viewer .o_wslides_slide_fs_header i {
+        color: #12384f !important;
+    }
+
+    .diligence-fullscreen-viewer .diligence-fullscreen-mark-completed {
+        color: #12384f !important;
+        border-left: 1px solid rgba(18, 56, 79, .12);
+        border-right: 1px solid rgba(18, 56, 79, .12);
+        text-decoration: none;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+    .diligence-fullscreen-viewer .diligence-fullscreen-mark-completed:hover {
+        background: #f8f4ea;
+        color: #116b83 !important;
+    }
+
+    .diligence-fullscreen-viewer .diligence-fullscreen-mark-completed.is-completed {
+        color: #208b62 !important;
+        cursor: default;
+    }
+
+    .diligence-fullscreen-viewer .diligence-fullscreen-mark-completed.is-loading {
+        opacity: .65;
+        pointer-events: none;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_slide_fs_header a:hover,
+    .diligence-fullscreen-viewer .o_wslides_slide_fs_header button:hover {
+        background: #f8f4ea;
+    }
+
+    .diligence-fullscreen-viewer .diligence-fullscreen-brand img {
+        display: block;
+        width: auto;
+        height: 2.35rem;
+        object-fit: contain;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar,
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar.o_wslides_fs_sidebar_hidden {
+        display: flex !important;
+        width: 25rem;
+        min-width: 20rem;
+        height: calc(100vh - 3.5rem);
+        border-right: 1px solid rgba(18, 56, 79, .14);
+        background: #fff;
+        color: #12384f !important;
+    }
+
+    /* The native fullscreen toggle collapses the sidebar by setting both
+       width: 0 and a translated content panel.  Fullscreen Diligence uses
+       the reference-style persistent course outline instead. */
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar.o_wslides_fs_sidebar_hidden {
+        width: 25rem !important;
+        min-width: 25rem !important;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar.o_wslides_fs_sidebar_hidden .o_wslides_fs_sidebar_content {
+        transform: none !important;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar .text-white,
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar .text-muted,
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar a {
+        color: #536875 !important;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar .text-white h1,
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar .text-white h2,
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar .text-white h3,
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar .text-white strong {
+        color: #12384f !important;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content {
+        padding: 1.35rem 1rem !important;
+        background: #fff;
+        overflow-y: auto;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar_header {
+        padding: .8rem .25rem 1rem;
+        border-bottom: 1px solid rgba(18, 56, 79, .10);
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar_header h1,
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section {
+        color: #12384f !important;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar_header h1 {
+        margin-bottom: .9rem;
+        font-size: 1.25rem;
+        font-weight: 750;
+        letter-spacing: -.02em;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar_header .progress {
+        height: .45rem !important;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #e8edef !important;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar_header .progress-bar {
+        border-radius: 999px;
+        background: #116b83 !important;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar_list_item {
+        min-height: 3.55rem;
+        margin: .35rem 0;
+        padding: .7rem .75rem !important;
+        border: 1px solid #e1e8e9;
+        border-radius: .8rem;
+        color: #536875;
+        background: #fff;
+        transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar_list_item.active {
+        border-color: #c8a96b;
+        background: #fbf7ed;
+        color: #12384f;
+        font-weight: 700;
+        box-shadow: 0 5px 14px rgba(18, 56, 79, .08);
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar_list_item:hover {
+        border-color: #8eb7bd;
+        background: #f5faf9;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar_list_item .o_wslides_sidebar_done_button {
+        flex: 0 0 2.2rem;
+        width: 2.2rem;
+        height: 2.2rem;
+        margin-right: .55rem;
+        border-radius: 50%;
+        background: #f0f5f5;
+        text-align: center;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar_list_item .o_wslides_button_complete {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        border: 0;
+        color: #116b83;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar_list_item .o_wslides_slide_completed {
+        color: #208b62 !important;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_slide_name {
+        font-size: .98rem;
+        line-height: 1.25;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_content {
+        flex: 1 1 auto;
+        min-width: 0;
+        min-height: 0;
+        padding: 2.2rem clamp(1rem, 3vw, 3rem);
+        background: #fbfaf7;
+        overflow-y: auto;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_container {
+        min-height: 0;
+        height: calc(100vh - 3.5rem);
+        display: flex !important;
+        flex: 1 1 auto;
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_quiz_container,
+    .diligence-fullscreen-viewer .o_wslides_lesson_content_type {
+        max-width: 1080px;
+        width: 100%;
+        margin: auto;
+        min-height: 0;
+        border-radius: .85rem;
+        background: #fff;
+        box-shadow: 0 12px 30px rgba(18, 56, 79, .08);
+    }
+
+    .diligence-fullscreen-viewer .o_wslides_fs_content > * {
+        max-width: 100%;
+    }
+
+    .diligence-fullscreen-viewer .diligence-custom-media-preview,
+    .diligence-fullscreen-viewer .diligence-custom-media-stage,
+    .diligence-fullscreen-viewer .o_wslides_lesson_content_type {
+        overflow: hidden;
+        border-radius: .9rem;
+    }
+
+    .diligence-fullscreen-viewer .diligence-custom-media-stage {
+        background: #eef5f5;
+    }
+
+    @media (max-width: 767.98px) {
+        .diligence-fullscreen-viewer .o_wslides_fs_sidebar {
+            width: 22rem;
+            max-width: 88vw;
+            min-width: 0;
+        }
+
+        .diligence-fullscreen-viewer .diligence-fullscreen-brand {
+            display: none !important;
+        }
+
+        .diligence-fullscreen-viewer .o_wslides_fs_content {
+            padding: .85rem;
+        }
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content_type + .oe_structure,
+    .diligence-lesson-main .o_wslides_lesson_content_type ~ p,
+    .diligence-lesson-main .o_wslides_lesson_content_type ~ h2,
+    .diligence-lesson-main .o_wslides_lesson_content_type ~ h3 {
+        max-width: 780px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .diligence-course-main .o_wslides_course_header {
+        overflow: hidden;
+        border-bottom: 0;
+        background: #f7f4ed !important;
+        color: #12384f;
+    }
+
+    .diligence-course-main .o_wslides_course_header .o_wslides_course_nav {
+        border-bottom: 1px solid rgba(18, 56, 79, .10);
+        background: transparent;
+    }
+
+    .diligence-course-main .o_wslides_course_header .container.mt-5 {
+        padding-top: 2rem;
+        padding-bottom: 2.5rem;
+    }
+
+    .diligence-course-main .o_wslides_course_header h1 {
+        max-width: 760px;
+        margin-bottom: 1rem;
+        color: #12384f;
+        font-size: clamp(2.2rem, 5vw, 4.6rem);
+        font-weight: 750;
+        letter-spacing: -.045em;
+        line-height: .98;
+    }
+
+    .diligence-course-main .o_wslides_course_header .mb-0.mb-xl-3 {
+        max-width: 680px;
+        color: #536875;
+        font-size: 1.12rem;
+        line-height: 1.7;
+    }
+
+    .diligence-course-main .o_wslides_course_pict {
+        width: 100%;
+        max-width: 360px;
+        max-height: 330px;
+        object-fit: cover;
+        border: 10px solid #fff;
+        border-radius: 1.25rem;
+        box-shadow: 0 18px 45px rgba(18, 56, 79, .15);
+    }
+
+.diligence-course-main {
+        background: #fbfaf7;
+    }
+
+    .diligence-course-intro {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .diligence-course-intro-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        padding: 1.5rem 1.75rem;
+        border: 1px solid rgba(18, 56, 79, .10);
+        border-radius: 1rem;
+        background: #fff;
+        box-shadow: 0 10px 30px rgba(18, 56, 79, .06);
+    }
+
+    .diligence-course-intro-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .diligence-eyebrow {
+        display: block;
+        margin-bottom: .45rem;
+        color: #116b83;
+        font-size: .72rem;
+        font-weight: 800;
+        letter-spacing: .12em;
+    }
+
+    .diligence-course-intro h2,
+    .diligence-material-heading h3 {
+        color: #12384f;
+        font-weight: 700;
+    }
+
+    .diligence-course-intro-stat {
+        display: flex;
+        flex-direction: column;
+        min-width: 8rem;
+        padding-left: 1.5rem;
+        border-left: 1px solid rgba(18, 56, 79, .12);
+        color: #12384f;
+        text-align: center;
+    }
+
+    .diligence-course-intro-stat strong {
+        font-size: 1.8rem;
+        line-height: 1;
+    }
+
+    .diligence-course-intro-stat span {
+        margin-top: .35rem;
+        color: #667886;
+        font-size: .78rem;
+    }
+
+    .diligence-start-button {
+        padding: .75rem 1.15rem;
+        border: 0;
+        border-radius: .7rem;
+        background: #116b83;
+        color: #ffffff !important;
+        box-shadow: 0 8px 18px rgba(17, 107, 131, .18);
+        white-space: nowrap;
+    }
+
+    .diligence-start-button:hover,
+    .diligence-start-button:focus {
+        background: #0d5367;
+        color: #ffffff !important;
+    }
+
+    .diligence-start-button i,
+    .diligence-start-button span {
+        color: #ffffff !important;
+    }
+
+    .diligence-material-heading {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 1.5rem;
+        margin: .75rem 0 1.25rem;
+    }
+
+    .diligence-course-main .o_wslides_course_main > .container {
+        padding-top: 1.5rem;
+    }
+
+    .diligence-course-main .o_wslides_course_main .o_wslides_home_aside_loggedin,
+    .diligence-course-main .o_wslides_course_main .o_wslides_course_sidebar {
+        border-radius: 1rem;
+    }
+
+    .diligence-material-legend {
+        flex-wrap: wrap;
+        justify-content: end;
+        gap: .5rem;
+        color: #667886;
+        font-size: .76rem;
+    }
+
+    .diligence-material-legend span {
+        padding: .35rem .55rem;
+        border: 1px solid rgba(18, 56, 79, .10);
+        border-radius: 999px;
+        background: #fff;
+    }
+
+    .diligence-material-legend i {
+        margin-right: .25rem;
+        color: #116b83;
+    }
+
+    .o_wslides_slides_list_category {
+        margin-bottom: 1.25rem !important;
+        overflow: hidden;
+        border: 1px solid rgba(18, 56, 79, .10);
+        border-radius: 1rem;
+        background: #fff;
+        box-shadow: 0 8px 24px rgba(18, 56, 79, .045);
+    }
+
+    .o_wslides_slides_list_category_header {
+        min-height: 3.25rem;
+        background: #f1f7f7 !important;
+    }
+
+    .diligence-material-row {
+        min-height: 4.25rem;
+        padding-top: .65rem !important;
+        padding-bottom: .65rem !important;
+        border-top: 1px solid rgba(18, 56, 79, .08) !important;
+        transition: background-color .18s ease, padding-left .18s ease;
+    }
+
+    .diligence-material-row:hover {
+        background: #f8fbfb;
+    }
+
+    .diligence-material-row > .diligence-material-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.25rem;
+        height: 2.25rem;
+        margin: 0 .7rem;
+        border-radius: .7rem;
+        color: #116b83;
+        background: #eaf5f5;
+        font-size: 1rem;
+    }
+
+    .diligence-material-icon-document { color: #a15c35 !important; background: #fff2e9 !important; }
+    .diligence-material-icon-audio { color: #755ca8 !important; background: #f1edfb !important; }
+    .diligence-material-icon-video { color: #116b83 !important; background: #e7f5f7 !important; }
+    .diligence-material-icon-quiz { color: #b7832e !important; background: #fff7e3 !important; }
+
+    .diligence-material-row .o_wslides_js_slides_list_slide_link {
+        color: #12384f;
+        font-weight: 600;
+    }
+
+    .diligence-material-type {
+        align-items: center;
+        margin-right: 1rem;
+        color: #71818a;
+        font-size: .75rem;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 767.98px) {
+        .diligence-lesson-main .o_wslides_lesson_content {
+            padding: 1rem;
+        }
+
+        .diligence-lesson-main .o_wslides_lesson_content_type {
+            min-height: 240px;
+        }
+
+        .diligence-lesson-type-badge {
+            margin-left: 0;
+            margin-top: .5rem;
+        }
+
+        .diligence-course-intro-inner,
+        .diligence-material-heading {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .diligence-course-intro-actions {
+            width: 100%;
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .diligence-start-button {
+            width: 100%;
+            text-align: center;
+        }
+
+        .diligence-course-intro-stat {
+            width: 100%;
+            padding: .75rem 0 0;
+            border-top: 1px solid rgba(18, 56, 79, .12);
+            border-left: 0;
+        }
+
+        .diligence-material-row {
+            min-height: 3.75rem;
+        }
+    }
+
+    /* Lesson controls: use a dedicated one-column layout instead of Bootstrap's
+       mixed col/order/flex rules, which can force the toolbar wider than the
+       lesson viewport. */
+    .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        gap: .75rem !important;
+        overflow: hidden !important;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 > .col-12 {
+        display: flex !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        flex: none !important;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 > .order-md-2 {
+        justify-content: flex-start !important;
+        align-items: center !important;
+        flex-wrap: wrap !important;
+        gap: .5rem !important;
+        white-space: normal !important;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 .btn-group {
+        display: flex !important;
+        flex: 0 1 auto !important;
+        flex-wrap: wrap !important;
+        gap: .5rem !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 .btn-group > *,
+    .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 > .order-md-2 > a {
+        flex: 0 1 auto !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+        white-space: nowrap !important;
+    }
+
+    /* The native tab shell remains in the DOM for the forum, but it must not
+       leave a large empty block between the explanation and quiz tools. */
+    .diligence-lesson-main .o_wslides_lesson_content > .mb-5.position-relative {
+        margin-top: .25rem !important;
+        margin-bottom: .5rem !important;
+        min-height: 0 !important;
+    }
+
+    .diligence-lesson-main .o_wslides_js_quiz_container,
+    .diligence-lesson-main .o_wslides_js_lesson_quiz_new_question {
+        margin-top: .5rem !important;
+        min-height: 0 !important;
+    }
+}
+
+/* Give the course editor list enough breathing room between the drag handle,
+   lesson icon, and lesson title. */
+.o_wslides_slides_list_slide > .o_wslides_slides_list_drag {
+    margin-right: .55rem !important;
+}
+
+.o_wslides_slides_list_slide > i.fa {
+    flex: 0 0 1.55rem;
+    width: 1.55rem;
+    margin-right: .75rem !important;
+    text-align: center;
+}
+
+.o_wslides_slides_list_slide > div.text-truncate {
+    min-width: 0;
+    padding-left: .15rem;
+}
+
+/* Fullscreen player palette: keep the reference layout, but retain the
+   original dark Odoo learning-player character.  This block is intentionally
+   outside the page-scope wrapper so it also applies to the standalone
+   fullscreen body used by website_slides. */
+body .diligence-fullscreen-viewer {
+    background: #10161d !important;
+    color: #e6edf3;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header {
+    background: #1b232d !important;
+    color: #e6edf3 !important;
+    border-bottom-color: #344252 !important;
+    box-shadow: 0 3px 18px rgba(0, 0, 0, .35) !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header a,
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header button,
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header .text-white,
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header i {
+    color: #e6edf3 !important;
+}
+
+/* Keep fullscreen navigation controls on the dark header in every state. */
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header > div > a,
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header > div > button,
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header .btn-link,
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header a.o_wslides_fs_share,
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header a.o_wslides_fs_exit_fullscreen {
+    background-color: #1b232d !important;
+    border-color: #344252 !important;
+    color: #e6edf3 !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header > div > a:hover,
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header > div > a:focus,
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header > div > button:hover,
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header > div > button:focus,
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header .btn-link:active {
+    background-color: #263341 !important;
+    color: #c8a96b !important;
+    outline: none !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar.o_wslides_fs_sidebar_hidden,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content {
+    background: #151c24 !important;
+    color: #e6edf3 !important;
+    border-color: #344252 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_header {
+    border-bottom-color: #344252 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_header h1,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_header a,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar .text-white,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar .text-muted,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar a {
+    color: #e6edf3 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section {
+    background: #242e39 !important;
+    border-bottom: 1px solid #3a4857 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a {
+    color: #d7e1e8 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_list_item {
+    background: #1a232d !important;
+    color: #c8d3dc !important;
+    border-color: #3a4857 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_list_item.active {
+    background: #263b4b !important;
+    border-color: #c8a96b !important;
+    color: #fff !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_slide_name,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_list_item i {
+    color: inherit !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_content {
+    background: #10161d !important;
+}
+
+body .diligence-fullscreen-viewer .diligence-custom-media-stage,
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container {
+    background: #1b232d !important;
+    box-shadow: 0 14px 35px rgba(0, 0, 0, .35) !important;
+}
+
+/* Keep the lesson identity at the top of the fullscreen content, above the
+   description and questions, instead of leaving the title only in the sidebar. */
+body .diligence-fullscreen-viewer .diligence-fs-lesson-title {
+    flex: 0 0 auto;
+    min-height: 76px;
+    display: flex;
+    align-items: center !important;
+    justify-content: flex-start;
+    color: #f4f8fb;
+    background: #111b26;
+    border-bottom: 1px solid #2d4051;
+}
+
+body .diligence-fullscreen-viewer .diligence-fs-lesson-title-icon {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #0d607a;
+    background: #eaf5f7;
+    border-radius: 12px;
+    font-size: 1.25rem;
+    align-self: center;
+}
+
+body .diligence-fullscreen-viewer .diligence-fs-lesson-kicker {
+    color: #c8a96b;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    line-height: 1.2;
+    margin: 0;
+}
+
+body .diligence-fullscreen-viewer .diligence-fs-lesson-name {
+    color: #f4f8fb !important;
+    font-size: clamp(1.15rem, 2vw, 1.7rem);
+    font-weight: 700;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+    margin: 0;
+}
+
+body .diligence-fullscreen-viewer .diligence-fs-lesson-title > .min-w-0 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-self: center;
+    min-width: 0;
+}
+
+/* Make the attached-quiz shortcut easy to identify below its lesson. */
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_list_item {
+    margin: .35rem 0 .5rem !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_slide_quiz,
+body .diligence-lesson-main .o_wslides_lesson_aside_list_link:has(.fa-flag) {
+    display: flex !important;
+    align-items: center;
+    gap: .5rem;
+    padding: .65rem .8rem !important;
+    color: #e9f1f5 !important;
+    background: #223547 !important;
+    border: 1px solid #3b5265;
+    border-radius: .65rem;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_slide_quiz:hover,
+body .diligence-lesson-main .o_wslides_lesson_aside_list_link:has(.fa-flag):hover {
+    color: #ffffff !important;
+    background: #2d485d !important;
+}
+
+/* Quiz questions must remain readable on the dark fullscreen stage. Odoo's
+   native quiz rules set the question text to a dark color, which disappears
+   against the Diligence background. */
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container,
+body .diligence-fullscreen-viewer .o_wslides_js_lesson_quiz,
+body .diligence-fullscreen-viewer .o_wslides_js_lesson_quiz_question,
+body .diligence-fullscreen-viewer .o_diligence_multitype_quiz {
+    color: #e6edf3 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .o_wslides_js_lesson_quiz_question p,
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .o_wslides_js_lesson_quiz_question h1,
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .o_wslides_js_lesson_quiz_question h2,
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .o_wslides_js_lesson_quiz_question h3,
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .o_wslides_js_lesson_quiz_question strong,
+body .diligence-fullscreen-viewer .o_diligence_multitype_quiz p,
+body .diligence-fullscreen-viewer .o_diligence_multitype_quiz h1,
+body .diligence-fullscreen-viewer .o_diligence_multitype_quiz h2,
+body .diligence-fullscreen-viewer .o_diligence_multitype_quiz h3 {
+    color: #e6edf3 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_quiz_question_sequence,
+body .diligence-fullscreen-viewer .o_wslides_js_lesson_quiz_question > small,
+body .diligence-fullscreen-viewer .o_wslides_js_lesson_quiz_question > small.text-muted,
+body .diligence-fullscreen-viewer .o_wslides_js_lesson_quiz_question .h4 > small,
+body .diligence-fullscreen-viewer .o_wslides_js_lesson_quiz_question .h4 > small.text-muted,
+body .diligence-fullscreen-viewer .o_wslides_js_lesson_quiz_question .h4 > small .o_wslides_quiz_question_sequence {
+    display: inline-block !important;
+    position: relative;
+    z-index: 2;
+    color: #c8a96b !important;
+    font-size: 1em !important;
+    font-weight: 700 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .h4 > small {
+    color: #c8a96b !important;
+    font-weight: 700 !important;
+    opacity: 1 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .list-group-item,
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .list-group-item label,
+body .diligence-fullscreen-viewer .o_diligence_multitype_quiz .list-group-item,
+body .diligence-fullscreen-viewer .o_diligence_multitype_quiz .list-group-item label {
+    color: #e6edf3 !important;
+    background: #263341 !important;
+    border-color: #405264 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .list-group-item:hover,
+body .diligence-fullscreen-viewer .o_diligence_multitype_quiz .list-group-item:hover {
+    color: #ffffff !important;
+    background: #304354 !important;
+    border-color: #c8a96b !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container input[type="radio"],
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container input[type="checkbox"],
+body .diligence-fullscreen-viewer .o_diligence_multitype_quiz input[type="radio"],
+body .diligence-fullscreen-viewer .o_diligence_multitype_quiz input[type="checkbox"] {
+    accent-color: #c8a96b;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .alert,
+body .diligence-fullscreen-viewer .o_diligence_multitype_quiz .alert,
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .o_wslides_js_quiz_result,
+body .diligence-fullscreen-viewer .o_diligence_multitype_quiz .o_diligence_quiz_feedback {
+    color: #e6edf3 !important;
+    background: #263341 !important;
+    border: 1px solid #405264 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .btn,
+body .diligence-fullscreen-viewer .o_diligence_multitype_quiz .btn {
+    color: #10202d !important;
+    background: #c8a96b !important;
+    border-color: #c8a96b !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .btn:hover,
+body .diligence-fullscreen-viewer .o_diligence_multitype_quiz .btn:hover {
+    color: #10202d !important;
+    background: #e0c88e !important;
+    border-color: #e0c88e !important;
+}
+
+/* Odoo adds `bg-100` to the completed-quiz validation row. It becomes a
+   bright white strip inside the dark fullscreen player, so keep this result
+   and retry surface consistent with the rest of the lesson stage. */
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .o_wslides_js_lesson_quiz_validation,
+body .diligence-fullscreen-viewer .o_diligence_multitype_quiz .o_wslides_js_lesson_quiz_validation,
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .diligence-quiz-retry-validation {
+    color: #e6edf3 !important;
+    background: transparent !important;
+    border-color: transparent !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .row:has(> .o_wslides_js_lesson_quiz_validation),
+body .diligence-fullscreen-viewer .o_diligence_multitype_quiz .row:has(> .o_wslides_js_lesson_quiz_validation) {
+    background: transparent !important;
+}
+
+/* Modern dark course outline and focused lesson stage. */
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar.o_wslides_fs_sidebar_hidden {
+    width: 26rem !important;
+    min-width: 26rem !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content {
+    padding: 1.25rem 1rem !important;
+    gap: .75rem;
+    min-height: 0 !important;
+    overflow: hidden !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_header {
+    padding: .25rem .4rem 1.1rem !important;
+    margin-bottom: 0 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_header h1 {
+    font-size: 1.35rem !important;
+    line-height: 1.2;
+    letter-spacing: -.02em;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_header .progress {
+    height: .45rem !important;
+    background: #303d4a !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_header .progress-bar {
+    background: #c8a96b !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar > .o_wslides_fs_sidebar_content > ul {
+    display: flex;
+    flex-direction: column;
+    gap: .65rem;
+    flex: 1 1 auto;
+    min-height: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: scroll !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 1px solid #344252 !important;
+    border-radius: .8rem;
+    background: #1b2530 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a {
+    min-height: 3rem;
+    align-items: center;
+    padding: .8rem 1rem !important;
+    pointer-events: none;
+    background: #263341 !important;
+    color: #f0f4f7 !important;
+    font-size: .82rem;
+    letter-spacing: .04em;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a .fa-caret-left,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a .fa-caret-down {
+    display: none !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section_slides {
+    display: block !important;
+    visibility: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+    padding: .45rem .55rem .55rem !important;
+    background: #18212b !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section_slides.collapsing {
+    display: block !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    transition: none !important;
+}
+
+/* Keep the native lesson list visible; the fullscreen runtime supplies its
+   lesson rows through the category template. */
+body .diligence-fullscreen-viewer .diligence-static-fullscreen-lessons {
+    display: block !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: .45rem .55rem .55rem !important;
+    overflow: visible !important;
+    background: #18212b !important;
+}
+
+body .diligence-fullscreen-viewer .diligence-static-fullscreen-lesson {
+    display: block !important;
+    margin: .3rem 0 !important;
+}
+
+body .diligence-fullscreen-viewer .diligence-static-fullscreen-lesson > a {
+    display: grid !important;
+    grid-template-columns: 2rem 1.4rem minmax(0, 1fr);
+    align-items: center;
+    gap: .55rem;
+    min-height: 3.35rem;
+    padding: .55rem .65rem !important;
+    border: 1px solid #3a4857;
+    border-radius: .65rem;
+    background: #1a232d !important;
+    color: #d7e1e8 !important;
+    text-decoration: none !important;
+}
+
+body .diligence-fullscreen-viewer .diligence-static-fullscreen-lesson > a:hover,
+body .diligence-fullscreen-viewer .diligence-static-fullscreen-lesson.active > a {
+    border-color: #c8a96b !important;
+    background: #263b4b !important;
+    color: #fff !important;
+}
+
+body .diligence-fullscreen-viewer .diligence-static-lesson-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid #536577;
+    border-radius: 50%;
+    color: #c8a96b;
+    font-size: .72rem;
+    font-weight: 700;
+}
+
+body .diligence-fullscreen-viewer .diligence-static-lesson-icon {
+    color: #9fb4c2;
+    text-align: center;
+}
+
+body .diligence-fullscreen-viewer .diligence-static-lesson-copy {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: .15rem;
+}
+
+body .diligence-fullscreen-viewer .diligence-static-lesson-copy strong {
+    overflow: hidden;
+    color: inherit !important;
+    font-size: .86rem;
+    font-weight: 600;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body .diligence-fullscreen-viewer .diligence-static-lesson-copy small {
+    color: #8fa2af;
+    font-size: .72rem;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_list_item {
+    min-height: 3.45rem;
+    margin: .3rem 0 !important;
+    padding: .65rem .7rem !important;
+    border-radius: .65rem;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_list_item .o_wslides_sidebar_content {
+    width: 100%;
+    margin-left: 0 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_list_item .o_wslides_slide_name,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_list_item .o_wslides_fs_slide_name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: .9rem;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_content {
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 2rem clamp(1rem, 4vw, 4rem) !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_content > * {
+    width: 100%;
+    max-width: 70rem;
+    max-height: calc(100vh - 7rem);
+}
+
+/* Lesson flow: media preview first, then its editable description. */
+body .diligence-fullscreen-viewer .o_wslides_fs_content {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 1.25rem;
+    overflow-y: auto !important;
+}
+
+body .diligence-fullscreen-viewer .diligence-fs-media-description {
+    width: 100%;
+    max-width: 70rem;
+    flex: 0 0 auto;
+    padding: 1.5rem 1.75rem;
+    border: 1px solid #344252;
+    border-radius: 1rem;
+    background: #1b232d;
+    color: #e6edf3;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, .22);
+}
+
+/* Reserve a real media stage before the description.  Odoo's PDF iframe and
+   some external players use height: 100%; without an explicit flex item
+   height they overlap the description at 100% browser zoom. */
+body .diligence-fullscreen-viewer .o_wslides_fs_content > .ratio,
+body .diligence-fullscreen-viewer .o_wslides_fs_content > .o_wslides_fs_player,
+body .diligence-fullscreen-viewer .o_wslides_fs_content > .o_wslide_fs_article_content {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    height: 70vh !important;
+    min-height: 26rem;
+    max-height: none !important;
+}
+
+/* Bootstrap's .ratio keeps a percentage padding spacer. In the fullscreen
+   reader that spacer can overlap the description when the PDF is zoomed.
+   Treat the preview as a normal bounded stage instead. */
+body .diligence-fullscreen-viewer .o_wslides_fs_content > .ratio {
+    aspect-ratio: auto !important;
+    padding-top: 0 !important;
+    overflow: auto !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_content > .o_wslides_fs_player {
+    overflow: auto !important;
+}
+
+body .diligence-fullscreen-viewer .diligence-fs-media-description {
+    position: relative;
+    z-index: 2;
+    overflow: visible;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_content > .ratio iframe,
+body .diligence-fullscreen-viewer .o_wslides_fs_content > .o_wslides_fs_player iframe {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+}
+
+body .diligence-fullscreen-viewer .diligence-fs-media-description-kicker {
+    margin-bottom: .55rem;
+    color: #c8a96b;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+}
+
+body .diligence-fullscreen-viewer .diligence-fs-media-description-body {
+    color: #e6edf3;
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+body .diligence-fullscreen-viewer .diligence-fs-media-description-body :is(p, h1, h2, h3, h4, ul, ol) {
+    margin-bottom: .75rem;
+}
+
+body .diligence-fullscreen-viewer .diligence-fs-media-description-body > :last-child {
+    margin-bottom: 0;
+}
+
+/* Description is rendered by the same OWL template as its media. This keeps
+   it present across Previous/Next and section changes without a page reload. */
+body .diligence-fullscreen-viewer .diligence-media-template-with-description {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 1.25rem !important;
+    height: auto !important;
+    min-height: 100% !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+    padding: 0 0 1.5rem !important;
+    aspect-ratio: auto !important;
+}
+
+body .diligence-fullscreen-viewer .diligence-media-template-with-description::before {
+    display: none !important;
+}
+
+body .diligence-fullscreen-viewer .diligence-media-template-with-description > iframe,
+body .diligence-fullscreen-viewer .diligence-media-template-with-description > img,
+body .diligence-fullscreen-viewer .diligence-media-template-with-description > div:not(.diligence-fs-media-description) {
+    position: relative !important;
+    inset: auto !important;
+    flex: 0 0 70vh !important;
+    width: 100% !important;
+    height: 70vh !important;
+    min-height: 26rem !important;
+    transform: none !important;
+}
+
+body .diligence-fullscreen-viewer .diligence-media-template-with-description > .diligence-fs-template-description {
+    position: relative !important;
+    inset: auto !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    transform: none !important;
+}
+
+@media (max-width: 767.98px) {
+    body .diligence-fullscreen-viewer .o_wslides_fs_content > .ratio,
+    body .diligence-fullscreen-viewer .o_wslides_fs_content > .o_wslides_fs_player,
+    body .diligence-fullscreen-viewer .o_wslides_fs_content > .o_wslide_fs_article_content {
+        height: 55vh !important;
+        min-height: 18rem;
+    }
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_content iframe,
+body .diligence-fullscreen-viewer .o_wslides_fs_content video {
+    display: block;
+    width: 100%;
+    min-height: 68vh;
+    max-height: 42rem;
+    border: 0;
+    border-radius: .8rem;
+    background: #0c1117;
+}
+
+/* Use the same readable contrast for every lesson preview, not only PDFs. */
+body .diligence-fullscreen-viewer .o_wslides_fs_content audio,
+body .diligence-fullscreen-viewer .o_wslides_fs_content video,
+body .diligence-fullscreen-viewer .o_wslides_fs_content embed,
+body .diligence-fullscreen-viewer .o_wslides_fs_content object {
+    color-scheme: dark;
+    accent-color: #c8a96b;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_content .oe_slides_panel_footer,
+body .diligence-fullscreen-viewer .o_wslides_fs_content .oe_slides_share_bar,
+body .diligence-fullscreen-viewer .o_wslides_fs_content .o_wslides_lesson_content_type,
+body .diligence-fullscreen-viewer .o_wslides_fs_content .diligence-custom-media-preview {
+    color: #e6edf3 !important;
+    background: #1b232d !important;
+    border-color: #344252 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_content .oe_slides_panel_footer a,
+body .diligence-fullscreen-viewer .o_wslides_fs_content .oe_slides_panel_footer span[role="button"],
+body .diligence-fullscreen-viewer .o_wslides_fs_content .oe_slides_panel_footer i,
+body .diligence-fullscreen-viewer .o_wslides_fs_content .oe_slides_share_bar a {
+    color: #e6edf3 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_content .oe_slides_panel_footer a:hover,
+body .diligence-fullscreen-viewer .o_wslides_fs_content .oe_slides_panel_footer span[role="button"]:hover,
+body .diligence-fullscreen-viewer .o_wslides_fs_content .oe_slides_share_bar a:hover {
+    color: #c8a96b !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_content audio {
+    display: block !important;
+    align-self: center !important;
+    width: 92% !important;
+    max-width: 50rem !important;
+    margin: auto !important;
+}
+
+/* Audio lessons should sit in the visual centre of the fullscreen media
+   stage.  The native audio element is short, so a normal top margin leaves
+   it floating near the header even though the stage itself is tall. */
+body .diligence-fullscreen-viewer .o_wslides_fs_content:has(audio) {
+    position: relative !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* The fullscreen stage is a flex item whose computed height can be smaller
+   than the viewport while the lesson is being loaded.  Anchor the short
+   native player to the stage's actual midpoint so it cannot remain near the
+   top edge. */
+body .diligence-fullscreen-viewer .o_wslides_fs_content:has(> audio) > audio {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    margin: 0 !important;
+    transform: translate(-50%, -50%) !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_content > div:has(> audio),
+body .diligence-fullscreen-viewer .o_wslides_fs_content > section:has(> audio) {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+}
+
+/* Odoo fullscreen renders local audio one level deeper inside
+   .o_wslides_fs_player.  Center that real wrapper and undo its native
+   align-items-start rule. */
+body .diligence-fullscreen-viewer .o_wslides_fs_content:has(.o_wslides_fs_player audio) .o_wslides_fs_player {
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 1rem !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_content:has(.o_wslides_fs_player audio) .o_wslides_fs_player > div:has(> audio) {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_content > div:has(> audio),
+body .diligence-fullscreen-viewer .o_wslides_fs_content > section:has(> audio) {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 68vh;
+    margin: 0 !important;
+}
+
+@media (max-width: 900px) {
+    body .diligence-fullscreen-viewer .o_wslides_fs_sidebar,
+    body .diligence-fullscreen-viewer .o_wslides_fs_sidebar.o_wslides_fs_sidebar_hidden {
+        width: 21rem !important;
+        min-width: 21rem !important;
+    }
+}
+
+/* Section dropdowns remain available, while the sidebar scrollbar gets a
+   compact modern treatment instead of the browser-default rail. */
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a {
+    pointer-events: auto !important;
+    cursor: pointer;
+    align-items: center;
+    gap: .5rem;
+    min-height: 3rem;
+    padding: .75rem .85rem !important;
+    border: 1px solid transparent;
+    border-radius: .8rem;
+    transition: color .18s ease, background-color .18s ease, border-color .18s ease;
+}
+
+/* Use a guaranteed visible chevron. The native FontAwesome caret is hidden
+   by some Odoo fullscreen themes, so the section state is represented by a
+   CSS marker instead. */
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a::after {
+    content: "⌄";
+    flex: 0 0 1.25rem;
+    width: 1.25rem;
+    color: #c8a96b !important;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    transform: translateY(-.08rem);
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a[aria-expanded="false"]::after {
+    content: "›";
+    transform: none;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a:hover,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a:focus-visible {
+    color: #ffffff !important;
+    background: #263341;
+    border-color: rgba(200, 169, 107, .45);
+    outline: none;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a .fa-caret-left,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a .fa-caret-down {
+    display: inline-block !important;
+    width: 1.25rem;
+    color: #c8a96b !important;
+    opacity: .95;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content > ul {
+    scrollbar-width: thin;
+    scrollbar-color: #607487 #151c24 !important;
+    scrollbar-gutter: stable;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content > ul::-webkit-scrollbar {
+    width: .65rem !important;
+    background: #151c24 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content > ul::-webkit-scrollbar-track {
+    margin: .35rem 0;
+    border-radius: 999px;
+    background: #151c24 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content > ul::-webkit-scrollbar-thumb {
+    border: 2px solid #151c24;
+    border-radius: 999px;
+    background: #607487 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content > ul::-webkit-scrollbar-thumb:hover {
+    background: #c8a96b !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content {
+    scrollbar-width: thin;
+    scrollbar-color: #607487 #151c24;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content::-webkit-scrollbar {
+    width: .55rem;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content::-webkit-scrollbar-track {
+    border-radius: 999px;
+    background: #151c24;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content::-webkit-scrollbar-thumb {
+    border: 2px solid #151c24;
+    border-radius: 999px;
+    background: #607487;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content::-webkit-scrollbar-thumb:hover {
+    background: #c8a96b;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a .fa-caret-left,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a .fa-caret-down {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: #c8a96b !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a[aria-expanded="true"] .fa-caret-left {
+    display: none !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a[aria-expanded="true"] .fa-caret-down {
+    display: inline-block !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a[aria-expanded="false"] .fa-caret-down {
+    display: none !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a[aria-expanded="false"] .fa-caret-left {
+    display: inline-block !important;
+}
+
+/* Section headers stay clickable, but do not show a directional marker. */
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a::after,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a .fa-caret-left,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a .fa-caret-down {
+    display: none !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a .fa-caret-left,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a .fa-caret-down {
+    flex: 0 0 1.25rem;
+    text-align: center;
+    font-size: .95rem;
+    transition: transform .18s ease, color .18s ease;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a[aria-expanded="true"] .fa-caret-down {
+    transform: rotate(0deg);
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section > a[aria-expanded="false"] .fa-caret-left {
+    transform: rotate(0deg);
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section_slides.collapse:not(.show) {
+    display: none !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section_slides.collapse.show {
+    display: block !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+}
+
+/* Quiz state and answer key.  The selected answer stays visible after a
+   refresh, while the correct answer is only revealed after submission. */
+.o_diligence_multitype_quiz {
+    .o_diligence_answer-correct {
+        border-color: #208b62 !important;
+        background-color: #e8f6ef !important;
+        color: #12384f !important;
+    }
+
+    .o_diligence_answer-selected {
+        border-width: 2px !important;
+        border-color: #c8a96b !important;
+    }
+
+    .o_diligence_answer-selected.o_diligence_answer-correct {
+        border-color: #208b62 !important;
+    }
+
+    .o_diligence_answer-key {
+        color: #edf5f8 !important;
+        background-color: #234153 !important;
+        border-color: #3b687d !important;
+    }
+}
+
+/* Fullscreen lessons use the dark learning-player skin.  These overrides
+   remove the white canvas left by the standard Odoo quiz/document viewer. */
+body .diligence-fullscreen-viewer,
+body .diligence-fullscreen-viewer .o_wslides_fs_container,
+body .diligence-fullscreen-viewer .o_wslides_fs_content {
+    background: #101820 !important;
+    color: #edf5f8 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header,
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header.bg-dark {
+    background: #18232f !important;
+    color: #edf5f8 !important;
+    border-bottom-color: #314252 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header a,
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header button,
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header .text-white,
+body .diligence-fullscreen-viewer .o_wslides_slide_fs_header i {
+    color: #edf5f8 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content {
+    background: #17212b !important;
+    color: #edf5f8 !important;
+    border-color: #314252 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar .text-white,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar .text-muted,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar a {
+    color: #d8e5eb !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_header h1,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section {
+    color: #edf5f8 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_list_item {
+    background: #1b2936 !important;
+    border-color: #314252 !important;
+    color: #d8e5eb !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_list_item.active {
+    background: #294152 !important;
+    border-color: #c8a96b !important;
+    color: #ffffff !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container,
+body .diligence-fullscreen-viewer .o_wslides_lesson_content_type {
+    background: #15202b !important;
+    color: #edf5f8 !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .28) !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container h1,
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container h2,
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container h3,
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .h4,
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container p,
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container label,
+body .diligence-fullscreen-viewer .o_wslides_lesson_content_type {
+    color: #edf5f8 !important;
+}
+
+body .diligence-fullscreen-viewer .o_diligence_quiz_choice,
+body .diligence-fullscreen-viewer a.o_wslides_quiz_answer {
+    background: #1d2d3a !important;
+    border-color: #3b5362 !important;
+    color: #edf5f8 !important;
+}
+
+body .diligence-fullscreen-viewer .o_diligence_quiz_choice:hover,
+body .diligence-fullscreen-viewer a.o_wslides_quiz_answer:hover {
+    background: #294152 !important;
+}
+
+body .diligence-fullscreen-viewer .o_diligence_quiz_text_answer,
+body .diligence-fullscreen-viewer .o_diligence_quiz_answer_group .form-control {
+    background: #1d2d3a !important;
+    border-color: #3b5362 !important;
+    color: #ffffff !important;
+}
+
+body .diligence-fullscreen-viewer .o_diligence_answer-correct {
+    background: #1f5848 !important;
+    border-color: #52c596 !important;
+    color: #ffffff !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .list-group-item.o_diligence_answer-correct,
+body .diligence-fullscreen-viewer .o_diligence_multitype_quiz .list-group-item.o_diligence_answer-correct,
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container a.o_wslides_quiz_answer.o_diligence_answer-correct {
+    background: #1f5848 !important;
+    border-color: #52c596 !important;
+    color: #ffffff !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .list-group-item.o_diligence_answer-selected:not(.o_diligence_answer-correct),
+body .diligence-fullscreen-viewer .o_diligence_multitype_quiz .list-group-item.o_diligence_answer-selected:not(.o_diligence_answer-correct) {
+    background: #4b3034 !important;
+    border-color: #e58b91 !important;
+}
+
+body .diligence-fullscreen-viewer .o_diligence_answer-status {
+    flex: 0 0 auto;
+    margin-left: auto;
+    padding: .25rem .55rem;
+    border-radius: 999px;
+    color: #10202d !important;
+    background: #70d5aa;
+    font-size: .7rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+body .diligence-fullscreen-viewer .o_diligence_answer-status.is-incorrect {
+    color: #ffffff !important;
+    background: #b94d58;
+}
+
+body .diligence-fullscreen-viewer .o_diligence_answer-key > div {
+    color: #edf5f8 !important;
+}
+
+body .diligence-fullscreen-viewer .o_diligence_answer-selected {
+    border-width: 2px !important;
+    border-color: #c8a96b !important;
+}
+
+/* Odoo adds bg-white to the fullscreen quiz mount after each lesson render.
+   Override it so the result footer (Done/Continue) stays inside the dark UI. */
+body .diligence-fullscreen-viewer .o_wslides_fs_content.bg-white,
+body .diligence-fullscreen-viewer .o_wslides_fs_content .bg-white,
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .bg-white,
+body .diligence-fullscreen-viewer [class~="bg-white"] {
+    background: #15202b !important;
+    color: #edf5f8 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_player,
+body .diligence-fullscreen-viewer .o_wslide_fs_article_content,
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .container {
+    background: #15202b !important;
+    color: #edf5f8 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container > .d-flex,
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container .alert-success {
+    background: #1c3442 !important;
+    border-color: #3b687d !important;
+    color: #edf5f8 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container div:has(> .o_wslides_quiz_continue),
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container div:has(> .o_wslides_js_lesson_quiz_reset) {
+    background: #1c3442 !important;
+    border-color: #3b687d !important;
+    color: #edf5f8 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container > .container > .d-md-flex,
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container div:has(.o_wslides_quiz_continue) {
+    background: #1c3442 !important;
+    border-color: #3b687d !important;
+    color: #edf5f8 !important;
+}
+
+/* Keep the quiz and lesson outline scrollbars consistent with the dark player. */
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container,
+body .diligence-fullscreen-viewer .o_wslides_fs_content,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content {
+    scrollbar-width: thin;
+    scrollbar-color: #607487 #17212b !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container::-webkit-scrollbar,
+body .diligence-fullscreen-viewer .o_wslides_fs_content::-webkit-scrollbar,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content::-webkit-scrollbar {
+    width: .65rem;
+    height: .65rem;
+    background: #17212b;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container::-webkit-scrollbar-track,
+body .diligence-fullscreen-viewer .o_wslides_fs_content::-webkit-scrollbar-track,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content::-webkit-scrollbar-track {
+    border-radius: 999px;
+    background: #17212b;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container::-webkit-scrollbar-thumb,
+body .diligence-fullscreen-viewer .o_wslides_fs_content::-webkit-scrollbar-thumb,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content::-webkit-scrollbar-thumb {
+    border: 2px solid #17212b;
+    border-radius: 999px;
+    background: #607487;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_quiz_container::-webkit-scrollbar-thumb:hover,
+body .diligence-fullscreen-viewer .o_wslides_fs_content::-webkit-scrollbar-thumb:hover,
+body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_content::-webkit-scrollbar-thumb:hover {
+    background: #c8a96b;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_quiz_continue,
+body .diligence-fullscreen-viewer .o_wslides_js_lesson_quiz_reset {
+    background: #116b83 !important;
+    border-color: #4b9caf !important;
+    color: #ffffff !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_quiz_continue:hover,
+body .diligence-fullscreen-viewer .o_wslides_js_lesson_quiz_reset:hover {
+    background: #16849d !important;
+    color: #ffffff !important;
+}
+
+/* Package availability: keep a full package informative without making it
+   look purchasable. This is shared by the dynamic package snippet and shop. */
+.diligence-package-card-full {
+    background: #eef0f2 !important;
+    border-color: #c8cdd2 !important;
+    color: #66707a !important;
+    box-shadow: none !important;
+}
+
+.oe_product_cart:has(.diligence-full-slot-badge) {
+    background: #eef0f2 !important;
+    border-color: #c8cdd2 !important;
+    color: #66707a !important;
+}
+
+.oe_product_cart:has(.diligence-full-slot-badge) img {
+    filter: grayscale(1);
+    opacity: .72;
+}
+
+.diligence-package-card-full img {
+    filter: grayscale(1);
+    opacity: .72;
+}
+
+.diligence-package-card-full a:not(.btn) {
+    color: #4d5862 !important;
+}
+
+.diligence-full-slot-badge {
+    z-index: 3;
+    background: #6c757d !important;
+    color: #fff !important;
+    letter-spacing: .06em;
+}

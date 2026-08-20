@@ -32,7 +32,10 @@
             <t t-set="package" t-value="product.product_tmpl_id"/>
             <t t-set="package_description" t-value="package.description_sale or ''"/>
             <t t-set="early_price" t-value="package._diligence_early_bird_price_for_date()"/>
-            <article class="h-100 w-100 p-4 bg-white border rounded-4 shadow-sm d-flex flex-column">
+            <article t-attf-class="diligence-package-card h-100 w-100 p-4 border rounded-4 shadow-sm d-flex flex-column #{'diligence-package-card-full' if package.diligence_sales_status == 'full' else 'bg-white'}">
+                <span t-if="package.diligence_sales_status == 'full'" class="diligence-full-slot-badge badge rounded-pill align-self-start mb-2">
+                    <i class="fa fa-ban me-1"/> FULL SLOT
+                </span>
                 <span class="badge rounded-pill text-bg-light align-self-start mb-3">
                     <t t-if="package.diligence_package_type == 'starter'">SELF LEARNING</t>
                     <t t-elif="package.diligence_package_type == 'community'">MOST POPULAR</t>
@@ -54,7 +57,11 @@
                         <li t-if="benefit.strip()" class="mb-3"><i class="fa fa-check text-primary me-2"/><span t-out="benefit.lstrip('?• ').strip()"/></li>
                     </t>
                 </ul>
-                <a class="btn btn-outline-primary rounded-pill w-100 mt-auto" t-att-href="product.website_url">View Package</a>
+                <a t-if="package.diligence_sales_status != 'full'" class="btn btn-outline-primary rounded-pill w-100 mt-auto" t-att-href="product.website_url">View Package</a>
+                <div t-else="" class="mt-auto">
+                    <a class="btn btn-outline-secondary rounded-pill w-100 mb-2" t-att-href="product.website_url">View Details</a>
+                    <button type="button" class="btn btn-secondary rounded-pill w-100" disabled="disabled">Full Slot</button>
+                </div>
             </article>
         </t>
     </template>

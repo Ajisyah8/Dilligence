@@ -1,0 +1,34 @@
+<odoo>
+    <template id="diligence_student_checkout_form" inherit_id="website_sale.address_form_fields">
+        <xpath expr="//t[@name='b2b_fields']" position="attributes">
+            <attribute name="t-if">False</attribute>
+        </xpath>
+        <xpath expr="//div[@id='div_name']/label" position="replace">
+            <label class="col-form-label" for="o_name">Nama Siswa</label>
+        </xpath>
+        <xpath expr="//div[@id='div_phone']/label" position="replace">
+            <label class="col-form-label" for="o_phone">Nomor WhatsApp</label>
+        </xpath>
+        <xpath expr="//div[@id='div_street']/label" position="replace">
+            <label class="col-form-label" for="o_street">Alamat (opsional)</label>
+        </xpath>
+        <xpath expr="//div[@id='div_street2']/label" position="replace">
+            <label class="col-form-label label-optional" for="o_street2">Detail alamat (opsional)</label>
+        </xpath>
+        <xpath expr="//div[@id='div_city']/label" position="replace">
+            <label class="col-form-label" for="o_city">Kota</label>
+        </xpath>
+        <xpath expr="//div[@id='div_zip']/label" position="replace">
+            <label class="col-form-label" for="o_zip">Kode Pos (opsional)</label>
+        </xpath>
+    </template>
+
+    <template id="diligence_student_checkout_title" inherit_id="website_sale.address">
+        <xpath expr="//h4[.//t[@t-if='partner_sudo']]" position="replace">
+            <h4 class="mb-3">
+                <t t-if="partner_sudo">Edit data siswa</t>
+                <t t-else="">Data siswa</t>
+            </h4>
+        </xpath>
+    </template>
+</odoo>

@@ -1,6 +1,7 @@
 param(
     [string]$Database = "odoo_dev",
-    [string[]]$DevFlags = @()
+    [string[]]$DevFlags = @(),
+    [int]$Port = 8070
 )
 
 $ErrorActionPreference = "Stop"
@@ -14,22 +15,19 @@ if (-not (Test-Path $python)) {
     throw "Python venv not found: $python"
 }
 
-try {
-    $moduleCommandPattern = [regex]::Escape("-m odoo")
-    $running = Get-CimInstance Win32_Process |
-        Where-Object {
-            $_.Name -like "python*.exe" -and
-            $_.CommandLine -match $moduleCommandPattern -and
-            $_.CommandLine -match [regex]::Escape($config)
+$listenerPattern = ":$Port"
+$listenerPids = netstat -ano |
+    Select-String $listenerPattern |
+    ForEach-Object {
+        if ($_.Line -match "LISTENING\s+(\d+)\s*$") {
+            [int]$Matches[1]
         }
-} catch {
-    Write-Warning "Could not inspect running Odoo processes: $($_.Exception.Message)"
-    $running = @()
-}
+    } |
+    Sort-Object -Unique
 
-if ($running) {
-    $running | ForEach-Object {
-        Stop-Process -Id $_.ProcessId -Force
+if ($listenerPids) {
+    foreach ($processId in $listenerPids) {
+        Stop-Process -Id $processId -Force -ErrorAction Stop
     }
     Start-Sleep -Seconds 2
 }

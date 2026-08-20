@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-inherit="slide.slide.quiz" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'o_wslides_fs_quiz_container')]/div[1]" position="before">
+            <div class="diligence-fs-lesson-title d-flex align-items-center gap-3 px-3 px-md-4 pt-3">
+                <span class="diligence-fs-lesson-title-icon">
+                    <i t-if="widget.slide and widget.slide.category === 'video'" class="fa fa-play-circle"/>
+                    <i t-elif="widget.slide and widget.slide.category === 'audio'" class="fa fa-volume-up"/>
+                    <i t-elif="widget.slide and widget.slide.category === 'document'" class="fa fa-file-pdf-o"/>
+                    <i t-else="" class="fa fa-question-circle"/>
+                </span>
+                <div class="min-w-0">
+                    <div class="diligence-fs-lesson-kicker">DILIGENCE ACADEMY</div>
+                    <h1 class="diligence-fs-lesson-name mb-0" t-out="widget.slide.name"/>
+                </div>
+            </div>
+        </xpath>
         <xpath expr="//div[contains(@class, 'o_wslides_fs_quiz_container')]" position="attributes">
             <attribute name="class" add="o_diligence_fs_quiz" separator=" "/>
             <attribute name="t-att-data-id">widget.slide.id</attribute>
         </xpath>
-        <xpath expr="//div[contains(@class, 'o_wslides_js_lesson_quiz_question')]" position="attributes">
+        <!-- The native OWL template stores the lesson class in t-attf-class,
+             not in a static class attribute. -->
+        <xpath expr="//div[contains(@t-attf-class, 'o_wslides_js_lesson_quiz_question')]" position="attributes">
             <attribute name="t-att-data-question-type">question.question_type</attribute>
             <attribute name="t-att-data-audio-url">question.audio_url</attribute>
         </xpath>

@@ -1,0 +1,188 @@
+.diligence-student-dashboard {
+    --diligence-ink: #123b56;
+    --diligence-muted: #6c7f8c;
+    --diligence-line: #dbe5ea;
+    --diligence-accent: #0b7890;
+    color: var(--diligence-ink);
+
+    .diligence-dashboard-card,
+    .diligence-shortcut-card,
+    .diligence-mini-stat {
+        border: 1px solid var(--diligence-line);
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 8px 22px rgba(18, 59, 86, .06);
+    }
+
+    .diligence-dashboard-card {
+        padding: 24px;
+    }
+
+    .diligence-calendar-weekdays,
+    .diligence-calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 6px;
+        text-align: center;
+    }
+
+    .diligence-calendar-weekdays {
+        color: var(--diligence-muted);
+        font-size: 11px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+    }
+
+    .diligence-calendar-day {
+        align-items: center;
+        border-radius: 50%;
+        color: var(--diligence-muted);
+        display: flex;
+        font-size: 13px;
+        height: 30px;
+        justify-content: center;
+        margin: auto;
+        width: 30px;
+    }
+
+    .diligence-calendar-day.is-active {
+        background: #d8f0f1;
+        color: var(--diligence-accent);
+        font-weight: 700;
+    }
+
+    .diligence-calendar-day.is-today {
+        box-shadow: 0 0 0 2px var(--diligence-accent);
+    }
+
+    .diligence-course-card {
+        padding: 20px 24px;
+    }
+
+    .diligence-progress-value {
+        color: var(--diligence-accent);
+        white-space: nowrap;
+    }
+
+    .diligence-course-card .progress {
+        background: #e9f0f2;
+        border-radius: 20px;
+        height: 10px;
+        overflow: hidden;
+    }
+
+    .diligence-course-card .progress-bar {
+        background: var(--diligence-accent);
+        border-radius: 20px;
+    }
+
+    .diligence-score-grid {
+        display: grid;
+        gap: 7px;
+        grid-template-columns: repeat(10, minmax(24px, 1fr));
+        max-width: 480px;
+    }
+
+    .diligence-score-box {
+        align-items: center;
+        background: #f4f7f8;
+        border: 1px solid var(--diligence-line);
+        border-radius: 8px;
+        color: var(--diligence-muted);
+        display: flex;
+        font-size: 12px;
+        font-weight: 700;
+        height: 34px;
+        justify-content: center;
+    }
+
+    .diligence-score-box.is-passed {
+        background: #d9f2e5;
+        border-color: #91d4ae;
+        color: #167043;
+    }
+
+    .diligence-score-box.is-pending {
+        background: #fff1cf;
+        border-color: #e8c56b;
+        color: #936b00;
+    }
+
+    .diligence-shortcut-card {
+        align-items: center;
+        color: var(--diligence-ink);
+        display: flex;
+        gap: 14px;
+        min-height: 78px;
+        padding: 16px 18px;
+        transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+
+    .diligence-shortcut-card:hover {
+        border-color: var(--diligence-accent);
+        box-shadow: 0 10px 24px rgba(18, 59, 86, .12);
+        color: var(--diligence-ink);
+        transform: translateY(-2px);
+    }
+
+    .diligence-shortcut-card > .fa:first-child {
+        align-items: center;
+        background: #e1f1f2;
+        border-radius: 12px;
+        color: var(--diligence-accent);
+        display: flex;
+        font-size: 18px;
+        height: 42px;
+        justify-content: center;
+        width: 42px;
+    }
+
+    .diligence-shortcut-card strong,
+    .diligence-shortcut-card small {
+        display: block;
+    }
+
+    .diligence-shortcut-card small {
+        color: var(--diligence-muted);
+        margin-top: 3px;
+    }
+
+    .diligence-mini-stat {
+        padding: 16px 18px;
+    }
+
+    .diligence-mini-stat span,
+    .diligence-mini-stat strong {
+        display: block;
+    }
+
+    .diligence-mini-stat span {
+        color: var(--diligence-muted);
+        font-size: 12px;
+    }
+
+    .diligence-mini-stat strong {
+        font-size: 24px;
+        margin-top: 4px;
+    }
+
+    @media (max-width: 575.98px) {
+        .diligence-dashboard-card {
+            padding: 18px;
+        }
+
+        .diligence-course-card {
+            padding: 18px;
+        }
+
+        .diligence-score-grid {
+            gap: 4px;
+        }
+
+        .diligence-score-box {
+            font-size: 10px;
+            height: 29px;
+        }
+    }
+}
