@@ -48,9 +48,10 @@ class DiligenceReferral(models.Model):
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company, required=True)
     currency_id = fields.Many2one(related='company_id.currency_id', store=True)
 
-    _sql_constraints = [
-        ('sale_order_unique', 'unique(sale_order_id)', 'Only one referral attribution is allowed per order.'),
-    ]
+    _sale_order_unique = models.Constraint(
+        'unique(sale_order_id)',
+        'Only one referral attribution is allowed per order.',
+    )
 
     @api.model_create_multi
     def create(self, vals_list):

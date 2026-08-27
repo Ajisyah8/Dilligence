@@ -8,5 +8,17 @@
                 <div class="form-text">Use an active number so our team can contact you about your learning program.</div>
             </div>
         </xpath>
+        <xpath expr="//div[contains(@class, 'field-phone')]" position="after">
+            <div class="mb-3 field-newsletter-opt-in">
+                <div class="form-check">
+                    <input type="checkbox" name="diligence_newsletter_opt_in" id="diligence_newsletter_opt_in"
+                           class="form-check-input"/>
+                    <label for="diligence_newsletter_opt_in" class="form-check-label">
+                        I agree to receive learning tips and updates from Diligence Academy.
+                    </label>
+                </div>
+                <div class="form-text">You can unsubscribe at any time.</div>
+            </div>
+        </xpath>
     </template>
 </odoo>

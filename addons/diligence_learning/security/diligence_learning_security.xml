@@ -1,4 +1,20 @@
 <odoo>
+    <record id="group_diligence_invoice_officer" model="res.groups">
+        <field name="name">Invoice Officer</field>
+        <field name="comment">May view unpaid customer invoices, payment status, and queue invoice emails. No accounting reports or configuration.</field>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="rule_diligence_invoice_officer_unpaid" model="ir.rule">
+        <field name="name">Invoice Officer sees unpaid customer invoices only</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="groups" eval="[(4, ref('diligence_learning.group_diligence_invoice_officer'))]"/>
+        <field name="domain_force">[('move_type', 'in', ('out_invoice', 'out_refund')), ('payment_state', 'in', ('not_paid', 'partial', 'in_payment'))]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
     <record id="group_diligence_community_member" model="res.groups">
         <field name="name">Diligence Community Member</field>
         <field name="comment">Granted automatically to buyers of Community and Consultation packages.</field>

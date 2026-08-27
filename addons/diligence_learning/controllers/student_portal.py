@@ -3,14 +3,23 @@ from datetime import timedelta
 
 from odoo import fields, http
 from odoo.http import request
+from odoo.addons.portal.controllers.portal import CustomerPortal
 
 
 def _student_courses_values(partner):
     """Build the student dashboard values from native Odoo records."""
+    paid_orders = request.env['sale.order'].sudo().search([
+        ('partner_id', 'child_of', partner.id),
+        ('state', 'in', ('sale', 'done')),
+    ]).filtered(lambda order: order._diligence_has_valid_package_payment())
+    paid_package_ids = paid_orders.mapped('order_line.product_template_id').filtered(
+        lambda product: product._diligence_is_package()
+    ).ids
     memberships = request.env['slide.channel.partner'].sudo().search([
         ('partner_id', 'child_of', partner.id),
         ('active', '=', True),
         ('member_status', '!=', 'invited'),
+        ('diligence_package_id', 'in', paid_package_ids or [0]),
     ])
     memberships = memberships.filtered(lambda membership: membership._diligence_access_is_valid())
 
@@ -93,6 +102,8 @@ def _student_courses_values(partner):
     current_streak, best_streak = activity_model.calculate_streak(partner)
     sessions = request.env['diligence.session'].sudo().search([
         ('package_id', 'in', memberships.mapped('diligence_package_id').ids),
+        ('attendee_ids.partner_id', '=', partner.id),
+        ('attendee_ids.state', '!=', 'cancelled'),
         ('start_datetime', '>=', fields.Datetime.now()),
         ('state', '=', 'scheduled'),
     ], order='start_datetime asc', limit=5)
@@ -114,11 +125,20 @@ def _student_courses_values(partner):
     }
 
 
-class DiligenceStudentPortal(http.Controller):
+class DiligenceStudentPortal(CustomerPortal):
+    @http.route(['/my', '/my/home'], type='http', auth='user', website=True,
+                list_as_website_content=False)
+    def home(self, **kwargs):
+        """Make the native My Account route open the Student Corner dashboard."""
+        partner = request.env.user.partner_id.commercial_partner_id
+        values = _student_courses_values(partner)
+        values.update(self._prepare_portal_layout_values())
+        values['my_details'] = True
+        return request.render('diligence_learning.portal_my_courses', values)
+
     @http.route('/my/courses', type='http', auth='user', website=True)
     def my_courses(self, **kwargs):
-        partner = request.env.user.partner_id.commercial_partner_id
-        return request.render('diligence_learning.portal_my_courses', _student_courses_values(partner))
+        return request.redirect('/my')
 
     @http.route('/my/consultations', type='http', auth='user', website=True)
     def my_consultations(self, **kwargs):

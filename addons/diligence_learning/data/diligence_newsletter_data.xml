@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="diligence_email_test_mode" model="ir.config_parameter">
+            <field name="key">diligence.email_test_mode</field>
+            <field name="value">True</field>
+        </record>
+
+        <record id="mail_template_diligence_newsletter_welcome" model="mail.template">
+            <field name="name">Diligence Newsletter: Welcome</field>
+            <field name="model_id" ref="model_diligence_newsletter_delivery"/>
+            <field name="subject">Welcome to Diligence Academy</field>
+            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="use_default_to" eval="False"/>
+            <field name="description">Sent on the student's registration day after explicit newsletter consent.</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-size:14px;line-height:1.6;">
+                    <p>Hi <t t-out="object.partner_id.name or 'there'"/>,</p>
+                    <p>Welcome to Diligence Academy. We are happy to support your learning journey.</p>
+                    <p>You will receive practical learning tips in the next few days.</p>
+                    <p>Thank you,<br/>Diligence Academy</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="False"/>
+        </record>
+
+        <record id="mail_template_diligence_newsletter_day_5" model="mail.template">
+            <field name="name">Diligence Newsletter: First Learning Material</field>
+            <field name="model_id" ref="model_diligence_newsletter_delivery"/>
+            <field name="subject">Your first learning material from Diligence Academy</field>
+            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="use_default_to" eval="False"/>
+            <field name="description">Sent five days after registration.</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-size:14px;line-height:1.6;">
+                    <p>Hi <t t-out="object.partner_id.name or 'there'"/>,</p>
+                    <p>Here is a simple reminder to continue your learning practice today.</p>
+                    <p>Open your Student Corner and continue the next available lesson.</p>
+                    <p>Keep learning,<br/>Diligence Academy</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="False"/>
+        </record>
+
+        <record id="mail_template_diligence_newsletter_day_10" model="mail.template">
+            <field name="name">Diligence Newsletter: Continue Learning</field>
+            <field name="model_id" ref="model_diligence_newsletter_delivery"/>
+            <field name="subject">Keep your learning momentum</field>
+            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="use_default_to" eval="False"/>
+            <field name="description">Sent ten days after registration.</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-size:14px;line-height:1.6;">
+                    <p>Hi <t t-out="object.partner_id.name or 'there'"/>,</p>
+                    <p>Small, consistent practice makes a real difference. Review your course progress and choose one lesson to complete today.</p>
+                    <p>We are cheering you on,<br/>Diligence Academy</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="False"/>
+        </record>
+
+        <record id="diligence_newsletter_stage_welcome" model="diligence.newsletter.stage">
+            <field name="name">Welcome</field>
+            <field name="sequence">10</field>
+            <field name="delay_days">0</field>
+            <field name="template_id" ref="mail_template_diligence_newsletter_welcome"/>
+        </record>
+        <record id="diligence_newsletter_stage_day_5" model="diligence.newsletter.stage">
+            <field name="name">First learning material</field>
+            <field name="sequence">20</field>
+            <field name="delay_days">5</field>
+            <field name="template_id" ref="mail_template_diligence_newsletter_day_5"/>
+        </record>
+        <record id="diligence_newsletter_stage_day_10" model="diligence.newsletter.stage">
+            <field name="name">Continue learning</field>
+            <field name="sequence">30</field>
+            <field name="delay_days">10</field>
+            <field name="template_id" ref="mail_template_diligence_newsletter_day_10"/>
+        </record>
+
+        <record id="ir_cron_diligence_newsletter_drip" model="ir.cron">
+            <field name="name">Diligence: Process Newsletter Drip</field>
+            <field name="model_id" ref="model_diligence_newsletter_delivery"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_process()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>

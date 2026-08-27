@@ -19,11 +19,11 @@
                         <input id="qris_proof_file" name="proof_file" type="file"
                                class="form-control" accept="image/*,application/pdf" required="required"/>
                         <button type="submit" class="btn btn-primary mt-3 w-100">
-                            Kirim Bukti &amp; Selesaikan Pembayaran
+                            Kirim Bukti Pembayaran
                         </button>
                     </form>
                     <small class="text-muted d-block mt-2">
-                        Setelah dikirim, pembayaran akan dikonfirmasi dan akses course diproses otomatis.
+                        Bukti dan nominal akan divalidasi otomatis. Akses course aktif setelah pembayaran diterima.
                     </small>
                 </div>
             </div>

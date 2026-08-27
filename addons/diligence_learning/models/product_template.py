@@ -50,6 +50,10 @@ class ProductTemplate(models.Model):
     )
     diligence_teacher_feedback = fields.Boolean('Teacher Feedback Included')
     diligence_live_qna = fields.Boolean('Monthly Live Q&A Included')
+    diligence_whatsapp_group_link = fields.Char(
+        'WhatsApp Group Link', copy=False,
+        help='Private group link shown only to students with a valid paid order for this package.',
+    )
     diligence_early_bird_enabled = fields.Boolean('Enable Early Bird', copy=False)
     diligence_early_bird_price = fields.Float('Early Bird Price', copy=False)
     diligence_early_bird_start_date = fields.Date('Early Bird Start Date', copy=False)

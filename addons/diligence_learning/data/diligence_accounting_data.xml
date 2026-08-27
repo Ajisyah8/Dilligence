@@ -1,0 +1,7 @@
+<odoo noupdate="1">
+    <!-- Odoo's standard payment -> sale order -> invoice automation. -->
+    <record id="diligence_sale_automatic_invoice" model="ir.config_parameter">
+        <field name="key">sale.automatic_invoice</field>
+        <field name="value">True</field>
+    </record>
+</odoo>

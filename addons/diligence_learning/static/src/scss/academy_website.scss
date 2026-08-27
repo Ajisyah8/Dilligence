@@ -769,6 +769,7 @@ body:has(.diligence-academy-home) {
 }
 
 .academy-floating-cta {
+    position: fixed !important;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -852,7 +853,7 @@ body:has(.diligence-academy-home) {
     .academy-floating-cta {
         right: 1rem !important;
         bottom: 1rem !important;
-        left: 1rem;
+        left: auto;
         text-align: center;
     }
 

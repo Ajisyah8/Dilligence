@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="diligence_payment_transaction_form" model="ir.ui.view">
+        <field name="name">payment.transaction.form.diligence</field>
+        <field name="model">payment.transaction</field>
+        <field name="inherit_id" ref="payment.payment_transaction_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/field[@name='state']" position="before">
+                <button
+                    name="action_diligence_verify_payment"
+                    type="object"
+                    string="Verify Bank Transfer"
+                    class="oe_highlight"
+                    groups="account.group_account_invoice"
+                    invisible="provider_code != 'custom' or provider_id.custom_mode != 'wire_transfer' or state != 'pending'"
+                />
+            </xpath>
+        </field>
+    </record>
+</odoo>

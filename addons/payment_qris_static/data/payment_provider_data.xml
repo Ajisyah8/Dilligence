@@ -8,7 +8,7 @@
         <field name="pending_msg" eval="False"/>
         <field name="qris_instructions"><![CDATA[
             <p>Scan QRIS di atas, bayar sesuai total order, lalu upload bukti pembayaran.</p>
-            <p><strong>Pembayaran akan langsung dianggap berhasil setelah bukti dikirim.</strong></p>
+            <p><strong>Setelah bukti dan nominal valid diterima, pembayaran akan dikonfirmasi otomatis.</strong></p>
         ]]></field>
     </record>
 </odoo>

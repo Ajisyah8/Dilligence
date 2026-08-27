@@ -139,10 +139,35 @@ class SaleOrder(models.Model):
                         'sale_order_id': order.id,
                     })
 
+            if self.env['ir.config_parameter'].sudo().get_param(
+                'diligence.whatsapp.send_on_payment', 'False'
+            ) == 'True':
+                service = self.env['diligence.whatsapp.service']
+                service.send_text(
+                    order.partner_id.mobile or order.partner_id.phone,
+                    _(
+                        'Pembayaran order %(order)s berhasil divalidasi. '
+                        'Akses paket belajar Anda sudah aktif di Diligence Academy.',
+                        order=order.name,
+                    ),
+                )
+
+    def _diligence_has_valid_package_payment(self):
+        self.ensure_one()
+        if not self._diligence_package_lines():
+            return True
+        return any(
+            transaction.state == 'done'
+            and transaction.currency_id == self.currency_id
+            and transaction.amount == self.amount_total
+            for transaction in self.transaction_ids
+        )
+
     def _action_confirm(self):
         result = super()._action_confirm()
-        self._diligence_apply_referral()
-        self._diligence_grant_package_access()
+        paid_or_non_package = self.filtered(lambda order: order._diligence_has_valid_package_payment())
+        paid_or_non_package._diligence_apply_referral()
+        paid_or_non_package._diligence_grant_package_access()
         return result
 
     def action_mark_diligence_cashback_paid(self):

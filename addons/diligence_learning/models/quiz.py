@@ -133,6 +133,8 @@ class DiligenceQuizAttempt(models.Model):
             )
 
     def action_grade(self):
+        if not self.env.user.has_group('website_slides.group_website_slides_officer') and not self.env.user._is_admin():
+            raise AccessError(_('Only authorised teachers or administrators can grade quiz attempts.'))
         for attempt in self:
             if any(response.question_type in ('essay', 'speaking') and not response.manual_graded
                    for response in attempt.response_ids):

@@ -239,6 +239,12 @@ class DiligenceWebsiteSlides(WebsiteSlides):
             if question.question_type in ('short_answer', 'essay') or (
                     question.question_type == 'listening' and question.listening_answer_type == 'short_answer'):
                 item['answer_ids'] = []
+            # The answer key is returned only by the submit response.  Native
+            # quiz payloads may contain these fields for officer views, but
+            # they must never be sent to a student while the quiz is open.
+            for answer in item.get('answer_ids', []):
+                answer.pop('is_correct', None)
+                answer.pop('comment', None)
             questions.append(item)
         values['slide_questions'] = questions
         return values
@@ -253,6 +259,27 @@ class DiligenceWebsiteSlides(WebsiteSlides):
         existing_count = attempt_model.search_count([('slide_id', '=', slide.id), ('partner_id', '=', partner.id)])
         if slide.quiz_max_attempts and existing_count >= slide.quiz_max_attempts:
             return {'error': 'quiz_attempt_limit'}
+        if request.env.user._is_public() or not (
+                request.env.user._is_admin()
+                or slide.channel_id.can_publish
+                or slide.channel_id.is_member
+                or slide.is_preview):
+            return {'error': 'quiz_access_denied'}
+
+        # Validate required answers before creating an attempt. This prevents
+        # an accidental empty submit from consuming an attempt or marking a
+        # quiz as failed.
+        for question in slide.question_ids:
+            raw = payload.get(str(question.id), payload.get(question.id, {})) or {}
+            if isinstance(raw, list):
+                raw = {'answer_ids': raw}
+            selected_ids = [int(value) for value in raw.get('answer_ids', []) if str(value).isdigit()]
+            text_answer = (raw.get('text_answer', '') or '').strip()
+            has_answer = bool(selected_ids) if question.question_type not in (
+                'short_answer', 'essay', 'speaking',
+            ) else bool(text_answer or raw.get('audio_file'))
+            if question.required and not has_answer:
+                return {'error': 'required_question', 'question_id': question.id}
         attempt = attempt_model.create({
             'slide_id': slide.id,
             'partner_id': partner.id,

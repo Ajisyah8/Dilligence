@@ -8,7 +8,6 @@
                         <div class="text-uppercase small fw-semibold text-primary" t-translation="yes">Diligence Academy</div>
                         <h3 class="mb-0" t-translation="yes">My Courses</h3>
                     </div>
-                    <a href="/my/home" class="btn btn-outline-secondary" t-translation="yes">Back to My Account</a>
                 </div>
 
                 <div class="row g-4 mb-4">
@@ -83,24 +82,6 @@
                 </div>
 
                 <div class="row g-3 mb-4">
-                    <div class="col-12 col-md-4">
-                        <a href="/my/orders" class="diligence-shortcut-card text-decoration-none">
-                            <span class="fa fa-shopping-bag" aria-hidden="true"/><span><strong t-translation="yes">My Orders</strong><small><t t-out="orders_count"/> <span t-translation="yes">orders</span></small></span><span class="fa fa-chevron-right ms-auto" aria-hidden="true"/>
-                        </a>
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <a href="/my/invoices" class="diligence-shortcut-card text-decoration-none">
-                            <span class="fa fa-file-text-o" aria-hidden="true"/><span><strong t-translation="yes">My Invoices</strong><small><t t-out="invoices_count"/> <span t-translation="yes">invoices</span></small></span><span class="fa fa-chevron-right ms-auto" aria-hidden="true"/>
-                        </a>
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <a href="/shop/cart" class="diligence-shortcut-card text-decoration-none">
-                            <span class="fa fa-shopping-cart" aria-hidden="true"/><span><strong t-translation="yes">My Cart</strong><small><t t-out="cart_count"/> <span t-translation="yes">items</span></small></span><span class="fa fa-chevron-right ms-auto" aria-hidden="true"/>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="row g-3 mb-4">
                     <div class="col-6 col-lg-3"><div class="diligence-mini-stat"><span t-translation="yes">Active courses</span><strong t-out="len(dashboard_courses)"/></div></div>
                     <div class="col-6 col-lg-3"><div class="diligence-mini-stat"><span t-translation="yes">Current streak</span><strong><t t-out="current_streak"/> <small t-translation="yes">days</small></strong></div></div>
                     <div class="col-6 col-lg-3"><div class="diligence-mini-stat"><span t-translation="yes">Best streak</span><strong><t t-out="best_streak"/> <small t-translation="yes">days</small></strong></div></div>
@@ -138,10 +119,41 @@
                                        t-att-href="membership.channel_id.website_absolute_url">
                                         <span t-translation="yes">Open Course</span>
                                     </a>
+                                    <a t-if="membership.diligence_package_id.diligence_whatsapp_group_link"
+                                       class="btn btn-sm btn-outline-success mt-2"
+                                       t-att-href="membership.diligence_package_id.diligence_whatsapp_group_link"
+                                       target="_blank" rel="noopener" t-translation="yes">
+                                        <i class="fa fa-whatsapp me-1"/> Join WhatsApp Group
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     </t>
+                </div>
+
+                <!-- Familiar Odoo portal shortcuts, kept below the learning area. -->
+                <div class="row g-3 mt-4 mb-4">
+                    <div class="col-12 col-md-4">
+                        <a href="/my/orders" class="diligence-shortcut-card text-decoration-none h-100">
+                            <span class="fa fa-shopping-bag" aria-hidden="true"/>
+                            <span><strong t-translation="yes">My Orders</strong><small><t t-out="orders_count"/> <span t-translation="yes">orders</span></small></span>
+                            <span class="fa fa-chevron-right ms-auto" aria-hidden="true"/>
+                        </a>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <a href="/my/invoices" class="diligence-shortcut-card text-decoration-none h-100">
+                            <span class="fa fa-file-text-o" aria-hidden="true"/>
+                            <span><strong t-translation="yes">My Invoices</strong><small><t t-out="invoices_count"/> <span t-translation="yes">invoices</span></small></span>
+                            <span class="fa fa-chevron-right ms-auto" aria-hidden="true"/>
+                        </a>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <a href="/shop/cart" class="diligence-shortcut-card text-decoration-none h-100">
+                            <span class="fa fa-shopping-cart" aria-hidden="true"/>
+                            <span><strong t-translation="yes">My Cart</strong><small><t t-out="cart_count"/> <span t-translation="yes">items</span></small></span>
+                            <span class="fa fa-chevron-right ms-auto" aria-hidden="true"/>
+                        </a>
+                    </div>
                 </div>
             </div>
         </t>
@@ -203,7 +215,7 @@
                ]) &gt; 0"/>
             <div class="o_portal_category row g-2 mt-3" id="diligence_student_category">
                 <div class="col-12 col-md-6">
-                    <a href="/my/courses" title="My Courses"
+                    <a href="/my" title="My Courses"
                        class="d-flex gap-3 py-3 px-3 h-100 rounded text-decoration-none bg-100">
                         <div class="d-flex align-items-center justify-content-center"
                              style="width: 56px; height: 56px; min-width: 56px;">

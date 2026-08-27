@@ -15,6 +15,26 @@ class PaymentTransaction(models.Model):
         help='Payment proof uploaded by the customer for this QRIS transaction.',
     )
 
+    def _set_done(self, state_message=None):
+        """Never complete static QRIS before a proof is attached.
+
+        A custom payment callback can be replayed or incorrectly report a
+        successful payment.  Static QRIS has no gateway confirmation, so the
+        uploaded receipt is the required confirmation signal.  Keeping this
+        invariant at transaction level also protects callers other than the
+        public upload controller.
+        """
+        unverified = self.filtered(
+            lambda tx: tx.provider_code == 'custom'
+            and tx.provider_id.custom_mode == 'qris_static'
+            and not tx.qris_proof_attachment_id
+        )
+        if unverified:
+            raise ValidationError(
+                _('A QRIS payment proof is required before the payment can be confirmed.')
+            )
+        return super()._set_done(state_message=state_message)
+
     def _get_specific_rendering_values(self, processing_values):
         values = super()._get_specific_rendering_values(processing_values)
         if self.provider_code == 'custom' and self.provider_id.custom_mode == 'qris_static':
@@ -63,7 +83,36 @@ class PaymentTransaction(models.Model):
             'res_id': self.id,
         })
         self.qris_proof_attachment_id = attachment.id
-        self._set_done(state_message=_('QRIS payment proof submitted by customer.'))
+        # Static QRIS is intentionally auto-confirmed by the agreed business
+        # flow: the receipt and exact order amount are validated at upload
+        # time, then the normal Odoo order/invoice/access flow is executed.
+        # Repeated uploads are rejected above, making this operation idempotent.
+        self._set_done(state_message=_('QRIS payment proof accepted.'))
+        orders = self.sale_order_ids.filtered(lambda order: order.state in ('draft', 'sent'))
+        orders.with_context(send_email=False).action_confirm()
+        self._post_process()
+
+    def action_diligence_verify_qris(self):
+        """Verify a static QRIS receipt and run normal post-processing."""
+        if not self.env.user.has_group('account.group_account_invoice') and not self.env.user._is_admin():
+            raise ValidationError(_('Only Finance users can verify a QRIS payment.'))
+        for transaction in self:
+            if transaction.provider_code != 'custom' or transaction.provider_id.custom_mode != 'qris_static':
+                raise ValidationError(_('This transaction is not a static QRIS transaction.'))
+            if transaction.state not in ('pending', 'done') or not transaction.qris_proof_attachment_id:
+                raise ValidationError(_('A pending or completed QRIS transaction with a payment proof is required.'))
+            orders = transaction.sale_order_ids
+            if len(orders) != 1 or abs(transaction.amount - orders.amount_total) > 0.01:
+                raise ValidationError(_('The QRIS amount does not match the sales order total.'))
+            if transaction.state == 'pending':
+                # Compatibility action for receipts submitted before the
+                # automatic approval change.
+                transaction._set_done(state_message=_('QRIS payment accepted.'))
+                orders.filtered(lambda order: order.state in ('draft', 'sent')).with_context(
+                    send_email=False
+                ).action_confirm()
+                transaction._post_process()
+        return True
 
     def _enroll_paid_courses(self):
         """Grant course access after a successful payment post-processing.
@@ -85,36 +134,20 @@ class PaymentTransaction(models.Model):
                 channels.sudo()._action_add_members(order.partner_id)
 
     def _check_amount_and_confirm_order(self):
-        """Confirm QRIS orders without requiring a PDF email attachment.
+        """Confirm provider-backed payments without requiring a PDF email.
 
         The standard payment flow requests an order-confirmation email. In a
         local Windows environment without wkhtmltopdf, generating that email
-        fails and prevents an otherwise valid QRIS payment from confirming its
-        sales order. QRIS confirmation remains automatic; only that optional
-        email delivery is skipped.
+        fails and prevents an otherwise valid payment from confirming its
+        sales order. Static QRIS is excluded because receipt verification is
+        required before confirmation.
         """
-        qris_transactions = self.filtered(
-            lambda tx: tx.provider_id.custom_mode == 'qris_static'
-        )
-        other_transactions = self - qris_transactions
-        confirmed_orders = self.env['sale.order']
-
-        if other_transactions:
-            confirmed_orders |= super(
-                PaymentTransaction, other_transactions
-            )._check_amount_and_confirm_order()
-
-        for transaction in qris_transactions:
-            if len(transaction.sale_order_ids) != 1:
-                continue
-            quotation = transaction.sale_order_ids.filtered(
-                lambda order: order.state in ('draft', 'sent')
-            )
-            if quotation and quotation._is_confirmation_amount_reached():
-                quotation.with_context(send_email=False).action_confirm()
-                confirmed_orders |= quotation
-
-        return confirmed_orders
+        # Static QRIS remains pending until Finance verifies the uploaded
+        # receipt. Provider-backed QRIS callbacks use Odoo's normal flow.
+        return super(
+            PaymentTransaction,
+            self.filtered(lambda tx: tx.provider_id.custom_mode != 'qris_static'),
+        )._check_amount_and_confirm_order()
 
     def _create_payment(self, **extra_create_values):
         """Skip accounting-entry creation for static QRIS in this LMS setup.

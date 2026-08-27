@@ -1,0 +1,47 @@
+/* Keep the single interview CTA attached to the viewport, not the footer. */
+.diligence-header-consultation,
+a[href="/contactus#free-interview"],
+li:has(a[href="/contactus#free-interview"]),
+a[href*="subject=Schedule%20Free%20Interview"]:not(.academy-floating-cta),
+a[href*="schedule%20free%20interview"]:not(.academy-floating-cta),
+a[href*="menjadwalkan%20free%20interview"]:not(.academy-floating-cta),
+a[href*="interview" i]:not(.academy-floating-cta) {
+    display: none !important;
+}
+
+.diligence-security-link {
+    display: block !important;
+    width: fit-content;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    text-align: left !important;
+}
+
+.academy-floating-cta {
+    position: fixed !important;
+    right: 1.5rem !important;
+    bottom: 1.5rem !important;
+    left: auto !important;
+    z-index: 1030;
+    background: #c9ab6e !important;
+    border: 1px solid #b18d4c !important;
+    color: #102f46 !important;
+    box-shadow: 0 .5rem 1.25rem rgba(16, 47, 70, .24) !important;
+    font-weight: 700;
+    transition: background-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+.academy-floating-cta:hover,
+.academy-floating-cta:focus {
+    background: #e0c98f !important;
+    color: #102f46 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 .7rem 1.5rem rgba(16, 47, 70, .3) !important;
+}
+
+@media (max-width: 991.98px) {
+    .academy-floating-cta {
+        right: 1rem !important;
+        bottom: 1rem !important;
+    }
+}

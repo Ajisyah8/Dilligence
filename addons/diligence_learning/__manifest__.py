@@ -1,6 +1,6 @@
 {
     'name': 'Diligence Learning Packages',
-    'version': '1.0.32',
+    'version': '1.0.35',
     'summary': 'Learning packages, bundle access, community, coaching, and referrals',
     'category': 'Website/eLearning',
     'author': 'Project ADS',
@@ -19,12 +19,15 @@
         'project',
         'mass_mailing',
         'website_mass_mailing',
+        'base_setup',
     ],
     'data': [
         'security/diligence_learning_security.xml',
         'security/ir.model.access.csv',
         'data/diligence_learning_data.xml',
+        'data/diligence_accounting_data.xml',
         'data/diligence_marketing_data.xml',
+        'data/diligence_newsletter_data.xml',
         'data/diligence_blog_data.xml',
         'data/package_shop_template.xml',
         'views/package_dynamic_snippet.xml',
@@ -32,6 +35,8 @@
         'views/product_website_templates.xml',
         'views/checkout_templates.xml',
         'views/payment_templates.xml',
+        'views/payment_transaction_views.xml',
+        'views/invoice_officer_views.xml',
         'views/package_product_tile_templates.xml',
         'views/res_partner_views.xml',
         'views/sale_order_views.xml',
@@ -48,7 +53,10 @@
         'views/reporting_views.xml',
         'views/management_dashboard_views.xml',
         'views/auth_signup_templates.xml',
+        'views/newsletter_views.xml',
         'views/course_detail_templates.xml',
+        'views/website_global_actions.xml',
+        'views/whatsapp_views.xml',
     ],
     'assets': {
         'web.assets_frontend': [
@@ -61,6 +69,7 @@
             'diligence_learning/static/src/scss/course_detail.scss',
             'diligence_learning/static/src/scss/student_portal.scss',
             'diligence_learning/static/src/scss/payment_methods.scss',
+            'diligence_learning/static/src/scss/website_global.scss',
         ],
         'web.assets_frontend_lazy': [
             'diligence_learning/static/src/js/diligence_fullscreen_sidebar.js',

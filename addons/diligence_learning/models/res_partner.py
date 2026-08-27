@@ -42,6 +42,20 @@ class ResPartner(models.Model):
         help='Granted when the partner has a confirmed Community or Consultation package.',
     )
 
+    _diligence_referral_code_uniq = models.Constraint(
+        'unique(diligence_referral_code)',
+        'Referral codes must be unique.',
+    )
+    diligence_newsletter_opt_in = fields.Boolean(
+        'Receive Diligence Newsletter',
+        default=False,
+        copy=False,
+        help='The student explicitly agreed to receive the Diligence Academy email sequence.',
+    )
+    diligence_newsletter_opt_in_date = fields.Datetime(
+        'Newsletter Consent Date', copy=False, readonly=True,
+    )
+
     @api.depends('diligence_referral_code')
     def _compute_diligence_referral_link(self):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url', '').rstrip('/')
@@ -66,7 +80,42 @@ class ResPartner(models.Model):
         partners = super().create(vals_list)
         for partner in partners.filtered(lambda record: not record.diligence_referral_code):
             partner.diligence_referral_code = f'DIL{partner.id:05d}'
+        opted_in = partners.filtered(lambda record: record.diligence_newsletter_opt_in)
+        if opted_in:
+            opted_in.write({'diligence_newsletter_opt_in_date': fields.Datetime.now()})
+            opted_in._sync_diligence_newsletter_subscription()
         return partners
+
+    def write(self, vals):
+        if vals.get('diligence_newsletter_opt_in'):
+            vals = dict(vals, diligence_newsletter_opt_in_date=fields.Datetime.now())
+        elif vals.get('diligence_newsletter_opt_in') is False:
+            vals = dict(vals, diligence_newsletter_opt_in_date=False)
+        result = super().write(vals)
+        if 'diligence_newsletter_opt_in' in vals:
+            self._sync_diligence_newsletter_subscription()
+        return result
+
+    def _sync_diligence_newsletter_subscription(self):
+        newsletter = self.env['mailing.list'].sudo().search([
+            ('name', '=', 'Diligence Academy Newsletter'),
+        ], limit=1)
+        if newsletter:
+            for partner in self.filtered(lambda record: record.email):
+                contact = self.env['mailing.contact'].sudo().search([
+                    ('email_normalized', '=', partner.email_normalized),
+                ], limit=1)
+                if not contact:
+                    contact = self.env['mailing.contact'].sudo().create({
+                        'name': partner.name,
+                        'email': partner.email,
+                        'list_ids': [(4, newsletter.id)],
+                    })
+                newsletter._update_subscription_from_email(
+                    partner.email,
+                    opt_out=not partner.diligence_newsletter_opt_in,
+                    force_message=False,
+                )
 
     def _diligence_ensure_referral_code(self):
         for partner in self:

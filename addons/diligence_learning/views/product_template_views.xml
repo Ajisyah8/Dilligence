@@ -31,6 +31,7 @@
                     <group string="4. Fasilitas dan Dukungan" col="2">
                         <group string="Akses Komunitas">
                             <field name="diligence_forum_access" string="Forum Diskusi" help="Centang untuk mengizinkan siswa mengikuti forum komunitas."/>
+                            <field name="diligence_whatsapp_group_link" string="Link WhatsApp Group" widget="url" help="Link tampil di Student Corner setelah pembayaran paket ini valid. Tidak bergantung pada akses Forum Diskusi."/>
                             <field name="diligence_consultation" string="Konsultasi/Coaching" help="Centang jika paket mencakup pengecekan progres atau arahan belajar dari coach."/>
                         </group>
                         <group string="Fasilitas Pengajar">

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="diligence_website_student_corner_nav" inherit_id="website.layout">
+        <xpath expr="//body" position="inside">
+            <a class="btn rounded-pill shadow academy-floating-cta"
+               t-att-href="('https://wa.me/%s?text=Halo%%20Diligence%%20Academy,%%20saya%%20ingin%%20free%%20interview' % request.env['ir.config_parameter'].sudo().get_param('diligence.whatsapp_number')) if request.env['ir.config_parameter'].sudo().get_param('diligence.whatsapp_number') else '/contactus'"
+               target="_blank" rel="noopener">
+                <i class="fa fa-whatsapp me-2" aria-hidden="true"/>
+                <span>Schedule Free Interview</span>
+            </a>
+        </xpath>
+    </template>
+
+    <template id="diligence_student_corner_user_dropdown" inherit_id="portal.user_dropdown">
+        <xpath expr="//div[contains(@t-attf-class, 'js_usermenu')]/div[@id='o_logout_divider']" position="before">
+            <a href="/my" role="menuitem" class="dropdown-item ps-3" id="diligence_student_corner_menu">
+                <i class="fa fa-fw fa-graduation-cap me-1 small text-primary-emphasis"/>
+                <span>Student Corner</span>
+            </a>
+        </xpath>
+    </template>
+
+    <template id="diligence_portal_security_link" inherit_id="portal.side_content">
+        <xpath expr="//a[@href='/my/account']" position="after">
+            <a role="button" href="/my/security" class="btn btn-link p-0 mt-2 d-block diligence-security-link">
+                <i class="fa fa-shield me-1" aria-hidden="true"/>
+                <span>Connection &amp; Security</span>
+            </a>
+        </xpath>
+    </template>
+
+    <!-- Remove the old Website Builder header consultation CTA. The floating
+         WhatsApp button is the only interview entry point now. -->
+    <template id="diligence_remove_header_consultation" inherit_id="website.header_text_element">
+        <xpath expr="//a[contains(@href, '#free-interview')]" position="replace"/>
+    </template>
+</odoo>
