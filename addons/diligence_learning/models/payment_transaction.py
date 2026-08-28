@@ -11,6 +11,7 @@ class PaymentTransaction(models.Model):
 
     _inherit = 'payment.transaction'
 
+
     def _diligence_has_exact_package_payment(self, order):
         """Return whether a package order is paid for by the exact checkout total.
 
@@ -95,13 +96,3 @@ class PaymentTransaction(models.Model):
         transfers._set_done(state_message=_('Bank transfer verified by Finance.'))
         transfers._post_process()
         return True
-
-    def _save_qris_proof(self, proof):
-        """Reject a static QRIS proof when its order amount is not exact."""
-        if (
-            self.provider_code == 'custom'
-            and getattr(self.provider_id, 'custom_mode', False) == 'qris_static'
-            and not self._diligence_payment_amount_is_valid()
-        ):
-            raise ValidationError(_('The payment amount does not match the order total.'))
-        return super()._save_qris_proof(proof)

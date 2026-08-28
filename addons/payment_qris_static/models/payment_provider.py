@@ -19,6 +19,6 @@ class PaymentProvider(models.Model):
         translate=True,
         default=(
             '<p>Scan the QRIS above, pay the exact order amount, then upload your payment proof.</p>'
-            '<p><strong>Payment is confirmed automatically after the proof is submitted.</strong></p>'
+            '<p><strong>Payment is activated after Finance verifies the proof.</strong></p>'
         ),
     )

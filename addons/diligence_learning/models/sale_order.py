@@ -142,13 +142,20 @@ class SaleOrder(models.Model):
             if self.env['ir.config_parameter'].sudo().get_param(
                 'diligence.whatsapp.send_on_payment', 'False'
             ) == 'True':
+                group_links = package_products.mapped('diligence_whatsapp_group_link')
+                group_message = (
+                    _('\nWhatsApp Community Group: %(link)s', link=group_links[0])
+                    if group_links else ''
+                )
                 service = self.env['diligence.whatsapp.service']
                 service.send_text(
-                    order.partner_id.mobile or order.partner_id.phone,
+                    order.partner_id.phone,
                     _(
                         'Pembayaran order %(order)s berhasil divalidasi. '
-                        'Akses paket belajar Anda sudah aktif di Diligence Academy.',
+                        'Akses paket belajar Anda sudah aktif di Diligence Academy.'
+                        '%(group_message)s',
                         order=order.name,
+                        group_message=group_message,
                     ),
                 )
 

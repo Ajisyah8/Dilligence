@@ -12,6 +12,7 @@
         'account',
         'account_payment',
         'payment_custom',
+        'payment_qris_static',
         'payment',
         'hr',
         'hr_attendance',
@@ -19,6 +20,7 @@
         'project',
         'mass_mailing',
         'website_mass_mailing',
+        'survey',
         'base_setup',
     ],
     'data': [
@@ -54,10 +56,12 @@
         'views/management_dashboard_views.xml',
         'views/auth_signup_templates.xml',
         'views/newsletter_views.xml',
+        'views/survey_views.xml',
         'views/homepage_newsletter.xml',
         'views/course_detail_templates.xml',
         'views/website_global_actions.xml',
         'views/whatsapp_views.xml',
+        'views/whatsapp_settings_views.xml',
     ],
     'assets': {
         'web.assets_frontend': [

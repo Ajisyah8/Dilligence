@@ -1,3 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="payment_transaction_form_qris_static" model="ir.ui.view">
+        <field name="name">payment.transaction.form.qris.static</field>
+        <field name="model">payment.transaction</field>
+        <field name="inherit_id" ref="payment.payment_transaction_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/field[@name='state']" position="before">
+                <button name="action_diligence_verify_qris" type="object" string="Verify QRIS Payment"
+                        class="oe_highlight" groups="account.group_account_invoice,account.group_account_manager"
+                        invisible="provider_code != 'custom' or provider_id.custom_mode != 'qris_static' or state != 'pending'"/>
+                <button name="action_diligence_reject_qris_payment" type="object" string="Reject QRIS Payment"
+                        groups="account.group_account_invoice,account.group_account_manager"
+                        invisible="provider_code != 'custom' or provider_id.custom_mode != 'qris_static' or state != 'pending'"/>
+            </xpath>
+            <xpath expr="//sheet/group[1]" position="after">
+                <group string="QRIS Verification" invisible="provider_code != 'custom' or provider_id.custom_mode != 'qris_static'">
+                    <group>
+                        <field name="qris_payment_amount"/>
+                        <field name="qris_order_amount"/>
+                        <field name="sale_order_ids"/>
+                        <field name="qris_proof_attachment_id"/>
+                        <field name="qris_payment_proof_filename"/>
+                        <field name="qris_proof_uploaded_at"/>
+                        <field name="qris_proof_uploaded_by"/>
+                    </group>
+                    <group>
+                        <field name="qris_payment_proof" filename="qris_payment_proof_filename" widget="binary"/>
+                        <field name="qris_finance_note"/>
+                        <field name="qris_rejection_reason"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
 </odoo>

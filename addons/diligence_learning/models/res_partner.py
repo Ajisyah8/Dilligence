@@ -4,6 +4,15 @@ from odoo import api, fields, models
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
+    diligence_contact_segment = fields.Selection([
+        ('student', 'Student'),
+        ('customer', 'Customer'),
+        ('newsletter', 'Newsletter Subscriber'),
+        ('referral_non_student', 'Referral - Non Student'),
+        ('affiliate', 'Affiliate / Referrer'),
+        ('other', 'Other'),
+    ], string='Diligence Contact Segment', default='other', index=True, copy=False)
+
     diligence_referral_code = fields.Char('Referral Code', copy=False, index=True)
     diligence_referral_link = fields.Char('Affiliate Link', compute='_compute_diligence_referral_link')
     diligence_is_affiliate = fields.Boolean('Active Affiliate', default=False, copy=False)

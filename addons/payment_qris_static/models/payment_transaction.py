@@ -1,7 +1,7 @@
 import base64
 
 from odoo import _, fields, models
-from odoo.exceptions import ValidationError
+from odoo.exceptions import AccessError, ValidationError
 
 
 class PaymentTransaction(models.Model):
@@ -14,6 +14,30 @@ class PaymentTransaction(models.Model):
         copy=False,
         help='Payment proof uploaded by the customer for this QRIS transaction.',
     )
+    qris_payment_proof = fields.Binary(
+        string='QRIS Proof Download', related='qris_proof_attachment_id.datas', readonly=True,
+    )
+    qris_payment_proof_filename = fields.Char(
+        string='Proof Filename', related='qris_proof_attachment_id.name', readonly=True,
+    )
+    qris_payment_amount = fields.Monetary(
+        string='Amount Paid by Student', currency_field='currency_id', copy=False,
+    )
+    qris_order_amount = fields.Monetary(
+        string='Sales Order Amount', currency_field='currency_id',
+        compute='_compute_qris_order_amount',
+    )
+    qris_proof_uploaded_at = fields.Datetime(string='Proof Uploaded At', readonly=True, copy=False)
+    qris_proof_uploaded_by = fields.Many2one('res.users', string='Proof Uploaded By', readonly=True, copy=False)
+    qris_finance_note = fields.Text(string='Finance Note', copy=False)
+    qris_rejection_reason = fields.Text(string='Rejection Reason', copy=False)
+
+    def _compute_qris_order_amount(self):
+        for transaction in self:
+            transaction.qris_order_amount = (
+                transaction.sale_order_ids[:1].amount_total
+                if transaction.sale_order_ids else 0
+            )
 
     def _set_done(self, state_message=None):
         """Never complete static QRIS before a proof is attached.
@@ -50,10 +74,10 @@ class PaymentTransaction(models.Model):
             return super()._apply_updates(payment_data)
 
         # The first custom-payment redirect only creates a pending transaction. The proof is
-        # uploaded on the payment status page, after which _save_qris_proof marks it done.
+        # uploaded on the payment status page and remains pending until Finance verifies it.
         return super()._apply_updates(payment_data)
 
-    def _save_qris_proof(self, proof):
+    def _save_qris_proof(self, proof, paid_amount=None):
         self.ensure_one()
         if self.provider_code != 'custom' or self.provider_id.custom_mode != 'qris_static':
             raise ValidationError(_('This transaction is not a static QRIS transaction.'))
@@ -74,6 +98,15 @@ class PaymentTransaction(models.Model):
         if proof.mimetype not in allowed_mimetypes:
             raise ValidationError(_('Please upload a JPG, PNG, WEBP, or PDF payment proof.'))
 
+        if paid_amount in (None, ''):
+            raise ValidationError(_('Enter the amount paid before submitting the proof.'))
+        try:
+            paid_amount = float(paid_amount)
+        except (TypeError, ValueError) as error:
+            raise ValidationError(_('Enter a valid payment amount.')) from error
+        if self.currency_id.compare_amounts(paid_amount, self.amount) != 0:
+            raise ValidationError(_('The payment amount does not match the order total.'))
+
         attachment = self.env['ir.attachment'].sudo().create({
             'name': proof.filename or f'{self.reference}-qris-proof',
             'type': 'binary',
@@ -82,37 +115,64 @@ class PaymentTransaction(models.Model):
             'res_model': self._name,
             'res_id': self.id,
         })
-        self.qris_proof_attachment_id = attachment.id
-        # Static QRIS is intentionally auto-confirmed by the agreed business
-        # flow: the receipt and exact order amount are validated at upload
-        # time, then the normal Odoo order/invoice/access flow is executed.
-        # Repeated uploads are rejected above, making this operation idempotent.
-        self._set_done(state_message=_('QRIS payment proof accepted.'))
-        orders = self.sale_order_ids.filtered(lambda order: order.state in ('draft', 'sent'))
-        orders.with_context(send_email=False).action_confirm()
-        self._post_process()
+        self.write({
+            'qris_proof_attachment_id': attachment.id,
+            'qris_payment_amount': paid_amount,
+            'qris_proof_uploaded_at': fields.Datetime.now(),
+            'qris_proof_uploaded_by': self.env.uid if not self.env.user._is_public() else False,
+            'state_message': _('QRIS payment proof uploaded. Waiting for Finance verification.'),
+        })
+        if self.state == 'draft':
+            self._set_pending(state_message=_('QRIS payment proof uploaded.'))
+        for order in self.sale_order_ids:
+            order.message_post(body=_('QRIS payment proof uploaded and is waiting for Finance verification.'))
 
     def action_diligence_verify_qris(self):
         """Verify a static QRIS receipt and run normal post-processing."""
-        if not self.env.user.has_group('account.group_account_invoice') and not self.env.user._is_admin():
-            raise ValidationError(_('Only Finance users can verify a QRIS payment.'))
+        if not (
+            self.env.user.has_group('account.group_account_invoice')
+            or self.env.user.has_group('account.group_account_manager')
+            or self.env.user._is_admin()
+        ):
+            raise AccessError(_('Only Finance users can verify a QRIS payment.'))
         for transaction in self:
             if transaction.provider_code != 'custom' or transaction.provider_id.custom_mode != 'qris_static':
                 raise ValidationError(_('This transaction is not a static QRIS transaction.'))
-            if transaction.state not in ('pending', 'done') or not transaction.qris_proof_attachment_id:
+            if transaction.state == 'done':
+                continue
+            if transaction.state != 'pending' or not transaction.qris_proof_attachment_id:
                 raise ValidationError(_('A pending or completed QRIS transaction with a payment proof is required.'))
             orders = transaction.sale_order_ids
-            if len(orders) != 1 or abs(transaction.amount - orders.amount_total) > 0.01:
+            if (
+                len(orders) != 1
+                or transaction.currency_id.compare_amounts(transaction.qris_payment_amount, transaction.amount) != 0
+                or transaction.currency_id.compare_amounts(transaction.amount, orders.amount_total) != 0
+            ):
                 raise ValidationError(_('The QRIS amount does not match the sales order total.'))
             if transaction.state == 'pending':
-                # Compatibility action for receipts submitted before the
-                # automatic approval change.
-                transaction._set_done(state_message=_('QRIS payment accepted.'))
+                transaction._set_done(state_message=_('QRIS payment verified by Finance.'))
                 orders.filtered(lambda order: order.state in ('draft', 'sent')).with_context(
                     send_email=False
                 ).action_confirm()
                 transaction._post_process()
         return True
+
+    def action_diligence_reject_qris_payment(self):
+        self.ensure_one()
+        if not (
+            self.env.user.has_group('account.group_account_invoice')
+            or self.env.user.has_group('account.group_account_manager')
+            or self.env.user._is_admin()
+        ):
+            raise AccessError(_('Only Finance users can reject a QRIS payment.'))
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Reject QRIS Payment'),
+            'res_model': 'payment.qris.reject.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_transaction_id': self.id},
+        }
 
     def _enroll_paid_courses(self):
         """Grant course access after a successful payment post-processing.

@@ -74,11 +74,13 @@ class ResConfigSettings(models.TransientModel):
     diligence_whatsapp_signup_message = fields.Char(
         string='Signup Welcome Message',
         config_parameter='diligence.whatsapp.signup_message',
+        default='Halo %(name)s, selamat datang di Diligence Academy. Akun Anda berhasil dibuat. Selamat belajar!',
         help='Use %(name)s for the new user name.',
     )
     diligence_whatsapp_test_message = fields.Char(
         string='Test WhatsApp Message',
         config_parameter='diligence.whatsapp.test_message',
+        default='Hello %(name)s, this is a test message from Diligence Academy.',
         help='Use %(name)s for the contact name.',
     )
 
@@ -90,27 +92,48 @@ class ResUsers(models.Model):
     def signup(self, values, token=None):
         phone = (values.get('phone') or '').strip()
         result = super().signup(values, token)
-        if not phone:
-            return result
         login = result[0] if result else values.get('login')
         user = self.sudo().search([('login', '=', login)], limit=1)
         if not user or not user.partner_id:
             return result
         partner = user.partner_id.sudo()
-        partner.write({'phone': phone})
+        service = self.env['diligence.whatsapp.service'].sudo()
+        normalized_phone = service.normalize_number(phone)
+        partner.write({
+            'phone': normalized_phone or phone,
+            'diligence_whatsapp_signup_status': 'skipped' if not normalized_phone else 'pending',
+            'diligence_whatsapp_signup_error': False,
+        })
+        if not normalized_phone:
+            return result
         params = self.env['ir.config_parameter'].sudo()
         template = params.get_param(
             'diligence.whatsapp.signup_message',
             'Halo %(name)s, selamat datang di Diligence Academy. Akun Anda berhasil dibuat. Selamat belajar!',
         )
         message = template % {'name': partner.name}
-        send_result = self.env['diligence.whatsapp.service'].sudo().send_text(phone, message)
-        _logger.info('Signup WhatsApp welcome result sent=%s skipped=%s error=%s', send_result.get('sent'), send_result.get('skipped'), send_result.get('error'))
+        send_result = service.send_text(normalized_phone, message)
+        status = 'sent' if send_result.get('sent') else 'skipped' if send_result.get('skipped') else 'error'
+        partner.write({
+            'diligence_whatsapp_signup_status': status,
+            'diligence_whatsapp_signup_error': send_result.get('error') or False,
+        })
+        _logger.info('Signup WhatsApp welcome result status=%s', status)
         return result
 
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
+
+    diligence_whatsapp_signup_status = fields.Selection([
+        ('pending', 'Pending'),
+        ('sent', 'Sent'),
+        ('skipped', 'Skipped'),
+        ('error', 'Error'),
+    ], string='Signup WhatsApp Status', copy=False, readonly=True)
+    diligence_whatsapp_signup_error = fields.Char(
+        string='Signup WhatsApp Error', copy=False, readonly=True,
+    )
 
     def action_diligence_send_whatsapp_test(self):
         self.ensure_one()
@@ -120,7 +143,7 @@ class ResPartner(models.Model):
             'diligence.whatsapp.test_message',
             'Hello %(name)s, this is a test message from Diligence Academy.',
         ) % {'name': self.name}
-        result = self.env['diligence.whatsapp.service'].send_text(self.phone, message)
+        result = self.env['diligence.whatsapp.service'].sudo().send_text(self.phone, message)
         if result.get('skipped'):
             raise UserError(_('Evolution API is disabled or not configured.'))
         if not result.get('sent'):

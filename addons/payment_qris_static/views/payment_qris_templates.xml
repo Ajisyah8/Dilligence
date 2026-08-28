@@ -15,6 +15,9 @@
                     <form action="/payment/qris_static/upload" method="post"
                           enctype="multipart/form-data" class="text-start">
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <label for="qris_paid_amount" class="form-label">Nominal pembayaran</label>
+                        <input id="qris_paid_amount" name="paid_amount" type="number" step="0.01"
+                               class="form-control mb-3" required="required" t-att-value="tx.amount"/>
                         <label for="qris_proof_file" class="form-label">Upload bukti pembayaran</label>
                         <input id="qris_proof_file" name="proof_file" type="file"
                                class="form-control" accept="image/*,application/pdf" required="required"/>
@@ -23,7 +26,7 @@
                         </button>
                     </form>
                     <small class="text-muted d-block mt-2">
-                        Bukti dan nominal akan divalidasi otomatis. Akses course aktif setelah pembayaran diterima.
+                        Bukti dan nominal akan diperiksa Finance. Course dan WhatsApp Group aktif setelah pembayaran disetujui.
                     </small>
                 </div>
             </div>

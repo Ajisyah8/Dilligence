@@ -21,6 +21,15 @@
         <field name="interval_type">days</field>
         <field name="active">True</field>
     </record>
+    <record id="ir_cron_diligence_referral_monthly_settlement" model="ir.cron">
+        <field name="name">Diligence: Prepare Monthly Referral Settlement</field>
+        <field name="model_id" ref="model_diligence_referral_settlement"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_prepare_monthly_settlements()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record>
 
     <record id="forum_diligence_community" model="forum.forum">
         <field name="name">Diligence Learning Community</field>

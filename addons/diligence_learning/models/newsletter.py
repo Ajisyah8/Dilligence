@@ -35,7 +35,13 @@ class DiligenceNewsletterDelivery(models.Model):
     _description = 'Diligence Newsletter Delivery'
     _order = 'scheduled_date, id'
 
-    partner_id = fields.Many2one('res.partner', required=True, index=True, ondelete='cascade')
+    partner_id = fields.Many2one('res.partner', index=True, ondelete='cascade')
+    mailing_contact_id = fields.Many2one(
+        'mailing.contact', index=True, ondelete='cascade',
+        help='The public newsletter subscriber. A partner is optional.',
+    )
+    email = fields.Char(compute='_compute_recipient', store=True, index=True)
+    contact_name = fields.Char(compute='_compute_recipient', store=True)
     stage_id = fields.Many2one('diligence.newsletter.stage', required=True, index=True, ondelete='restrict')
     scheduled_date = fields.Datetime(required=True, index=True)
     state = fields.Selection([
@@ -52,6 +58,22 @@ class DiligenceNewsletterDelivery(models.Model):
         'unique(partner_id, stage_id)',
         'A student can only have one delivery record for each newsletter stage.',
     )
+    _mailing_contact_stage_uniq = models.Constraint(
+        'unique(mailing_contact_id, stage_id)',
+        'A subscriber can only have one delivery record for each newsletter stage.',
+    )
+    _recipient_required = models.Constraint(
+        'CHECK(partner_id IS NOT NULL OR mailing_contact_id IS NOT NULL)',
+        'A newsletter delivery must have a partner or mailing contact.',
+    )
+
+    @api.depends('partner_id.email', 'partner_id.name', 'mailing_contact_id.email', 'mailing_contact_id.name')
+    def _compute_recipient(self):
+        for delivery in self:
+            partner = delivery.partner_id
+            contact = delivery.mailing_contact_id
+            delivery.email = (contact.email if contact else False) or (partner.email if partner else False)
+            delivery.contact_name = (contact.name if contact else False) or (partner.name if partner else False)
 
     @api.model
     def _newsletter_list(self):
@@ -73,27 +95,68 @@ class DiligenceNewsletterDelivery(models.Model):
         return bool(subscription and not subscription[-1].opt_out)
 
     @api.model
-    def _ensure_deliveries(self):
-        stages = self.env['diligence.newsletter.stage'].sudo().search([('active', '=', True)])
-        partners = self.env['res.partner'].sudo().search([
-            ('diligence_newsletter_opt_in', '=', True),
-            ('email', '!=', False),
+    def _is_contact_subscribed(self, contact):
+        mailing_list = self._newsletter_list()
+        if not mailing_list or not contact or not contact.email:
+            return False
+        subscription = contact.subscription_ids.filtered(
+            lambda record: record.list_id == mailing_list and not record.opt_out
+        )
+        return bool(subscription)
+
+    @api.model
+    def _partner_for_contact(self, contact):
+        return self.env['res.partner'].sudo().search([
+            ('email', '=ilike', contact.email),
+            ('active', '=', True),
+        ], limit=1)
+
+    @api.model
+    def _create_deliveries_for_contact(self, contact, anchor=None, partner=None):
+        if not self._is_contact_subscribed(contact):
+            return self.env[self._name]
+        stages = self.env['diligence.newsletter.stage'].sudo().search([
             ('active', '=', True),
         ])
-        for partner in partners:
-            if not self._is_subscribed(partner):
+        anchor = anchor or fields.Datetime.now()
+        partner = partner or self._partner_for_contact(contact)
+        created = self.env[self._name]
+        for stage in stages:
+            domain = [
+                ('stage_id', '=', stage.id),
+                '|', ('mailing_contact_id', '=', contact.id),
+                ('partner_id', '=', partner.id if partner else 0),
+            ]
+            existing = self.sudo().search(domain, limit=1)
+            if existing:
+                # Link legacy partner-based deliveries to the public contact
+                # when both records represent the same email address.
+                if partner and existing.partner_id == partner and not existing.mailing_contact_id:
+                    existing.write({'mailing_contact_id': contact.id})
                 continue
-            registration_date = partner.create_date or fields.Datetime.now()
-            for stage in stages:
-                if self.search_count([
-                    ('partner_id', '=', partner.id), ('stage_id', '=', stage.id),
-                ]):
-                    continue
-                self.create({
-                    'partner_id': partner.id,
-                    'stage_id': stage.id,
-                    'scheduled_date': registration_date + timedelta(days=stage.delay_days),
-                })
+            created |= self.sudo().create({
+                'partner_id': partner.id if partner else False,
+                'mailing_contact_id': contact.id,
+                'stage_id': stage.id,
+                'scheduled_date': anchor + timedelta(days=stage.delay_days),
+            })
+        return created
+
+    @api.model
+    def _ensure_deliveries(self):
+        mailing_list = self._newsletter_list()
+        if not mailing_list:
+            return
+        subscriptions = self.env['mailing.subscription'].sudo().search([
+            ('list_id', '=', mailing_list.id),
+            ('opt_out', '=', False),
+            ('contact_id.email', '!=', False),
+        ])
+        for subscription in subscriptions:
+            contact = subscription.contact_id
+            partner = self._partner_for_contact(contact)
+            anchor = (partner.create_date if partner else False) or fields.Datetime.now()
+            self._create_deliveries_for_contact(contact, anchor=anchor, partner=partner)
 
     @api.model
     def _cron_process(self):
@@ -108,7 +171,14 @@ class DiligenceNewsletterDelivery(models.Model):
             'diligence.email_test_mode', 'True',
         ).lower() in ('1', 'true', 'yes', 'on')
         for delivery in deliveries:
-            if not delivery.partner_id.diligence_newsletter_opt_in or not self._is_subscribed(delivery.partner_id):
+            if not delivery.email:
+                delivery.write({'state': 'skipped', 'last_error': _('Subscriber has no email address.')})
+                continue
+            if delivery.mailing_contact_id:
+                subscribed = self._is_contact_subscribed(delivery.mailing_contact_id)
+            else:
+                subscribed = delivery.partner_id.diligence_newsletter_opt_in and self._is_subscribed(delivery.partner_id)
+            if not subscribed:
                 delivery.write({'state': 'skipped', 'last_error': _('Student is not subscribed.')})
                 continue
             if test_mode:
@@ -127,10 +197,11 @@ class DiligenceNewsletterDelivery(models.Model):
                     'last_error': False,
                 })
             except Exception as error:
-                _logger.exception('Newsletter drip failed for delivery %s', delivery.id)
+                error_type = type(error).__name__
+                _logger.error('Newsletter drip failed for delivery %s (%s)', delivery.id, error_type)
                 delivery.write({
                     'state': 'failed',
                     'attempt_count': delivery.attempt_count + 1,
-                    'last_error': str(error),
+                    'last_error': _('Delivery failed (%s).') % error_type,
                 })
         return True

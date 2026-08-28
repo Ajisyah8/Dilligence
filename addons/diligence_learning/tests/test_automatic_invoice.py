@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 from odoo import Command
 from odoo.addons.payment_custom.tests.common import PaymentCustomCommon
-from odoo.exceptions import AccessError
+from odoo.exceptions import AccessError, ValidationError
 from odoo.tests import tagged
 
 
@@ -18,6 +18,7 @@ class TestDiligenceAutomaticInvoice(PaymentCustomCommon):
     def setUpClass(cls):
         super().setUpClass()
         cls.provider = cls._prepare_provider(code='custom', custom_mode='wire_transfer')
+        cls.qris_provider = cls._prepare_provider(code='custom', custom_mode='qris_static')
         cls.product = cls.env['product.product'].create({
             'name': 'Diligence invoice test package',
             'type': 'service',
@@ -112,3 +113,70 @@ class TestDiligenceAutomaticInvoice(PaymentCustomCommon):
                           order.invoice_ids.ids, order.invoice_status))
         self.assertAlmostEqual(tx.invoice_ids.amount_total, order.amount_total)
         self.assertEqual(tx.invoice_ids.partner_id, order.partner_id)
+
+    def test_qris_proof_upload_stays_pending_until_finance(self):
+        order = self._create_order()
+        tx = self._create_transaction(
+            flow='direct', provider_id=self.qris_provider.id, amount=order.amount_total,
+            sale_order_ids=[order.id], state='pending', reference=f'QRIS pending {order.id}',
+        )
+        upload = type('Upload', (), {
+            'read': lambda self: b'fake-png', 'filename': 'proof.png', 'mimetype': 'image/png',
+        })()
+        tx._save_qris_proof(upload, order.amount_total)
+        self.assertEqual(tx.state, 'pending')
+        self.assertTrue(tx.qris_proof_attachment_id)
+        self.assertFalse(order.invoice_ids)
+        self.assertNotEqual(order.state, 'sale')
+
+    def test_qris_wrong_amount_cannot_be_uploaded_or_verified(self):
+        order = self._create_order()
+        tx = self._create_transaction(
+            flow='direct', provider_id=self.qris_provider.id, amount=order.amount_total,
+            sale_order_ids=[order.id], state='pending', reference=f'QRIS invalid {order.id}',
+        )
+        upload = type('Upload', (), {
+            'read': lambda self: b'fake-png', 'filename': 'proof.png', 'mimetype': 'image/png',
+        })()
+        with self.assertRaises(ValidationError):
+            tx._save_qris_proof(upload, order.amount_total - 1)
+        self.assertFalse(tx.qris_proof_attachment_id)
+        self.assertEqual(tx.state, 'pending')
+
+    def test_qris_finance_approval_is_idempotent_and_creates_one_invoice(self):
+        self.env['ir.config_parameter'].sudo().set_param('sale.automatic_invoice', 'True')
+        order = self._create_order()
+        tx = self._create_transaction(
+            flow='direct', provider_id=self.qris_provider.id, amount=order.amount_total,
+            sale_order_ids=[order.id], state='pending', reference=f'QRIS approve {order.id}',
+        )
+        upload = type('Upload', (), {
+            'read': lambda self: b'fake-png', 'filename': 'proof.png', 'mimetype': 'image/png',
+        })()
+        tx._save_qris_proof(upload, order.amount_total)
+        with patch('odoo.addons.sale.models.payment_transaction.PaymentTransaction._send_invoice'):
+            tx.action_diligence_verify_qris()
+            tx.action_diligence_verify_qris()
+        self.assertEqual(tx.state, 'done')
+        self.assertEqual(order.state, 'sale')
+        self.assertEqual(len(tx.invoice_ids), 1)
+        self.assertAlmostEqual(tx.invoice_ids.amount_total, order.amount_total)
+
+    def test_student_cannot_approve_qris_payment(self):
+        order = self._create_order()
+        tx = self._create_transaction(
+            flow='direct', provider_id=self.qris_provider.id, amount=order.amount_total,
+            sale_order_ids=[order.id], state='pending', reference=f'QRIS student {order.id}',
+        )
+        upload = type('Upload', (), {
+            'read': lambda self: b'fake-png', 'filename': 'proof.png', 'mimetype': 'image/png',
+        })()
+        tx._save_qris_proof(upload, order.amount_total)
+        portal_user = self.env['res.users'].sudo().create({
+            'name': 'QRIS Portal Student',
+            'login': f'qris-student-{order.id}@example.com',
+            'email': f'qris-student-{order.id}@example.com',
+            'group_ids': [Command.set([self.env.ref('base.group_portal').id])],
+        })
+        with self.assertRaises(AccessError):
+            tx.with_user(portal_user).action_diligence_verify_qris()

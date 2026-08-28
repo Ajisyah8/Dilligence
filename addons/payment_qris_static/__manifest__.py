@@ -8,6 +8,8 @@
         'views/payment_provider_views.xml',
         'views/payment_qris_templates.xml',
         'views/payment_transaction_views.xml',
+        'views/payment_reject_wizard.xml',
+        'security/ir.model.access.csv',
         'data/payment_provider_data.xml',
     ],
     'post_init_hook': 'post_init_hook',

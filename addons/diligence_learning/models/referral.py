@@ -154,6 +154,40 @@ class DiligenceReferralSettlement(models.Model):
     payout_reference = fields.Char('Payout Transfer Reference', copy=False)
     currency_id = fields.Many2one(related='affiliate_id.company_id.currency_id', store=True)
 
+    _affiliate_period_unique = models.Constraint(
+        'unique(affiliate_id, period_start, period_end)',
+        'Only one referral settlement cycle is allowed per affiliate and period.',
+    )
+
+    @api.model
+    def _cron_prepare_monthly_settlements(self):
+        """Prepare, but never pay, the previous month's referral cycle."""
+        today = fields.Date.context_today(self)
+        first_this_month = today.replace(day=1)
+        period_end = first_this_month - timedelta(days=1)
+        period_start = period_end.replace(day=1)
+        affiliate_ids = self.env['diligence.referral'].search([
+            ('affiliate_id', '!=', False),
+            ('payment_date', '>=', period_start),
+            ('payment_date', '<=', period_end),
+            ('status', 'in', ('approved', 'ready_to_pay')),
+            ('settlement_id', '=', False),
+        ]).mapped('affiliate_id')
+        for affiliate in affiliate_ids:
+            settlement = self.search([
+                ('affiliate_id', '=', affiliate.id),
+                ('period_start', '=', period_start),
+                ('period_end', '=', period_end),
+            ], limit=1)
+            if not settlement:
+                settlement = self.create({
+                    'affiliate_id': affiliate.id,
+                    'period_start': period_start,
+                    'period_end': period_end,
+                })
+            settlement.action_load_eligible()
+        return True
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:

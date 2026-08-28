@@ -13,7 +13,7 @@ class StaticQrisController(http.Controller):
         website=True,
         csrf=True,
     )
-    def upload_qris_proof(self, proof_file=None, **post):
+    def upload_qris_proof(self, proof_file=None, paid_amount=None, **post):
         transaction_id = request.session.get('__payment_monitored_tx_id__')
         transaction = request.env['payment.transaction'].sudo().browse(transaction_id).exists()
         if not transaction:
@@ -30,9 +30,7 @@ class StaticQrisController(http.Controller):
                 partner = transaction.sale_order_ids[:1].partner_id.commercial_partner_id
                 if partner != request.env.user.partner_id.commercial_partner_id:
                     raise ValidationError(_('You can only submit proof for your own order.'))
-            transaction._save_qris_proof(proof_file)
-            # _save_qris_proof performs the idempotent confirmation and normal
-            # invoice/course-access post-processing.
+            transaction._save_qris_proof(proof_file, paid_amount)
         except ValidationError as error:
             request.session['qris_upload_error'] = str(error)
 

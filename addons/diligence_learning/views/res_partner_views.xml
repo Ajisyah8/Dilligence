@@ -36,6 +36,21 @@
                     </group>
                 </page>
             </xpath>
+            <xpath expr="//sheet//field[@name='category_id']" position="after">
+                <field name="diligence_contact_segment"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="res_partner_view_tree_diligence_segment" model="ir.ui.view">
+        <field name="name">res.partner.list.diligence.segment</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list/field[@name='email']" position="after">
+                <field name="diligence_referral_code" optional="hide"/>
+                <field name="diligence_contact_segment" optional="hide"/>
+                <field name="diligence_is_affiliate" optional="hide"/>
+            </xpath>
         </field>
     </record>
 </odoo>

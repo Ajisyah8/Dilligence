@@ -10,12 +10,12 @@
             <field name="name">Diligence Newsletter: Welcome</field>
             <field name="model_id" ref="model_diligence_newsletter_delivery"/>
             <field name="subject">Welcome to Diligence Academy</field>
-            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="email_to">{{ object.email }}</field>
             <field name="use_default_to" eval="False"/>
             <field name="description">Sent on the student's registration day after explicit newsletter consent.</field>
             <field name="body_html" type="html">
                 <div style="margin:0;padding:0;font-size:14px;line-height:1.6;">
-                    <p>Hi <t t-out="object.partner_id.name or 'there'"/>,</p>
+                    <p>Hi <t t-out="object.contact_name or 'there'"/>,</p>
                     <p>Welcome to Diligence Academy. We are happy to support your learning journey.</p>
                     <p>You will receive practical learning tips in the next few days.</p>
                     <p>Thank you,<br/>Diligence Academy</p>
@@ -28,12 +28,12 @@
             <field name="name">Diligence Newsletter: First Learning Material</field>
             <field name="model_id" ref="model_diligence_newsletter_delivery"/>
             <field name="subject">Your first learning material from Diligence Academy</field>
-            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="email_to">{{ object.email }}</field>
             <field name="use_default_to" eval="False"/>
             <field name="description">Sent five days after registration.</field>
             <field name="body_html" type="html">
                 <div style="margin:0;padding:0;font-size:14px;line-height:1.6;">
-                    <p>Hi <t t-out="object.partner_id.name or 'there'"/>,</p>
+                    <p>Hi <t t-out="object.contact_name or 'there'"/>,</p>
                     <p>Here is a simple reminder to continue your learning practice today.</p>
                     <p>Open your Student Corner and continue the next available lesson.</p>
                     <p>Keep learning,<br/>Diligence Academy</p>
@@ -46,12 +46,12 @@
             <field name="name">Diligence Newsletter: Continue Learning</field>
             <field name="model_id" ref="model_diligence_newsletter_delivery"/>
             <field name="subject">Keep your learning momentum</field>
-            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="email_to">{{ object.email }}</field>
             <field name="use_default_to" eval="False"/>
             <field name="description">Sent ten days after registration.</field>
             <field name="body_html" type="html">
                 <div style="margin:0;padding:0;font-size:14px;line-height:1.6;">
-                    <p>Hi <t t-out="object.partner_id.name or 'there'"/>,</p>
+                    <p>Hi <t t-out="object.contact_name or 'there'"/>,</p>
                     <p>Small, consistent practice makes a real difference. Review your course progress and choose one lesson to complete today.</p>
                     <p>We are cheering you on,<br/>Diligence Academy</p>
                 </div>

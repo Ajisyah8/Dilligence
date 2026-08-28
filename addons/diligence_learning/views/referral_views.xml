@@ -30,9 +30,13 @@
                 <field name="student_id"/>
                 <field name="program_id"/>
                 <field name="sale_order_id"/>
+                <field name="referral_code"/>
                 <field name="net_payment" sum="Net Payment"/>
+                <field name="payment_amount" sum="Payment Received"/>
                 <field name="cashback_amount" sum="Cashback"/>
                 <field name="status" widget="badge"/>
+                <field name="settlement_id"/>
+                <field name="paid_date"/>
                 <field name="waiting_until"/>
             </list>
         </field>
