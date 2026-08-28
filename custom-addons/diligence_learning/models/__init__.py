@@ -12,3 +12,5 @@ from . import website_menu
 from . import website
 from . import quiz
 from . import learning_activity
+from . import whatsapp
+from . import newsletter

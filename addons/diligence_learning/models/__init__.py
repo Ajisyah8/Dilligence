@@ -17,3 +17,4 @@ from . import newsletter
 from . import account_move
 from . import payment_transaction
 from . import whatsapp
+from . import whatsapp_webhook

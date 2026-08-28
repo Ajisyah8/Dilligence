@@ -4,6 +4,9 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//form/header" position="inside">
+                <button name="action_test_whatsapp" type="object" string="Test WhatsApp" class="oe_highlight" icon="fa-whatsapp" groups="base.group_system"/>
+            </xpath>
             <xpath expr="//notebook" position="inside">
                 <page string="Diligence Affiliate" name="diligence_affiliate">
                     <group>
@@ -38,4 +41,17 @@
             </xpath>
         </field>
     </record>
+    <record id="res_partner_view_form_diligence_whatsapp_test" model="ir.ui.view">
+        <field name="name">res.partner.form.diligence.whatsapp.test</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet" position="before">
+                <header>
+                    <button name="action_test_whatsapp" type="object" string="Test WhatsApp" class="oe_highlight" icon="fa-whatsapp" groups="base.group_system"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

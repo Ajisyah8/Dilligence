@@ -1,4 +1,7 @@
+import requests
+
 from odoo import api, fields, models
+from odoo.exceptions import UserError
 
 
 class ResPartner(models.Model):
@@ -73,3 +76,30 @@ class ResPartner(models.Model):
             if not partner.diligence_referral_code:
                 partner.diligence_referral_code = f'DIL{partner.id:05d}'
         return self
+
+    def action_test_whatsapp(self):
+        self.ensure_one()
+        if not self.phone:
+            raise UserError('Isi nomor WhatsApp pada field Phone terlebih dahulu.')
+        params = self.env['ir.config_parameter'].sudo()
+        if params.get_param('diligence.whatsapp.enabled', 'False').lower() != 'true':
+            raise UserError('Integrasi WhatsApp belum diaktifkan pada Settings.')
+        api_url = params.get_param('diligence.whatsapp.api_url', '').rstrip('/')
+        instance = params.get_param('diligence.whatsapp.instance', '')
+        api_key = params.get_param('diligence.whatsapp.api_key', '')
+        if not api_url or not instance or not api_key:
+            raise UserError('Konfigurasi Evolution API belum lengkap.')
+        number = ''.join(char for char in self.phone if char.isdigit())
+        if number.startswith('0'):
+            number = '62' + number[1:]
+        try:
+            response = requests.post(
+                f'{api_url}/message/sendText/{instance}',
+                headers={'apikey': api_key, 'Content-Type': 'application/json'},
+                json={'number': number, 'text': f'Tes WhatsApp Diligence Academy untuk {self.name}.'},
+                timeout=15,
+            )
+            response.raise_for_status()
+        except requests.RequestException as error:
+            raise UserError('Pengiriman test WhatsApp gagal. Periksa koneksi Evolution API.') from error
+        return True

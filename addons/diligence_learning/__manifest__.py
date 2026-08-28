@@ -54,6 +54,7 @@
         'views/management_dashboard_views.xml',
         'views/auth_signup_templates.xml',
         'views/newsletter_views.xml',
+        'views/homepage_newsletter.xml',
         'views/course_detail_templates.xml',
         'views/website_global_actions.xml',
         'views/whatsapp_views.xml',
@@ -75,6 +76,7 @@
             'diligence_learning/static/src/js/diligence_fullscreen_sidebar.js',
         ],
     },
+    'application': True,
     'installable': True,
     'post_init_hook': 'post_init_hook',
 }

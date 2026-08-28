@@ -1,0 +1,22 @@
+<odoo>
+    <template id="diligence_homepage_newsletter" inherit_id="website.homepage" name="Diligence Homepage Newsletter">
+        <xpath expr="//section[@data-name='Testimonials']" position="before">
+            <section class="s_newsletter_block s_newsletter_list o_cc o_cc2 pt64 pb64" data-snippet="s_newsletter_block" data-name="Newsletter" data-list-id="2">
+                <div class="container">
+                    <div class="row align-items-center g-4">
+                        <div class="col-lg-6">
+                            <h2 class="h3-fs">Dapatkan materi belajar terbaru</h2>
+                            <p class="lead">Daftarkan email Anda untuk menerima tips belajar, materi pilihan, dan informasi program terbaru dari Diligence Academy.</p>
+                        </div>
+                        <div class="col-lg-6">
+                            <t t-call="website_mass_mailing.s_newsletter_subscribe_form">
+                                <t t-set="_contentClasses" t-value="'w-100'"/>
+                                <t t-set="_btn_classes" t-value="'btn btn-primary'"/>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </xpath>
+    </template>
+</odoo>

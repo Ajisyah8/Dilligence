@@ -1,4 +1,5 @@
 import base64
+import json
 import werkzeug
 
 from odoo import http, fields, _
@@ -106,6 +107,7 @@ class DiligenceWebsiteSlides(WebsiteSlides):
         self._set_viewed_slide(slide, quiz_attempts_inc=True)
         if attempt.state == 'passed':
             slide._action_mark_completed()
+        self._diligence_draft_attachment(slide.id).unlink()
         self._channel_remove_session_answers(slide.channel_id, slide)
         return {
             'answers': result_answers,
@@ -115,6 +117,41 @@ class DiligenceWebsiteSlides(WebsiteSlides):
             'pending_review': pending_review,
             'quizAttemptsCount': existing_count + 1,
         }
+
+    def _diligence_draft_attachment(self, slide_id):
+        partner = request.env.user.partner_id.commercial_partner_id
+        return request.env['ir.attachment'].sudo().search([
+            ('res_model', '=', 'res.partner'),
+            ('res_id', '=', partner.id),
+            ('name', '=', 'diligence.quiz.draft.%s' % slide_id),
+        ], limit=1)
+
+    @http.route('/diligence/quiz/draft/load', type='jsonrpc', auth='user', website=True)
+    def diligence_quiz_draft_load(self, slide_id):
+        attachment = self._diligence_draft_attachment(int(slide_id))
+        if not attachment or not attachment.datas:
+            return {'answers': {}}
+        try:
+            return {'answers': json.loads(base64.b64decode(attachment.datas).decode())}
+        except (ValueError, TypeError, UnicodeDecodeError):
+            attachment.unlink()
+            return {'answers': {}}
+
+    @http.route('/diligence/quiz/draft/save', type='jsonrpc', auth='user', website=True)
+    def diligence_quiz_draft_save(self, slide_id, answers=None):
+        payload = answers if isinstance(answers, dict) else {}
+        encoded = base64.b64encode(json.dumps(payload, separators=(',', ':')).encode()).decode()
+        if len(encoded) > 500000:
+            return {'saved': False, 'error': 'draft_too_large'}
+        attachment = self._diligence_draft_attachment(int(slide_id))
+        values = {'name': 'diligence.quiz.draft.%s' % int(slide_id), 'res_model': 'res.partner',
+                  'res_id': request.env.user.partner_id.commercial_partner_id.id, 'datas': encoded,
+                  'mimetype': 'application/json'}
+        if attachment:
+            attachment.write({'datas': encoded})
+        else:
+            request.env['ir.attachment'].sudo().create(values)
+        return {'saved': True}
 
     @http.route('/diligence/quiz/audio/<int:question_id>', type='http', auth='user', website=True)
     def diligence_quiz_audio(self, question_id, **kwargs):

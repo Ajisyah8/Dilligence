@@ -1,7 +1,38 @@
+/** @odoo-module **/
 import { rpc } from '@web/core/network/rpc';
+
+const serverDraftTimers = new WeakMap();
 
 function quizStorageKey(root) {
     return `diligence.quiz.${root.dataset.id}`;
+}
+
+
+async function restoreServerDraft(root) {
+    if (!root || !root.dataset.id) return;
+    try {
+        const result = await rpc('/diligence/quiz/draft/load', {slide_id: Number(root.dataset.id)});
+        const answers = result?.answers || {};
+        Object.entries(answers).forEach(([questionId, value]) => {
+            const question = root.querySelector(`.o_wslides_js_lesson_quiz_question[data-question-id="${questionId}"]`);
+            if (!question) return;
+            question.querySelectorAll('input[type=radio], input[type=checkbox]').forEach((field) => {
+                field.checked = (value.answer_ids || []).includes(Number(field.value));
+            });
+            const text = question.querySelector('.o_diligence_quiz_text_answer');
+            if (text) text.value = value.text_answer || '';
+        });
+    } catch {
+        // Draft recovery must never block the quiz.
+    }
+}
+
+function scheduleServerDraftSave(root) {
+    if (!root || !root.dataset.id) return;
+    clearTimeout(serverDraftTimers.get(root));
+    serverDraftTimers.set(root, setTimeout(() => {
+        rpc('/diligence/quiz/draft/save', {slide_id: Number(root.dataset.id), answers: collectAnswers(root)}).catch(() => {});
+    }, 500));
 }
 
 function isMultiTypeRoot(root) {
@@ -155,7 +186,10 @@ document.addEventListener('click', async (event) => {
     }
 }, true);
 
-document.querySelectorAll('.o_diligence_multitype_quiz').forEach(restoreAnswers);
+document.querySelectorAll('.o_diligence_multitype_quiz').forEach((root) => {
+    restoreAnswers(root);
+    restoreServerDraft(root);
+});
 
 const fullscreenObserver = new MutationObserver(() => {
     document.querySelectorAll('.o_diligence_fs_quiz').forEach(enhanceFullscreenQuiz);

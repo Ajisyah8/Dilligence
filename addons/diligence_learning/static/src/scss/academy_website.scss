@@ -6,6 +6,64 @@ $academy-cream: #f7f4ed;
 $academy-mist: #edf5f5;
 $academy-border: #dce5e8;
 
+// Keep Website Builder buttons on the Academy palette instead of the
+// default Odoo/Enterprise purple theme.
+.btn.btn-primary {
+    border-color: $academy-teal;
+    background-color: $academy-teal;
+    color: #fff;
+
+    &:hover,
+    &:focus,
+    &:active {
+        border-color: $academy-teal-dark;
+        background-color: $academy-teal-dark;
+        color: #fff;
+    }
+}
+
+.btn.btn-secondary {
+    border-color: $academy-gold;
+    background-color: $academy-gold;
+    color: $academy-ink;
+
+    &:hover,
+    &:focus,
+    &:active {
+        border-color: #b99755;
+        background-color: #b99755;
+        color: $academy-ink;
+    }
+}
+
+.btn.btn-outline-primary {
+    border-color: $academy-teal;
+    background-color: transparent;
+    color: $academy-teal;
+
+    &:hover,
+    &:focus,
+    &:active {
+        border-color: $academy-teal;
+        background-color: $academy-teal;
+        color: #fff;
+    }
+}
+
+.btn.btn-outline-secondary {
+    border-color: $academy-gold;
+    background-color: transparent;
+    color: $academy-ink;
+
+    &:hover,
+    &:focus,
+    &:active {
+        border-color: $academy-gold;
+        background-color: $academy-gold;
+        color: $academy-ink;
+    }
+}
+
 .diligence-academy-home {
     color: $academy-ink;
     background: #fff;

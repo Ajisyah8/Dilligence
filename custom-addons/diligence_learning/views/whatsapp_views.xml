@@ -1,0 +1,13 @@
+<odoo>
+
+    <record id="res_partner_view_form_diligence_whatsapp" model="ir.ui.view">
+        <field name="name">res.partner.form.diligence.whatsapp</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='diligence_affiliate']" position="inside">
+                <button name="action_diligence_send_whatsapp_test" type="object" string="Test WhatsApp" class="btn-secondary" groups="base.group_system"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -126,10 +126,10 @@ def _student_courses_values(partner):
 
 
 class DiligenceStudentPortal(CustomerPortal):
-    @http.route(['/my', '/my/home'], type='http', auth='user', website=True,
+    @http.route(['/my'], type='http', auth='user', website=True,
                 list_as_website_content=False)
     def home(self, **kwargs):
-        """Make the native My Account route open the Student Corner dashboard."""
+        """Keep Student Corner on /my; leave the native My Account route at /my/home."""
         partner = request.env.user.partner_id.commercial_partner_id
         values = _student_courses_values(partner)
         values.update(self._prepare_portal_layout_values())
