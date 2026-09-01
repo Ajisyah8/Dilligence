@@ -51,7 +51,8 @@
                         <group>
                             <field name="name"/>
                             <field name="package_id"/>
-                            <field name="session_type"/>
+                            <field name="session_type_id" options="{'no_quick_create': False, 'no_create_edit': False}"/>
+                            <field name="session_type" invisible="True"/>
                             <field name="coach_id"/>
                         </group>
                         <group>

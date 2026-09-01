@@ -21,7 +21,8 @@ class PaymentTransaction(models.Model):
         order, create an invoice, or unlock a course.
         """
         package_order = order.order_line.filtered(
-            lambda line: line.product_template_id.diligence_package_type
+            lambda line: line.product_template_id.diligence_package_type_id
+            or line.product_template_id.diligence_package_type
         )
         if not package_order:
             return True

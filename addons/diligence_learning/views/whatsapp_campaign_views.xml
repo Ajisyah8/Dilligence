@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="diligence_whatsapp_campaign_view_list" model="ir.ui.view">
+        <field name="name">diligence.whatsapp.campaign.list</field>
+        <field name="model">diligence.whatsapp.campaign</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="survey_id"/>
+                <field name="state"/>
+                <field name="pending_count"/>
+                <field name="sent_count"/>
+                <field name="error_count"/>
+            </list>
+        </field>
+    </record>
+    <record id="diligence_whatsapp_campaign_view_form" model="ir.ui.view">
+        <field name="name">diligence.whatsapp.campaign.form</field>
+        <field name="model">diligence.whatsapp.campaign</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_prepare" type="object" string="Prepare Recipients" class="btn-secondary"/>
+                    <button name="action_send" type="object" string="Send Campaign" class="oe_highlight"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,prepared,done"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="survey_id"/>
+                        <field name="survey_url"/>
+                        <field name="partner_ids" widget="many2many_tags"/>
+                        <field name="message_template" placeholder="Halo %%(name)s..."/>
+                    </group>
+                    <group string="Delivery Summary">
+                        <field name="pending_count"/>
+                        <field name="sent_count"/>
+                        <field name="error_count"/>
+                    </group>
+                    <notebook>
+                        <page string="Deliveries">
+                            <field name="line_ids" readonly="1">
+                                <list>
+                                    <field name="partner_id"/>
+                                    <field name="phone"/>
+                                    <field name="state"/>
+                                    <field name="sent_at"/>
+                                    <field name="error_message"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_diligence_whatsapp_campaign" model="ir.actions.act_window">
+        <field name="name">WhatsApp Campaigns</field>
+        <field name="res_model">diligence.whatsapp.campaign</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <menuitem id="menu_diligence_whatsapp_campaign" name="WhatsApp Campaigns"
+              parent="sale.menu_sale_report" action="action_diligence_whatsapp_campaign"
+              sequence="20" groups="sales_team.group_sale_manager"/>
+</odoo>

@@ -1,3 +1,6 @@
+from datetime import timedelta
+
+from odoo import fields
 from odoo.tests.common import TransactionCase
 
 
@@ -69,3 +72,28 @@ class TestDiligenceNewsletter(TransactionCase):
         self.assertEqual(delivery.state, 'pending')
         self.assertEqual(delivery.attempt_count, 0)
         self.assertIn('test mode', delivery.last_error.lower())
+
+    def test_delivery_schedule_uses_subscription_date(self):
+        partner = self.env['res.partner'].create({
+            'name': 'Newsletter Schedule Student',
+            'email': 'newsletter-schedule@example.com',
+            'diligence_newsletter_opt_in': True,
+        })
+        subscription = self.env['mailing.subscription'].search([
+            ('contact_id.email', '=', partner.email),
+            ('list_id', '=', self.newsletter.id),
+        ], limit=1)
+        self.assertTrue(subscription)
+
+        delivery_model = self.env['diligence.newsletter.delivery']
+        delivery_model._ensure_deliveries()
+        anchor = fields.Datetime.to_datetime(subscription.create_date)
+        for stage in self.stages:
+            delivery = delivery_model.search([
+                ('partner_id', '=', partner.id),
+                ('stage_id', '=', stage.id),
+            ], limit=1)
+            self.assertEqual(
+                fields.Datetime.to_datetime(delivery.scheduled_date),
+                anchor + timedelta(days=stage.delay_days),
+            )

@@ -31,4 +31,37 @@
             </h4>
         </xpath>
     </template>
+
+    <template id="diligence_checkout_referral_code" inherit_id="website_sale.payment">
+        <xpath expr="//div[@id='payment_method']" position="before">
+            <div class="card border-0 shadow-sm mb-4 diligence-checkout-referral">
+                <div class="card-body">
+                    <h5 class="mb-2">Referral Code</h5>
+                    <p class="text-muted mb-3">
+                        Masukkan kode referral jika Anda mendapatkannya dari student atau affiliate kami.
+                        Kode ini digunakan untuk mencatat cashback referrer dan tidak menggantikan discount code.
+                    </p>
+                    <form action="/shop/referral/apply" method="post" class="row g-2 align-items-end">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <div class="col-md-8">
+                            <label for="diligence_referral_code" class="form-label">Referral Code</label>
+                            <input id="diligence_referral_code" name="referral_code" type="text"
+                                   class="form-control text-uppercase"
+                                   t-att-value="website_sale_order.diligence_referral_code or request.session.get('diligence_referral_code', '')"
+                                   placeholder="Contoh: DIL00025" maxlength="64" autocomplete="off"/>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-outline-primary w-100">Apply Referral</button>
+                        </div>
+                    </form>
+                    <div t-if="request.params.get('referral_status') == 'valid'" class="alert alert-success mt-3 mb-0" role="status">
+                        Referral code berhasil digunakan.
+                    </div>
+                    <div t-if="request.params.get('referral_status') == 'invalid'" class="alert alert-warning mt-3 mb-0" role="alert">
+                        Referral code tidak valid, tidak aktif, atau tidak berlaku untuk paket ini.
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
 </odoo>

@@ -1,0 +1,55 @@
+<odoo>
+    <record id="diligence_package_type_view_list" model="ir.ui.view">
+        <field name="name">diligence.package.type.list</field>
+        <field name="model">diligence.package.type</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="website_label"/>
+                <field name="website_badge"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+    <record id="diligence_package_type_view_form" model="ir.ui.view">
+        <field name="name">diligence.package.type.form</field>
+        <field name="model">diligence.package.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="code" help="Unique internal code, for example english or premium."/>
+                        <field name="website_label"/>
+                        <field name="website_badge"/>
+                        <field name="sequence"/>
+                        <field name="active"/>
+                    </group>
+                    <field name="description" placeholder="Optional description for this package type."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_diligence_package_types" model="ir.actions.act_window">
+        <field name="name">Package Types</field>
+        <field name="res_model">diligence.package.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <menuitem id="menu_diligence_package_types" name="Package Types" parent="sale.product_menu_catalog" action="action_diligence_package_types" sequence="90" groups="sales_team.group_sale_manager"/>
+    <record id="diligence_delivery_mode_view_list" model="ir.ui.view">
+        <field name="name">diligence.delivery.mode.list</field>
+        <field name="model">diligence.delivery.mode</field>
+        <field name="arch" type="xml"><list editable="bottom"><field name="sequence" widget="handle"/><field name="name"/><field name="code"/><field name="active"/></list></field>
+    </record>
+    <record id="diligence_delivery_mode_view_form" model="ir.ui.view">
+        <field name="name">diligence.delivery.mode.form</field>
+        <field name="model">diligence.delivery.mode</field>
+        <field name="arch" type="xml"><form><sheet><group><field name="name"/><field name="code"/><field name="sequence"/><field name="active"/></group><field name="description"/></sheet></form></field>
+    </record>
+    <record id="action_diligence_delivery_modes" model="ir.actions.act_window">
+        <field name="name">Delivery Modes</field><field name="res_model">diligence.delivery.mode</field><field name="view_mode">list,form</field>
+    </record>
+    <menuitem id="menu_diligence_delivery_modes" name="Delivery Modes" parent="sale.product_menu_catalog" action="action_diligence_delivery_modes" sequence="91" groups="sales_team.group_sale_manager"/>
+</odoo>

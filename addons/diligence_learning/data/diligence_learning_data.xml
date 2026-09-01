@@ -1,4 +1,80 @@
 <odoo>
+    <record id="diligence_package_type_starter" model="diligence.package.type">
+        <field name="name">Starter Pack</field>
+        <field name="code">starter</field>
+        <field name="sequence">10</field>
+        <field name="website_label">SELF LEARNING</field>
+    </record>
+    <record id="diligence_package_type_community" model="diligence.package.type">
+        <field name="name">Community</field>
+        <field name="code">community</field>
+        <field name="sequence">20</field>
+        <field name="website_badge">MOST POPULAR</field>
+    </record>
+    <record id="diligence_package_type_consultation" model="diligence.package.type">
+        <field name="name">Consultation</field>
+        <field name="code">consultation</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="diligence_package_type_zoom_group" model="diligence.package.type">
+        <field name="name">Zoom Group Learning</field>
+        <field name="code">zoom_group</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="diligence_package_type_zoom_private" model="diligence.package.type">
+        <field name="name">Zoom Private Learning</field>
+        <field name="code">zoom_private</field>
+        <field name="sequence">50</field>
+    </record>
+    <record id="diligence_package_type_zoom_coaching" model="diligence.package.type">
+        <field name="name">Zoom Private Coaching</field>
+        <field name="code">zoom_coaching</field>
+        <field name="sequence">60</field>
+    </record>
+    <record id="diligence_package_type_business" model="diligence.package.type">
+        <field name="name">Business Class</field>
+        <field name="code">business</field>
+        <field name="sequence">70</field>
+    </record>
+    <record id="diligence_delivery_mode_self" model="diligence.delivery.mode">
+        <field name="name">Self Learning</field><field name="code">self</field><field name="sequence">10</field>
+    </record>
+    <record id="diligence_delivery_mode_group_zoom" model="diligence.delivery.mode">
+        <field name="name">Group Zoom</field><field name="code">group_zoom</field><field name="sequence">20</field>
+    </record>
+    <record id="diligence_delivery_mode_private_zoom" model="diligence.delivery.mode">
+        <field name="name">Private Zoom</field><field name="code">private_zoom</field><field name="sequence">30</field>
+    </record>
+    <record id="diligence_delivery_mode_one_on_one" model="diligence.delivery.mode">
+        <field name="name">Private 1-on-1</field><field name="code">one_on_one</field><field name="sequence">40</field>
+    </record>
+    <record id="diligence_contact_segment_student" model="diligence.contact.segment"><field name="name">Student</field><field name="code">student</field><field name="sequence">10</field></record>
+    <record id="diligence_contact_segment_customer" model="diligence.contact.segment"><field name="name">Customer</field><field name="code">customer</field><field name="sequence">20</field></record>
+    <record id="diligence_contact_segment_newsletter" model="diligence.contact.segment"><field name="name">Newsletter Subscriber</field><field name="code">newsletter</field><field name="sequence">30</field></record>
+    <record id="diligence_contact_segment_referral" model="diligence.contact.segment"><field name="name">Referral - Non Student</field><field name="code">referral_non_student</field><field name="sequence">40</field></record>
+    <record id="diligence_contact_segment_affiliate" model="diligence.contact.segment"><field name="name">Affiliate / Referrer</field><field name="code">affiliate</field><field name="sequence">50</field></record>
+    <record id="diligence_contact_segment_other" model="diligence.contact.segment"><field name="name">Other</field><field name="code">other</field><field name="sequence">60</field></record>
+    <record id="diligence_affiliate_type_student" model="diligence.affiliate.type"><field name="name">Student</field><field name="code">student</field><field name="sequence">10</field></record>
+    <record id="diligence_affiliate_type_alumni" model="diligence.affiliate.type"><field name="name">Alumni</field><field name="code">alumni</field><field name="sequence">20</field></record>
+    <record id="diligence_affiliate_type_parent" model="diligence.affiliate.type"><field name="name">Parent</field><field name="code">parent</field><field name="sequence">30</field></record>
+    <record id="diligence_affiliate_type_tutor" model="diligence.affiliate.type"><field name="name">Tutor</field><field name="code">tutor</field><field name="sequence">40</field></record>
+    <record id="diligence_affiliate_type_agent" model="diligence.affiliate.type"><field name="name">Agent</field><field name="code">agent</field><field name="sequence">50</field></record>
+    <record id="diligence_affiliate_type_school" model="diligence.affiliate.type"><field name="name">School</field><field name="code">school</field><field name="sequence">60</field></record>
+    <record id="diligence_cashback_type_percent" model="diligence.cashback.type"><field name="name">Percentage</field><field name="code">percent</field><field name="sequence">10</field></record>
+    <record id="diligence_cashback_type_fixed" model="diligence.cashback.type"><field name="name">Fixed Amount</field><field name="code">fixed</field><field name="sequence">20</field></record>
+    <record id="diligence_quiz_type_single" model="diligence.quiz.type"><field name="name">Single choice</field><field name="code">single_choice</field><field name="sequence">10</field><field name="supports_choices">True</field></record>
+    <record id="diligence_quiz_type_multiple" model="diligence.quiz.type"><field name="name">Multiple choice</field><field name="code">multiple_choice</field><field name="sequence">20</field><field name="supports_choices">True</field></record>
+    <record id="diligence_quiz_type_true_false" model="diligence.quiz.type"><field name="name">True / False</field><field name="code">true_false</field><field name="sequence">30</field><field name="supports_choices">True</field></record>
+    <record id="diligence_quiz_type_short" model="diligence.quiz.type"><field name="name">Short answer</field><field name="code">short_answer</field><field name="sequence">40</field><field name="supports_choices">False</field><field name="supports_text_answer">True</field></record>
+    <record id="diligence_quiz_type_essay" model="diligence.quiz.type"><field name="name">Essay</field><field name="code">essay</field><field name="sequence">50</field><field name="supports_choices">False</field><field name="supports_text_answer">True</field><field name="requires_manual_grading">True</field></record>
+    <record id="diligence_quiz_type_listening" model="diligence.quiz.type"><field name="name">Listening</field><field name="code">listening</field><field name="sequence">60</field><field name="supports_choices">True</field><field name="supports_text_answer">True</field></record>
+    <record id="diligence_quiz_type_speaking" model="diligence.quiz.type"><field name="name">Speaking / audio</field><field name="code">speaking</field><field name="sequence">70</field><field name="supports_choices">False</field><field name="supports_text_answer">True</field><field name="requires_manual_grading">True</field></record>
+    <record id="diligence_activity_type_lesson" model="diligence.activity.type"><field name="name">Lesson completed</field><field name="code">lesson</field><field name="sequence">10</field></record>
+    <record id="diligence_activity_type_quiz" model="diligence.activity.type"><field name="name">Quiz completed</field><field name="code">quiz</field><field name="sequence">20</field></record>
+    <record id="diligence_session_type_group" model="diligence.session.type"><field name="name">Group Zoom</field><field name="code">group</field><field name="sequence">10</field></record>
+    <record id="diligence_session_type_private" model="diligence.session.type"><field name="name">Private Zoom</field><field name="code">private</field><field name="sequence">20</field></record>
+    <record id="diligence_session_type_one_on_one" model="diligence.session.type"><field name="name">Private 1-on-1</field><field name="code">one_on_one</field><field name="sequence">30</field></record>
+    <record id="diligence_session_type_qna" model="diligence.session.type"><field name="name">Live Q&amp;A</field><field name="code">qna</field><field name="sequence">40</field></record>
     <record id="sequence_diligence_referral" model="ir.sequence">
         <field name="name">Diligence Referral</field>
         <field name="code">diligence.referral</field>

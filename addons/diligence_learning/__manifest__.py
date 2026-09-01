@@ -34,6 +34,7 @@
         'data/package_shop_template.xml',
         'views/package_dynamic_snippet.xml',
         'views/product_template_views.xml',
+        'views/package_type_views.xml',
         'views/product_website_templates.xml',
         'views/checkout_templates.xml',
         'views/payment_templates.xml',
@@ -62,8 +63,9 @@
         'views/website_global_actions.xml',
         'views/whatsapp_views.xml',
         'views/whatsapp_settings_views.xml',
+        'views/whatsapp_campaign_views.xml',
     ],
-    'assets': {
+        'assets': {
         'web.assets_frontend': [
             'diligence_learning/static/src/js/diligence_fullscreen_sidebar.js',
             'diligence_learning/static/src/js/diligence_multitype_quiz.js',
@@ -78,6 +80,7 @@
         ],
         'web.assets_frontend_lazy': [
             'diligence_learning/static/src/js/diligence_fullscreen_sidebar.js',
+            'diligence_learning/static/src/js/diligence_course_entrypoint.js',
         ],
     },
     'application': True,

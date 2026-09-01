@@ -16,7 +16,7 @@ class DiligenceSession(models.Model):
     name = fields.Char(required=True)
     package_id = fields.Many2one(
         'product.template', string='Package', required=True, ondelete='cascade',
-        domain=[('diligence_package_type', '!=', False)],
+        domain=['|', ('diligence_package_type_id', '!=', False), ('diligence_package_type', '!=', False)],
     )
     session_type = fields.Selection([
         ('group', 'Group Zoom'),
@@ -24,6 +24,13 @@ class DiligenceSession(models.Model):
         ('one_on_one', 'Private 1-on-1'),
         ('qna', 'Live Q&A'),
     ], required=True, default='group')
+    session_type_id = fields.Many2one('diligence.session.type', string='Session Type (Configurable)', ondelete='restrict')
+
+    @api.onchange('session_type_id')
+    def _onchange_session_type_id(self):
+        for session in self:
+            if session.session_type_id and session.session_type_id.code in ('group', 'private', 'one_on_one', 'qna'):
+                session.session_type = session.session_type_id.code
     start_datetime = fields.Datetime('Start', required=True)
     end_datetime = fields.Datetime('End', required=True)
     timezone = fields.Char(default='Asia/Jakarta')

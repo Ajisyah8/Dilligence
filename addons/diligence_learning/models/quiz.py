@@ -19,6 +19,7 @@ class SlideQuestion(models.Model):
         ('ordering', 'Ordering (Phase 2)'),
         ('speaking', 'Speaking / audio (Phase 2)'),
     ], default='single_choice', required=True, string='Question type')
+    question_type_id = fields.Many2one('diligence.quiz.type', string='Question Type (Configurable)', ondelete='restrict')
     weight = fields.Float('Weight', default=1.0)
     required = fields.Boolean('Required', default=True)
     allow_partial_score = fields.Boolean('Allow partial score')
@@ -37,6 +38,31 @@ class SlideQuestion(models.Model):
     max_audio_plays = fields.Integer('Maximum audio plays', default=0)
     feedback_after_submit = fields.Boolean('Show feedback after submit', default=True)
     grading_rubric = fields.Text('Teacher grading rubric')
+
+    @api.onchange('question_type_id')
+    def _onchange_question_type_id(self):
+        for question in self:
+            if question.question_type_id and question.question_type_id.code in dict(
+                self._fields['question_type'].selection
+            ):
+                question.question_type = question.question_type_id.code
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            type_id = vals.get('question_type_id')
+            if type_id and not vals.get('question_type'):
+                configured = self.env['diligence.quiz.type'].browse(type_id)
+                if configured.code in dict(self._fields['question_type'].selection):
+                    vals['question_type'] = configured.code
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if vals.get('question_type_id'):
+            configured = self.env['diligence.quiz.type'].browse(vals['question_type_id'])
+            if configured.code in dict(self._fields['question_type'].selection):
+                vals = dict(vals, question_type=configured.code)
+        return super().write(vals)
 
     @api.constrains('weight', 'max_audio_plays')
     def _check_diligence_quiz_configuration(self):

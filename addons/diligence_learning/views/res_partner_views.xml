@@ -11,15 +11,21 @@
                             <field name="diligence_is_affiliate"/>
                             <field name="diligence_referral_code" readonly="1"/>
                             <field name="diligence_referral_link" widget="url" readonly="1" invisible="not diligence_is_affiliate"/>
-                            <field name="diligence_affiliate_type" invisible="not diligence_is_affiliate"/>
+                            <field name="diligence_affiliate_type_id" invisible="not diligence_is_affiliate" options="{'no_quick_create': False, 'no_create_edit': False}"/>
+                            <field name="diligence_affiliate_type" invisible="True"/>
                             <field name="diligence_affiliate_start_date" invisible="not diligence_is_affiliate"/>
                             <field name="diligence_affiliate_end_date" invisible="not diligence_is_affiliate"/>
                             <field name="diligence_affiliate_program_ids" widget="many2many_tags" invisible="not diligence_is_affiliate"/>
+                            <field name="diligence_referral_count"/>
+                            <field name="diligence_valid_referral_count"/>
+                            <field name="diligence_cashback_total"/>
+                            <field name="diligence_cashback_outstanding"/>
                         </group>
                         <group string="Cashback Rules">
-                            <field name="diligence_cashback_type" invisible="not diligence_is_affiliate"/>
-                            <field name="diligence_cashback_rate" invisible="not diligence_is_affiliate or diligence_cashback_type != 'percent'"/>
-                            <field name="diligence_cashback_fixed" invisible="not diligence_is_affiliate or diligence_cashback_type != 'fixed'"/>
+                            <field name="diligence_cashback_type_id" invisible="not diligence_is_affiliate" options="{'no_quick_create': False, 'no_create_edit': False}"/>
+                            <field name="diligence_cashback_type" invisible="True"/>
+                            <field name="diligence_cashback_rate" invisible="not diligence_is_affiliate or (diligence_cashback_type_id.code != 'percent' and diligence_cashback_type != 'percent')"/>
+                            <field name="diligence_cashback_fixed" invisible="not diligence_is_affiliate or (diligence_cashback_type_id.code != 'fixed' and diligence_cashback_type != 'fixed')"/>
                             <field name="diligence_affiliate_min_payout" invisible="not diligence_is_affiliate"/>
                             <field name="diligence_affiliate_waiting_days" invisible="not diligence_is_affiliate"/>
                         </group>
@@ -37,7 +43,8 @@
                 </page>
             </xpath>
             <xpath expr="//sheet//field[@name='category_id']" position="after">
-                <field name="diligence_contact_segment"/>
+                <field name="diligence_contact_segment_id"/>
+                <field name="diligence_contact_segment" invisible="True"/>
             </xpath>
         </field>
     </record>
@@ -50,6 +57,9 @@
                 <field name="diligence_referral_code" optional="hide"/>
                 <field name="diligence_contact_segment" optional="hide"/>
                 <field name="diligence_is_affiliate" optional="hide"/>
+                <field name="diligence_referral_count" optional="hide"/>
+                <field name="diligence_valid_referral_count" optional="hide"/>
+                <field name="diligence_cashback_outstanding" optional="hide"/>
             </xpath>
         </field>
     </record>

@@ -4,7 +4,7 @@
               inherit_id="website_sale.products_item"
               name="Diligence Package Early Bird Price on Cards">
         <xpath expr="//div[contains(@class, 'product_price')]" position="replace">
-            <t t-set="package_early_price" t-value="product._diligence_early_bird_price_for_date() if product.diligence_package_type else False"/>
+            <t t-set="package_early_price" t-value="product._diligence_early_bird_price_for_date() if (product.diligence_package_type_id or product.diligence_package_type) else False"/>
             <div t-if="package_early_price" class="product_price diligence-package-price" aria-label="Package promotional price">
                 <del class="text-muted me-1 mb-0" style="white-space: nowrap;">
                     <small t-out="product.list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
@@ -24,7 +24,7 @@
             </div>
         </xpath>
         <xpath expr="//div[contains(@class, 'product_price')]" position="before">
-            <span t-if="product.diligence_package_type and product.diligence_sales_status == 'full'"
+            <span t-if="(product.diligence_package_type_id or product.diligence_package_type) and product.diligence_sales_status == 'full'"
                   class="diligence-full-slot-badge badge rounded-pill mb-2">
                 <i class="fa fa-ban me-1"/> Full Slot
             </span>

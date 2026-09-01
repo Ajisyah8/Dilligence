@@ -9,32 +9,76 @@
         </xpath>
     </template>
 
-    <!-- Keep Odoo's native course page and make the learning path easier to scan. -->
+    <!-- Replace the native cover with a focused editorial course hero. -->
     <template id="diligence_course_main_detail" inherit_id="website_slides.course_main">
         <xpath expr="//div[contains(@class, 'o_wslides_course_main')]" position="attributes">
             <attribute name="class" add="diligence-course-main" separator=" "/>
         </xpath>
-        <xpath expr="//t[@t-call='website_slides.course_nav']" position="after">
-            <div class="container diligence-course-intro">
-                <div class="diligence-course-intro-inner">
-                    <div>
-                        <span class="diligence-eyebrow">DILIGENCE ACADEMY</span>
-                        <h2 class="mb-2">Your structured learning path</h2>
-                        <p class="mb-0 text-muted">
-                            Learn step by step with video explanations, listening practice, documents, and quizzes.
-                        </p>
-                    </div>
-                    <div class="diligence-course-intro-actions">
-                        <div class="diligence-course-intro-stat">
-                            <strong t-out="channel.total_slides"/>
-                            <span>learning materials</span>
+        <xpath expr="//t[@t-call='website.record_cover']" position="replace">
+            <t t-set="diligence_learning_slides" t-value="channel.slide_ids.filtered(lambda lesson: not lesson.is_category)"/>
+            <t t-set="diligence_next_slide" t-value="diligence_learning_slides.filtered(lambda lesson: not channel_progress.get(lesson.id, {}).get('completed'))[:1] or diligence_learning_slides[:1]"/>
+            <section class="diligence-course-hero"
+                     t-att-data-diligence-first-slide-url="('/slides/slide/%s' % slug(diligence_next_slide)) if diligence_next_slide else ''"
+                     t-att-data-diligence-reader-entry="'1' if (request.env.user._is_admin() or channel.can_publish or channel.is_member) else '0'">
+                <t t-call="website_slides.course_nav"/>
+                <div class="container diligence-course-hero-inner">
+                    <div class="diligence-course-hero-copy">
+                        <span class="diligence-eyebrow">DILIGENCE ACADEMY · ONLINE COURSE</span>
+                        <h1 t-field="channel.name"/>
+                        <div class="diligence-course-hero-description" t-field="channel.description"/>
+                        <div class="diligence-course-hero-meta">
+                            <span><i class="fa fa-book-open me-2"/><t t-out="channel.total_slides"/> lessons</span>
+                            <span><i class="fa fa-signal me-2"/><t t-out="channel.completion"/>% complete</span>
                         </div>
-                        <a t-if="channel.slide_ids.filtered(lambda lesson: not lesson.is_category)[:1]"
-                           class="btn btn-primary diligence-start-button"
-                           t-att-href="'/slides/slide/%s' % slug(channel.slide_ids.filtered(lambda lesson: not lesson.is_category)[:1])">
-                            <i class="fa fa-play-circle me-2"/>Start learning
-                        </a>
+                        <div class="diligence-course-hero-actions">
+                            <a t-if="diligence_next_slide" class="diligence-start-button" t-att-href="'/slides/slide/%s' % slug(diligence_next_slide)">
+                                <i class="fa fa-play-circle me-2"/>Start learning
+                            </a>
+                            <span class="diligence-course-hero-note">Learn at your own pace</span>
+                        </div>
                     </div>
+                    <div class="diligence-course-hero-art">
+                        <div class="diligence-course-hero-art-frame">
+                            <div t-field="channel.image_1920" t-options="{'widget': 'image', 'preview_image': 'image_1024'}"/>
+                        </div>
+                        <div class="diligence-course-hero-progress">
+                            <div class="diligence-course-hero-progress-label"><span>Your progress</span><strong><t t-out="channel.completion"/>%</strong></div>
+                            <div class="progress"><div class="progress-bar" role="progressbar" t-attf-style="width: #{channel.completion}%" t-att-aria-valuenow="channel.completion" aria-valuemin="0" aria-valuemax="100"/></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </xpath>
+
+        <xpath expr="//div[contains(@class, 'o_wslides_course_main')]" position="replace">
+            <div class="diligence-editorial-course-body">
+                <div class="container diligence-editorial-course-container">
+                    <main class="diligence-editorial-course-content">
+                        <section class="diligence-editorial-introduction">
+                            <span class="diligence-eyebrow">ABOUT THIS COURSE</span>
+                            <h2>Everything you need to keep learning</h2>
+                            <p>
+                                Follow the lessons in order, practice with the exercises, and continue whenever you are ready.
+                                Your progress is saved automatically.
+                            </p>
+                        </section>
+
+                        <section class="diligence-editorial-learning-path">
+                            <div class="diligence-editorial-section-heading">
+                                <div>
+                                    <span class="diligence-eyebrow">LEARNING PATH</span>
+                                    <h2>What you'll learn</h2>
+                                </div>
+                                <div class="diligence-editorial-completion">
+                                    <strong><t t-out="channel.completion"/>%</strong>
+                                    <span>completed</span>
+                                </div>
+                            </div>
+                            <t t-set="channel_frontend_tags" t-value="channel.tag_ids.filtered(lambda tag: tag.color)"/>
+                            <t t-if="channel.channel_type == 'training'" t-call="website_slides.course_slides_list"/>
+                            <t t-else="" t-call="website_slides.course_slides_cards"/>
+                        </section>
+                    </main>
                 </div>
             </div>
         </xpath>
@@ -90,6 +134,22 @@
         </xpath>
         <xpath expr="//div[contains(@class, 'o_wslides_lesson_main')]" position="attributes">
             <attribute name="class" add="diligence-lesson-main" separator=" "/>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'o_wslides_lesson_main')]/div[contains(@class, 'row')]" position="before">
+            <header class="diligence-reader-course-header">
+                <div class="diligence-reader-course-header-copy">
+                    <span class="diligence-eyebrow">NOW LEARNING</span>
+                    <div class="diligence-reader-breadcrumb">
+                        <a href="/slides">Courses</a>
+                        <span>/</span>
+                        <span t-out="slide.channel_id.name"/>
+                    </div>
+                    <h1 t-out="slide.channel_id.name"/>
+                </div>
+            </header>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'o_wslides_lesson_main')]/div[contains(@class, 'row')]" position="attributes">
+            <attribute name="class" add="diligence-reader-course-grid" separator=" "/>
         </xpath>
     </template>
 
@@ -218,7 +278,9 @@
     <!-- Replace Odoo's native media preview with a Diligence-owned renderer. -->
     <template id="diligence_custom_media_preview" inherit_id="website_slides.slide_content_detailed">
         <xpath expr="//div[@t-else and hasclass('o_wslides_lesson_content_type')]" position="replace">
-            <section class="diligence-custom-media-preview" t-att-data-media-type="slide.slide_category">
+            <section t-if="slide.slide_category != 'quiz'"
+                     class="diligence-custom-media-preview"
+                     t-att-data-media-type="slide.slide_category">
                 <header class="diligence-custom-media-header">
                     <span class="diligence-custom-media-icon">
                         <i t-if="slide.slide_category == 'document'" class="fa fa-file-pdf-o"/>
@@ -273,6 +335,33 @@
         </xpath>
     </template>
 
+    <template id="diligence_lesson_sidebar_course_progress" inherit_id="website_slides.slide_aside_training">
+        <xpath expr="//div[contains(@class, 'o_wslides_lesson_aside_list')]" position="before">
+            <section class="diligence-reader-sidebar-header">
+                <span class="diligence-eyebrow">YOUR COURSE</span>
+                <h2 t-out="slide.channel_id.name"/>
+                <div class="diligence-reader-progress-heading">
+                    <span>Course Progress</span>
+                    <strong><t t-out="slide.channel_id.completion"/>%</strong>
+                </div>
+                <div class="progress" role="progressbar" t-att-aria-valuenow="slide.channel_id.completion" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar" t-attf-style="width: #{slide.channel_id.completion}%"/>
+                </div>
+            </section>
+        </xpath>
+    </template>
+
+    <!-- Learners should see every section's lessons immediately. The native
+         template restores collapsed state from category_data, so force the
+         section state open for the reader sidebar. -->
+    <template id="diligence_lesson_sidebar_sections_open"
+              inherit_id="website_slides.slide_aside_training_category"
+              name="Diligence: Open all lesson sections">
+        <xpath expr="//t[@t-set='category_collapsed']" position="replace">
+            <t t-set="category_collapsed" t-value="True"/>
+        </xpath>
+    </template>
+
     <!-- Keep Odoo's Quiz shortcut available for lessons with attached questions.
          The shortcut opens the question view in fullscreen. -->
     <template id="diligence_hide_attached_quiz_sidebar_row" inherit_id="website_slides.slide_aside_training_category">
@@ -316,6 +405,9 @@
                 <h2>What you will learn</h2>
                 <div t-field="slide.description"/>
             </section>
+        </xpath>
+        <xpath expr="//h1[contains(@class, 'h4')]" position="before">
+            <span class="diligence-reader-module-label" t-if="slide.category_id" t-out="slide.category_id.name"/>
         </xpath>
     </template>
 

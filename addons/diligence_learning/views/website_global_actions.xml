@@ -34,5 +34,16 @@
     <template id="diligence_remove_header_consultation" inherit_id="website.header_text_element">
         <xpath expr="//a[contains(@href, '#free-interview')]" position="replace"/>
     </template>
-    <template id="diligence_secondary_header_controls" inherit_id="website.template_header_default"><xpath expr="//div[@id=&quot;o_main_nav&quot;]/ul[hasclass(&quot;justify-content-end&quot;)]" position="inside"><li t-if="request.httprequest.path != &quot;/&quot;" class="nav-item diligence-header-search"><a href="/shop" class="nav-link" title="Search"><i class="fa fa-search me-1" aria-hidden="true"/>Search</a></li><li t-if="request.httprequest.path != &quot;/&quot;" class="nav-item diligence-header-cart"><a href="/shop/cart" class="nav-link" title="Cart"><i class="fa fa-shopping-cart me-1" aria-hidden="true"/>Cart</a></li></xpath></template>
+    <template id="diligence_secondary_header_controls" inherit_id="website.template_header_default">
+        <xpath expr="//div[@id=&quot;o_main_nav&quot;]/ul[hasclass(&quot;justify-content-end&quot;)]" position="inside">
+            <li t-if="request.httprequest.path != &quot;/&quot;" class="nav-item diligence-header-cart">
+                <a href="/shop/cart" class="nav-link position-relative" title="Cart">
+                    <i class="fa fa-shopping-cart me-1" aria-hidden="true"/>Cart
+                    <sup t-att-class="'diligence-header-cart-quantity my_cart_quantity badge bg-primary rounded-pill %s' % ('d-none' if not request.cart.cart_quantity else '')"
+                         t-out="request.cart.cart_quantity or 0"/>
+                </a>
+            </li>
+        </xpath>
+    </template>
+
 </odoo>

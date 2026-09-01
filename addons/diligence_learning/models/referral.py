@@ -28,6 +28,7 @@ class DiligenceReferral(models.Model):
         ('percent', 'Percentage'),
         ('fixed', 'Fixed Amount'),
     ], default='percent', required=True)
+    cashback_type_id = fields.Many2one('diligence.cashback.type', string='Cashback Type', ondelete='restrict')
     cashback_rate = fields.Float('Cashback Rate (%)', copy=False)
     cashback_fixed = fields.Monetary('Fixed Cashback', currency_field='currency_id', copy=False)
     cashback_amount = fields.Monetary('Cashback Amount', currency_field='currency_id', copy=False)
@@ -44,6 +45,8 @@ class DiligenceReferral(models.Model):
     ], default='draft', required=True, index=True)
     payout_reference = fields.Char('Payout Transfer Reference', copy=False)
     notes = fields.Text('Notes', copy=False)
+    approved_by = fields.Many2one('res.users', 'Approved By', copy=False, readonly=True)
+    paid_by = fields.Many2one('res.users', 'Paid By', copy=False, readonly=True)
     settlement_id = fields.Many2one('diligence.referral.settlement', 'Settlement Batch', copy=False)
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company, required=True)
     currency_id = fields.Many2one(related='company_id.currency_id', store=True)
@@ -62,7 +65,7 @@ class DiligenceReferral(models.Model):
 
     def _compute_cashback(self):
         for referral in self:
-            if referral.cashback_type == 'fixed':
+            if (referral.cashback_type_id.code if referral.cashback_type_id else referral.cashback_type) == 'fixed':
                 referral.cashback_amount = referral.cashback_fixed
             else:
                 referral.cashback_amount = referral.net_payment * referral.cashback_rate / 100
@@ -109,27 +112,48 @@ class DiligenceReferral(models.Model):
         return True
 
     def action_approve(self):
+        self._check_finance_access()
         for referral in self:
             if referral.status not in ('eligible', 'waiting_period'):
                 raise UserError(_('Only eligible referrals can be approved.'))
             if referral.waiting_until and referral.waiting_until > fields.Date.today():
                 raise UserError(_('The waiting period has not ended yet.'))
-            referral.write({'status': 'approved', 'approved_date': fields.Datetime.now()})
+            referral.write({
+                'status': 'approved',
+                'approved_date': fields.Datetime.now(),
+                'approved_by': self.env.user.id,
+            })
 
     def action_ready_to_pay(self):
+        self._check_finance_access()
         self.write({'status': 'ready_to_pay', 'ready_to_pay_date': fields.Datetime.now()})
 
     def action_mark_paid(self):
+        self._check_finance_access()
         for referral in self:
             if referral.status not in ('approved', 'ready_to_pay'):
                 raise UserError(_('Referral must be approved before it can be paid.'))
-            referral.write({'status': 'paid', 'paid_date': fields.Datetime.now()})
+            referral.write({
+                'status': 'paid',
+                'paid_date': fields.Datetime.now(),
+                'paid_by': self.env.user.id,
+            })
 
     def action_cancel(self):
+        self._check_finance_access()
         self.write({'status': 'cancelled'})
 
     def action_reverse(self):
+        self._check_finance_access()
         self.write({'status': 'reversed'})
+
+    def _check_finance_access(self):
+        if not (
+            self.env.user.has_group('sales_team.group_sale_manager')
+            or self.env.user.has_group('account.group_account_invoice')
+            or self.env.user.has_group('base.group_system')
+        ):
+            raise UserError(_('Only Referral Managers or Finance users can approve or pay referrals.'))
 
 
 class DiligenceReferralSettlement(models.Model):
@@ -152,6 +176,8 @@ class DiligenceReferralSettlement(models.Model):
         ('cancelled', 'Cancelled'),
     ], default='draft', required=True)
     payout_reference = fields.Char('Payout Transfer Reference', copy=False)
+    approved_by = fields.Many2one('res.users', 'Approved By', copy=False, readonly=True)
+    paid_by = fields.Many2one('res.users', 'Paid By', copy=False, readonly=True)
     currency_id = fields.Many2one(related='affiliate_id.company_id.currency_id', store=True)
 
     _affiliate_period_unique = models.Constraint(
@@ -214,18 +240,29 @@ class DiligenceReferralSettlement(models.Model):
             referrals.write({'settlement_id': settlement.id})
 
     def action_approve(self):
+        self._check_finance_access()
         for settlement in self:
             if not settlement.referral_ids:
                 raise UserError(_('Load eligible referrals before approving the settlement.'))
             settlement.referral_ids.filtered(lambda referral: referral.status == 'approved').action_ready_to_pay()
-            settlement.status = 'approved'
+            settlement.write({'status': 'approved', 'approved_by': self.env.user.id})
 
     def action_mark_paid(self):
+        self._check_finance_access()
         for settlement in self:
             settlement.referral_ids.filtered(lambda referral: referral.status in ('approved', 'ready_to_pay')).action_mark_paid()
-            settlement.status = 'paid'
+            settlement.write({'status': 'paid', 'paid_by': self.env.user.id})
 
     def action_cancel(self):
+        self._check_finance_access()
         for settlement in self:
             settlement.referral_ids.write({'settlement_id': False})
             settlement.status = 'cancelled'
+
+    def _check_finance_access(self):
+        if not (
+            self.env.user.has_group('sales_team.group_sale_manager')
+            or self.env.user.has_group('account.group_account_invoice')
+            or self.env.user.has_group('base.group_system')
+        ):
+            raise UserError(_('Only Referral Managers or Finance users can manage settlements.'))
