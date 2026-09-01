@@ -32,4 +32,12 @@
             </div>
         </xpath>
     </template>
+
+    <!-- A pending static QRIS transaction needs manual proof upload, not the
+         generic post-processing poller. Polling is resumed after verification. -->
+    <template id="qris_pending_status_without_polling" inherit_id="payment.payment_status">
+        <xpath expr="//div[@name='o_payment_status']" position="attributes">
+            <attribute name="t-att-name">"o_payment_status_qris_pending" if tx.provider_id.sudo().custom_mode == 'qris_static' and tx.state == 'pending' else 'o_payment_status'</attribute>
+        </xpath>
+    </template>
 </odoo>

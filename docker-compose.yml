@@ -44,6 +44,8 @@ services:
     volumes:
       - dilligence-odoo:/var/lib/odoo
       - ./custom-addons:/mnt/extra-addons/custom:ro
+      - ./addons:/mnt/extra-addons/latest:ro
+      - ./docker/odoo.conf:/etc/odoo/odoo.conf:ro
       - ./enterprise:/mnt/enterprise:ro
     networks:
       - default

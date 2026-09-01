@@ -5,16 +5,15 @@
         <field name="model">payment.transaction</field>
         <field name="inherit_id" ref="payment.payment_transaction_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//header/field[@name='state']" position="before">
+            <xpath expr="//form/header" position="inside">
                 <button name="action_diligence_verify_qris" type="object" string="Verify QRIS Payment"
-                        class="oe_highlight" groups="account.group_account_invoice,account.group_account_manager"
-                        invisible="provider_code != 'custom' or provider_id.custom_mode != 'qris_static' or state != 'pending'"/>
+                        class="oe_highlight"
+                        invisible="state != 'pending'"/>
                 <button name="action_diligence_reject_qris_payment" type="object" string="Reject QRIS Payment"
-                        groups="account.group_account_invoice,account.group_account_manager"
-                        invisible="provider_code != 'custom' or provider_id.custom_mode != 'qris_static' or state != 'pending'"/>
+                        invisible="state != 'pending'"/>
             </xpath>
-            <xpath expr="//sheet/group[1]" position="after">
-                <group string="QRIS Verification" invisible="provider_code != 'custom' or provider_id.custom_mode != 'qris_static'">
+            <xpath expr="//sheet" position="inside">
+                <group string="QRIS Verification">
                     <group>
                         <field name="qris_payment_amount"/>
                         <field name="qris_order_amount"/>
@@ -23,6 +22,9 @@
                         <field name="qris_payment_proof_filename"/>
                         <field name="qris_proof_uploaded_at"/>
                         <field name="qris_proof_uploaded_by"/>
+                        <button name="action_preview_qris_proof" type="object"
+                                string="Preview Payment Proof" class="oe_link"
+                                invisible="not qris_proof_attachment_id"/>
                     </group>
                     <group>
                         <field name="qris_payment_proof" filename="qris_payment_proof_filename" widget="binary"/>

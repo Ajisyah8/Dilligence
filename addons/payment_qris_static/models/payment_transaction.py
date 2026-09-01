@@ -39,6 +39,16 @@ class PaymentTransaction(models.Model):
                 if transaction.sale_order_ids else 0
             )
 
+    def action_preview_qris_proof(self):
+        self.ensure_one()
+        if not self.qris_proof_attachment_id:
+            raise ValidationError(_('No QRIS payment proof has been uploaded.'))
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/{self.qris_proof_attachment_id.id}?download=false',
+            'target': 'new',
+        }
+
     def _set_done(self, state_message=None):
         """Never complete static QRIS before a proof is attached.
 
@@ -150,10 +160,17 @@ class PaymentTransaction(models.Model):
             ):
                 raise ValidationError(_('The QRIS amount does not match the sales order total.'))
             if transaction.state == 'pending':
+                already_confirmed = orders.filtered(lambda order: order.state in ('sale', 'done'))
                 transaction._set_done(state_message=_('QRIS payment verified by Finance.'))
                 orders.filtered(lambda order: order.state in ('draft', 'sent')).with_context(
                     send_email=False
                 ).action_confirm()
+                # A website checkout may already have confirmed the order
+                # while the QRIS proof was still pending. In that case
+                # sale.order._action_confirm() has already run, so explicitly
+                # trigger the paid-only entitlement hooks now.
+                already_confirmed._diligence_apply_referral()
+                already_confirmed._diligence_grant_package_access()
                 transaction._post_process()
         return True
 

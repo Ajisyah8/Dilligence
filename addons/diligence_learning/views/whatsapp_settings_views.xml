@@ -22,16 +22,24 @@
                     <h2>Connection</h2>
                     <div class="row mt16 o_settings_container">
                         <div class="col-12 col-lg-6 o_setting_box"><div class="o_setting_right_pane">
-                            <label for="diligence_whatsapp_api_url" string="Evolution API URL"/>
-                            <field name="diligence_whatsapp_api_url" placeholder="https://..."/>
-                            <label for="diligence_whatsapp_instance" string="Evolution Instance" class="mt16"/>
-                            <field name="diligence_whatsapp_instance"/>
+                            <div class="mb-3">
+                                <label for="diligence_whatsapp_api_url" string="Evolution API URL" class="d-block mb-1"/>
+                                <field name="diligence_whatsapp_api_url" placeholder="https://..." class="w-100"/>
+                            </div>
+                            <div class="mb-3">
+                                <label for="diligence_whatsapp_instance" string="Evolution Instance" class="d-block mb-1"/>
+                                <field name="diligence_whatsapp_instance" class="w-100"/>
+                            </div>
                         </div></div>
                         <div class="col-12 col-lg-6 o_setting_box"><div class="o_setting_right_pane">
-                            <label for="diligence_whatsapp_api_key" string="Evolution API Key"/>
-                            <field name="diligence_whatsapp_api_key" password="True"/>
-                            <label for="diligence_whatsapp_default_country_code" string="Default Country Code" class="mt16"/>
-                            <field name="diligence_whatsapp_default_country_code"/>
+                            <div class="mb-3">
+                                <label for="diligence_whatsapp_api_key" string="Evolution API Key" class="d-block mb-1"/>
+                                <field name="diligence_whatsapp_api_key" password="True" class="w-100"/>
+                            </div>
+                            <div class="mb-3">
+                                <label for="diligence_whatsapp_default_country_code" string="Default Country Code" class="d-block mb-1"/>
+                                <field name="diligence_whatsapp_default_country_code" class="w-100"/>
+                            </div>
                         </div></div>
                     </div>
                     <h2>Message Templates</h2>

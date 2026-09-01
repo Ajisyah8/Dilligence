@@ -25,13 +25,17 @@ class StaticQrisController(http.Controller):
         # A logged-in customer may only submit proof for their own order. For
         # public checkout, the monitored transaction in the current session is
         # the ownership token and no transaction id is accepted from the form.
+        uploaded = False
         try:
             if not request.env.user._is_public():
                 partner = transaction.sale_order_ids[:1].partner_id.commercial_partner_id
                 if partner != request.env.user.partner_id.commercial_partner_id:
                     raise ValidationError(_('You can only submit proof for your own order.'))
             transaction._save_qris_proof(proof_file, paid_amount)
+            uploaded = True
         except ValidationError as error:
             request.session['qris_upload_error'] = str(error)
 
+        if uploaded:
+            return request.redirect('/shop/confirmation')
         return request.redirect('/payment/status')

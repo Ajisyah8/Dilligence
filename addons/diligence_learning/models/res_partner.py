@@ -147,6 +147,23 @@ class ResPartner(models.Model):
             self._sync_diligence_newsletter_subscription()
         return result
 
+    def unlink(self):
+        """Archive partners referenced by payment records instead of deleting.
+
+        Payment transactions are historical accounting evidence and use a
+        restrictive partner relation. Keep Odoo's normal delete behaviour for
+        unreferenced contacts, but archive referenced contacts so the user can
+        remove them from active lists without losing payment history.
+        """
+        transactions = self.env['payment.transaction'].sudo().search([
+            ('partner_id', 'in', self.ids),
+        ])
+        protected = self.filtered(lambda partner: partner.id in transactions.mapped('partner_id').ids)
+        if protected:
+            protected.write({'active': False})
+        removable = self - protected
+        return super(ResPartner, removable).unlink() if removable else True
+
     def _sync_diligence_newsletter_subscription(self):
         newsletter = self.env['mailing.list'].sudo().search([
             ('name', '=', 'Diligence Academy Newsletter'),
