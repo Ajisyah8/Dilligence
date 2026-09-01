@@ -9,6 +9,8 @@ from odoo.exceptions import ValidationError
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
+    # Kept for backward compatibility with existing products. New products
+    # must use diligence_package_type_id, which is configurable from Odoo.
     diligence_package_type = fields.Selection([
         ('starter', 'Starter Pack'),
         ('community', 'Community'),
@@ -18,6 +20,11 @@ class ProductTemplate(models.Model):
         ('zoom_coaching', 'Zoom Private Coaching'),
         ('business', 'Business Class'),
     ], string='Diligence Package')
+    diligence_package_type_id = fields.Many2one(
+        'diligence.package.type', string='Package Type',
+        ondelete='restrict', index=True,
+        help='Select a configurable package type. Create a new type directly from this field when allowed.',
+    )
     diligence_sales_status = fields.Selection([
         ('available', 'Available'),
         ('full', 'Full Slot'),
@@ -39,6 +46,10 @@ class ProductTemplate(models.Model):
         ('private_zoom', 'Private Zoom'),
         ('one_on_one', 'Private 1-on-1'),
     ], string='Delivery Mode', default='self')
+    diligence_delivery_mode_id = fields.Many2one(
+        'diligence.delivery.mode', string='Delivery Mode', ondelete='restrict', index=True,
+        help='Select a configurable delivery mode. New modes can be created from Sales configuration.',
+    )
     diligence_session_frequency = fields.Integer(
         'Sessions per Week', default=0,
         help='Used for scheduled Zoom products. Zero means the schedule is managed manually.',
@@ -159,7 +170,15 @@ class ProductTemplate(models.Model):
 
     def _diligence_is_package(self):
         self.ensure_one()
-        return bool(self.diligence_package_type and self.diligence_course_ids)
+        return bool((self.diligence_package_type_id or self.diligence_package_type) and self.diligence_course_ids)
+
+    def _diligence_package_type_code(self):
+        self.ensure_one()
+        return self.diligence_package_type_id.code if self.diligence_package_type_id else self.diligence_package_type
+
+    def _diligence_delivery_mode_code(self):
+        self.ensure_one()
+        return self.diligence_delivery_mode_id.code if self.diligence_delivery_mode_id else self.diligence_delivery_mode
 
     def _diligence_benefit_lines(self):
         self.ensure_one()

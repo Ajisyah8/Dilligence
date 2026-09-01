@@ -22,9 +22,9 @@
             <form string="Affiliate Settlement">
                 <header>
                     <button name="action_load_eligible" type="object" string="Load Eligible Referrals" class="btn-secondary" invisible="status != 'draft'"/>
-                    <button name="action_approve" type="object" string="Approve Settlement" class="btn-primary" invisible="status != 'draft'"/>
-                    <button name="action_mark_paid" type="object" string="Mark Batch Paid" class="btn-primary" invisible="status != 'approved'"/>
-                    <button name="action_cancel" type="object" string="Cancel" invisible="status in ('paid', 'cancelled')"/>
+                    <button name="action_approve" type="object" string="Approve Settlement" class="btn-primary" groups="sales_team.group_sale_manager,account.group_account_invoice" invisible="status != 'draft'"/>
+                    <button name="action_mark_paid" type="object" string="Mark Batch Paid" class="btn-primary" groups="sales_team.group_sale_manager,account.group_account_invoice" invisible="status != 'approved'"/>
+                    <button name="action_cancel" type="object" string="Cancel" groups="sales_team.group_sale_manager,account.group_account_invoice" invisible="status in ('paid', 'cancelled')"/>
                     <field name="status" widget="statusbar" statusbar_visible="draft,approved,paid"/>
                 </header>
                 <sheet>
@@ -40,6 +40,8 @@
                             <field name="total_payment"/>
                             <field name="total_cashback"/>
                             <field name="payout_reference"/>
+                            <field name="approved_by"/>
+                            <field name="paid_by"/>
                         </group>
                     </group>
                     <notebook>

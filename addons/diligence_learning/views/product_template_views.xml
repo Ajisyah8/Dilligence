@@ -11,8 +11,9 @@
                         <div>Isi tab ini hanya untuk produk yang memang merupakan paket belajar Diligence. Setelah order dibayar, pengaturan akses di bawah ini menentukan course dan fasilitas yang diterima siswa.</div>
                     </div>
                     <group string="1. Identitas dan Harga Paket" col="2">
-                        <field name="diligence_package_type" string="Jenis Paket" help="Pilih jenis paket belajar. Biarkan kosong jika produk ini bukan paket Diligence."/>
-                        <field name="diligence_sales_status" string="Status Ketersediaan" invisible="not diligence_package_type" help="Pilih Full Slot agar paket tetap tampil, tetapi tidak dapat dibeli."/>
+                        <field name="diligence_package_type_id" string="Jenis Paket" options="{'no_quick_create': False, 'no_create_edit': False}" help="Pilih jenis paket atau buat jenis baru langsung dari daftar ini."/>
+                        <field name="diligence_package_type" invisible="True"/>
+                        <field name="diligence_sales_status" string="Status Ketersediaan" invisible="not (diligence_package_type_id or diligence_package_type)" help="Pilih Full Slot agar paket tetap tampil, tetapi tidak dapat dibeli."/>
                         <field name="list_price" string="Harga Normal" help="Harga normal paket sebelum potongan Early Bird. Contoh: 169000."/>
                         <field name="diligence_access_duration_days" string="Masa Akses (Hari)" help="Berapa hari siswa dapat mengakses paket setelah pembayaran dikonfirmasi. Kosong atau 0 berarti tanpa batas waktu."/>
                     </group>
@@ -41,10 +42,11 @@
                     </group>
                     <group string="5. Pengaturan Sesi Kelas" col="2">
                         <div class="text-muted" colspan="2">Untuk paket belajar mandiri, pilih Belajar Mandiri. Field jadwal di bawah hanya diperlukan untuk paket Zoom/coaching.</div>
-                        <field name="diligence_delivery_mode" string="Cara Belajar" help="Pilih Belajar Mandiri, kelas Zoom grup, Zoom privat, atau sesi 1-on-1."/>
-                        <field name="diligence_session_frequency" string="Frekuensi Sesi per Minggu" invisible="diligence_delivery_mode == 'self'" help="Jumlah sesi terjadwal setiap minggu. Isi hanya jika paket memiliki sesi live."/>
-                        <field name="diligence_session_duration_minutes" string="Durasi Sesi (Menit)" invisible="diligence_delivery_mode == 'self'" help="Durasi setiap sesi live dalam menit."/>
-                        <field name="diligence_max_participants" string="Batas Peserta per Sesi" invisible="diligence_delivery_mode == 'self'" help="Jumlah maksimal peserta pada satu sesi live. Isi 0 atau kosong jika tidak dibatasi."/>
+                        <field name="diligence_delivery_mode_id" string="Cara Belajar" options="{'no_quick_create': False, 'no_create_edit': False}" help="Pilih cara belajar atau buat pilihan baru dari daftar ini."/>
+                        <field name="diligence_delivery_mode" invisible="True"/>
+                        <field name="diligence_session_frequency" string="Frekuensi Sesi per Minggu" invisible="diligence_delivery_mode_id.code == 'self' or diligence_delivery_mode == 'self'" help="Jumlah sesi terjadwal setiap minggu. Isi hanya jika paket memiliki sesi live."/>
+                        <field name="diligence_session_duration_minutes" string="Durasi Sesi (Menit)" invisible="diligence_delivery_mode_id.code == 'self' or diligence_delivery_mode == 'self'" help="Durasi setiap sesi live dalam menit."/>
+                        <field name="diligence_max_participants" string="Batas Peserta per Sesi" invisible="diligence_delivery_mode_id.code == 'self' or diligence_delivery_mode == 'self'" help="Jumlah maksimal peserta pada satu sesi live. Isi 0 atau kosong jika tidak dibatasi."/>
                     </group>
                     <group string="6. Benefit yang Tampil di Website">
                         <field name="diligence_benefit_text" string="Daftar Benefit Paket" widget="text" placeholder="Tulis satu benefit per baris, contoh:\n30 PDF bahan belajar\n30 audio listening\n30 video penjelasan\n30 set quiz + answer key" help="Sumber teks benefit pada kartu paket di website dan deskripsi penawaran. Tulis satu benefit pada setiap baris."/>

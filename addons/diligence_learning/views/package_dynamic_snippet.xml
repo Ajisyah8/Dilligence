@@ -31,14 +31,15 @@
             <t t-set="product" t-value="data['_record']"/>
             <t t-set="package" t-value="product.product_tmpl_id"/>
             <t t-set="package_description" t-value="package.description_sale or ''"/>
+            <t t-set="package_benefits" t-value="package.diligence_benefit_text or ''"/>
             <t t-set="early_price" t-value="package._diligence_early_bird_price_for_date()"/>
             <article t-attf-class="diligence-package-card h-100 w-100 p-4 border rounded-4 shadow-sm d-flex flex-column #{'diligence-package-card-full' if package.diligence_sales_status == 'full' else 'bg-white'}">
                 <span t-if="package.diligence_sales_status == 'full'" class="diligence-full-slot-badge badge rounded-pill align-self-start mb-2">
                     <i class="fa fa-ban me-1"/> FULL SLOT
                 </span>
                 <span class="badge rounded-pill text-bg-light align-self-start mb-3">
-                    <t t-if="package.diligence_package_type == 'starter'">SELF LEARNING</t>
-                    <t t-elif="package.diligence_package_type == 'community'">MOST POPULAR</t>
+                    <t t-if="package.diligence_package_type_id.website_label" t-out="package.diligence_package_type_id.website_label"/>
+                    <t t-elif="package.diligence_package_type_id.website_badge" t-out="package.diligence_package_type_id.website_badge"/>
                     <t t-else="">TEACHER GUIDANCE</t>
                 </span>
                 <h3 class="h4 mb-3"><a class="text-decoration-none text-reset" t-att-href="product.website_url" t-out="product.display_name"/></h3>
@@ -53,7 +54,7 @@
                     <strong t-else="" class="fs-3" t-out="package.list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                 </div>
                 <ul class="list-unstyled my-4">
-                    <t t-foreach="package_description.splitlines()[1:]" t-as="benefit">
+                    <t t-foreach="package_benefits.splitlines()" t-as="benefit">
                         <li t-if="benefit.strip()" class="mb-3"><i class="fa fa-check text-primary me-2"/><span t-out="benefit.lstrip('?• ').strip()"/></li>
                     </t>
                 </ul>
@@ -64,6 +65,21 @@
                 </div>
             </article>
         </t>
+    </template>
+
+    <template id="dynamic_filter_template_product_product_products_item_benefits"
+              inherit_id="website_sale.dynamic_filter_template_product_product_products_item"
+              name="Diligence Package Benefits on Existing Product Cards">
+        <xpath expr="//div[hasclass('oe_subdescription_wrapper')]" position="after">
+            <ul t-if="product.diligence_benefit_text" class="diligence-package-benefits list-unstyled small mt-2 mb-0">
+                <t t-foreach="product.diligence_benefit_text.splitlines()" t-as="benefit">
+                    <li t-if="benefit.strip()" class="mb-1">
+                        <i class="fa fa-check text-primary me-2" aria-hidden="true"/>
+                        <span t-out="benefit.lstrip('- •').strip()"/>
+                    </li>
+                </t>
+            </ul>
+        </xpath>
     </template>
 
     <template id="diligence_package_snippet_registration" inherit_id="website.snippets" name="Diligence Package Snippet Registration">

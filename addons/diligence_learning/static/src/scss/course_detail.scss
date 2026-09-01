@@ -909,6 +909,141 @@ body,
         margin-left: auto;
     }
 
+    .diligence-course-hero {
+        overflow: hidden;
+        background: #f3ead7;
+        color: #12384f;
+    }
+
+    .diligence-course-hero .o_wslides_course_nav {
+        border-bottom: 1px solid rgba(18, 56, 79, .12);
+        background: transparent;
+    }
+
+    .diligence-course-hero-inner {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(300px, .95fr);
+        align-items: center;
+        gap: clamp(2rem, 6vw, 6rem);
+        min-height: 31rem;
+        padding-top: 4.5rem;
+        padding-bottom: 4.5rem;
+    }
+
+    .diligence-course-hero-copy {
+        max-width: 42rem;
+    }
+
+    .diligence-course-hero-copy h1 {
+        max-width: 40rem;
+        margin: 0 0 1.25rem;
+        color: #12384f;
+        font-size: clamp(2.75rem, 6vw, 5.4rem);
+        font-weight: 750;
+        letter-spacing: -.055em;
+        line-height: .98;
+    }
+
+    .diligence-course-hero-description {
+        max-width: 38rem;
+        color: #536875;
+        font-size: 1.12rem;
+        line-height: 1.75;
+    }
+
+    .diligence-course-hero-description p:last-child {
+        margin-bottom: 0;
+    }
+
+    .diligence-course-hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem 1.5rem;
+        margin-top: 1.5rem;
+        color: #536875;
+        font-size: .86rem;
+        font-weight: 650;
+    }
+
+    .diligence-course-hero-meta i {
+        color: #116b83;
+    }
+
+    .diligence-course-hero-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .diligence-course-hero-note {
+        color: #667886;
+        font-size: .84rem;
+    }
+
+    .diligence-course-hero-art {
+        width: 100%;
+        max-width: 30rem;
+        justify-self: end;
+    }
+
+    .diligence-course-hero-art-frame {
+        position: relative;
+        overflow: hidden;
+        aspect-ratio: 4 / 3;
+        border: .75rem solid #fff;
+        border-radius: 1.4rem;
+        background: #fff;
+        box-shadow: 1.25rem 1.25rem 0 rgba(17, 107, 131, .14), 0 1.5rem 3.5rem rgba(18, 56, 79, .15);
+        transform: rotate(2deg);
+    }
+
+    .diligence-course-hero-art-frame > div,
+    .diligence-course-hero-art-frame img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .diligence-course-hero-progress {
+        position: relative;
+        width: 78%;
+        margin: -1.25rem 0 0 auto;
+        padding: 1rem 1.1rem;
+        border: 1px solid rgba(18, 56, 79, .10);
+        border-radius: .85rem;
+        background: #fff;
+        box-shadow: 0 .75rem 1.75rem rgba(18, 56, 79, .10);
+        transform: rotate(-1deg);
+    }
+
+    .diligence-course-hero-progress-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: .55rem;
+        color: #536875;
+        font-size: .78rem;
+    }
+
+    .diligence-course-hero-progress-label strong {
+        color: #116b83;
+        font-size: .95rem;
+    }
+
+    .diligence-course-hero-progress .progress {
+        height: .5rem;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #e8edef;
+    }
+
+    .diligence-course-hero-progress .progress-bar {
+        border-radius: inherit;
+        background: #c6a76b;
+    }
+
     .diligence-course-main .o_wslides_course_header {
         overflow: hidden;
         border-bottom: 0;
@@ -1045,12 +1180,12 @@ body,
         margin: .75rem 0 1.25rem;
     }
 
-    .diligence-course-main .o_wslides_course_main > .container {
+    .diligence-course-main > .container {
         padding-top: 1.5rem;
     }
 
-    .diligence-course-main .o_wslides_course_main .o_wslides_home_aside_loggedin,
-    .diligence-course-main .o_wslides_course_main .o_wslides_course_sidebar {
+    .diligence-course-main .o_wslides_home_aside_loggedin,
+    .diligence-course-main .o_wslides_course_sidebar {
         border-radius: 1rem;
     }
 
@@ -1132,6 +1267,27 @@ body,
     }
 
     @media (max-width: 767.98px) {
+        .diligence-course-hero-inner {
+            grid-template-columns: minmax(0, 1fr);
+            min-height: 0;
+            gap: 2.5rem;
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+
+        .diligence-course-hero-copy h1 {
+            font-size: clamp(2.5rem, 14vw, 4rem);
+        }
+
+        .diligence-course-hero-art {
+            max-width: 30rem;
+            justify-self: start;
+        }
+
+        .diligence-course-hero-progress {
+            width: 84%;
+        }
+
         .diligence-lesson-main .o_wslides_lesson_content {
             padding: 1rem;
         }
@@ -1873,6 +2029,379 @@ body .diligence-fullscreen-viewer .diligence-media-template-with-description > .
     }
 }
 
+/* Course landing pages do not need a second course search control. Keep the
+   public catalogue search available at /slides instead. */
+body.o_wslides_body .diligence-course-hero .o_wslides_course_nav_search,
+body.o_wslides_body .diligence-course-hero .o_wslides_course_nav .btn-group.ms-1.position-static {
+    display: none !important;
+}
+
+/* Editorial course landing page: keep the Odoo learning behaviour while
+   presenting the public course as a focused learning path. */
+body.o_wslides_body:has(.diligence-course-hero) {
+    background: #f8f8f5;
+}
+
+body.o_wslides_body:has(.diligence-course-hero) #wrapwrap,
+body.o_wslides_body:has(.diligence-course-hero) main {
+    background: #f8f8f5;
+}
+
+.diligence-course-hero {
+    background: #f8f8f5;
+}
+
+.diligence-course-hero .o_wslides_course_nav {
+    min-height: 3.5rem;
+    background: #fff;
+    border-bottom: 1px solid #e4e4df;
+}
+
+.diligence-course-hero .o_wslides_course_nav .container {
+    max-width: 1180px;
+}
+
+.diligence-course-hero-inner {
+    max-width: 1180px;
+    min-height: 35rem;
+    padding-top: 5rem;
+    padding-bottom: 5.5rem;
+}
+
+.diligence-course-hero-copy {
+    max-width: 44rem;
+}
+
+.diligence-course-hero-copy .diligence-eyebrow {
+    color: #9a6d27;
+    font-size: .7rem;
+    letter-spacing: .16em;
+}
+
+.diligence-course-hero-copy h1 {
+    max-width: 42rem;
+    margin-top: .75rem;
+    color: #172b36;
+    font-size: clamp(3rem, 7vw, 6.25rem);
+    letter-spacing: -.065em;
+    line-height: .94;
+}
+
+.diligence-course-hero-description {
+    max-width: 37rem;
+    margin-top: 1.5rem;
+    color: #56666d;
+    font-size: 1.15rem;
+    line-height: 1.8;
+}
+
+.diligence-course-hero-meta {
+    margin-top: 1.75rem;
+    color: #68777d;
+}
+
+.diligence-course-hero-actions {
+    margin-top: 2.25rem;
+}
+
+.diligence-course-hero .diligence-start-button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 3.25rem;
+    padding: .9rem 1.35rem;
+    border-radius: .35rem;
+    background: #162f3b;
+    color: #fff !important;
+    font-size: .95rem;
+    font-weight: 700;
+    box-shadow: 0 .6rem 1.5rem rgba(22, 47, 59, .16);
+}
+
+.diligence-course-hero .diligence-start-button:hover,
+.diligence-course-hero .diligence-start-button:focus {
+    background: #0f222b;
+    color: #fff !important;
+}
+
+.diligence-course-hero-art {
+    max-width: 31rem;
+}
+
+.diligence-course-hero-art-frame {
+    border: .9rem solid #fff;
+    border-radius: .35rem;
+    box-shadow: 1.1rem 1.1rem 0 #d9c69e, 0 1.8rem 3rem rgba(22, 47, 59, .12);
+    transform: rotate(0);
+}
+
+.diligence-course-hero-progress {
+    width: 72%;
+    margin-top: -1.5rem;
+    border-radius: .35rem;
+    transform: rotate(0);
+}
+
+.diligence-course-main {
+    background: #f8f8f5;
+}
+
+.diligence-editorial-course-body {
+    background: #f8f8f5;
+}
+
+.diligence-editorial-course-container {
+    max-width: 980px;
+    padding-top: 5.5rem;
+    padding-bottom: 7rem;
+}
+
+.diligence-editorial-course-content {
+    width: 100%;
+}
+
+.diligence-editorial-introduction {
+    max-width: 48rem;
+    padding-bottom: 4.5rem;
+}
+
+.diligence-editorial-introduction h2,
+.diligence-editorial-section-heading h2 {
+    margin: .65rem 0 1rem;
+    color: #172b36;
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    font-weight: 750;
+    letter-spacing: -.05em;
+    line-height: 1;
+}
+
+.diligence-editorial-introduction p {
+    max-width: 42rem;
+    margin: 0;
+    color: #56666d;
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+.diligence-editorial-learning-path {
+    padding-top: 2.75rem;
+    border-top: 1px solid #d9dcd7;
+}
+
+.diligence-editorial-section-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 2.25rem;
+}
+
+.diligence-editorial-section-heading h2 {
+    margin-bottom: 0;
+}
+
+.diligence-editorial-completion {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    color: #68777d;
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+.diligence-editorial-completion strong {
+    color: #116b83;
+    font-size: 1.6rem;
+    letter-spacing: -.04em;
+}
+
+.diligence-editorial-course-body .diligence-material-heading {
+    display: none;
+}
+
+.diligence-editorial-course-body .o_wslides_slides_list_category {
+    margin-bottom: 3rem !important;
+}
+
+.diligence-editorial-course-body .o_wslides_slides_list_category_header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.diligence-editorial-course-body .o_wslides_slides_list_category_header > * {
+    margin-bottom: 0 !important;
+}
+
+.diligence-editorial-course-body .o_wslides_slides_list_category_header .o_wslides_slides_list_category_title {
+    font-size: 1.25rem;
+}
+
+.diligence-editorial-course-body .diligence-material-row {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+}
+
+.diligence-editorial-course-body .diligence-material-row:hover {
+    padding-right: .75rem !important;
+    padding-left: .75rem !important;
+}
+
+@media (max-width: 767.98px) {
+    .diligence-editorial-course-container {
+        padding-top: 3.5rem;
+        padding-bottom: 4rem;
+    }
+
+    .diligence-editorial-introduction {
+        padding-bottom: 3.5rem;
+    }
+
+    .diligence-editorial-section-heading {
+        align-items: start;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .diligence-editorial-completion {
+        align-items: start;
+    }
+}
+
+/* The reference uses one uninterrupted reading column. Keep the native
+   sidebar data available to Odoo, but remove it from the public composition. */
+.diligence-course-main > .container {
+    max-width: 980px;
+    padding-top: 4rem;
+    padding-bottom: 6rem;
+}
+
+.diligence-course-main > .container > .row {
+    display: block;
+}
+
+.diligence-course-main > .container > .row > .col-12.col-md-4,
+.diligence-course-main > .container > .row > .col-md-4 {
+    display: none !important;
+}
+
+.diligence-course-main > .container > .row > .col-12.col-md-8,
+.diligence-course-main > .container > .row > .col-md-8 {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+}
+
+.diligence-course-main .o_wslides_nav_tabs {
+    display: none !important;
+}
+
+.diligence-course-main .o_wslides_tabs_content {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.diligence-course-main .diligence-material-heading {
+    align-items: flex-start;
+    margin: 0 0 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #dcded9;
+}
+
+.diligence-course-main .diligence-material-heading h3 {
+    margin-top: .4rem;
+    color: #172b36;
+    font-size: clamp(2rem, 4vw, 3rem);
+    letter-spacing: -.045em;
+}
+
+.diligence-course-main .diligence-material-heading p {
+    max-width: 38rem;
+    color: #68777d !important;
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+.diligence-course-main .diligence-material-legend span {
+    border: 0;
+    background: transparent;
+    color: #68777d;
+}
+
+.diligence-course-main .o_wslides_slides_list_category {
+    margin-bottom: 2.75rem !important;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.diligence-course-main .o_wslides_slides_list_category_header {
+    min-height: 0;
+    padding: 0 0 .8rem !important;
+    border-bottom: 2px solid #172b36;
+    background: transparent !important;
+    color: #172b36 !important;
+}
+
+.diligence-course-main .o_wslides_slides_list_category_header h5,
+.diligence-course-main .o_wslides_slides_list_category_header strong {
+    color: #172b36 !important;
+    font-size: 1.15rem;
+    font-weight: 750;
+    letter-spacing: -.015em;
+}
+
+.diligence-course-main .diligence-material-row {
+    min-height: 4.75rem;
+    padding: .95rem 0 !important;
+    border-top: 0 !important;
+    border-bottom: 1px solid #dedfda !important;
+    background: transparent;
+}
+
+.diligence-course-main .diligence-material-row:hover {
+    padding-right: .75rem !important;
+    padding-left: .75rem !important;
+    background: #fff;
+}
+
+.diligence-course-main .diligence-material-row > .diligence-material-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    margin: 0 1rem 0 0;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.diligence-course-main .diligence-material-row .o_wslides_js_slides_list_slide_link {
+    color: #263d48;
+    font-size: 1rem;
+    font-weight: 650;
+}
+
+.diligence-course-main .diligence-material-type {
+    color: #7a8588;
+}
+
+@media (max-width: 767.98px) {
+    .diligence-course-hero-inner {
+        min-height: 0;
+        padding-top: 3.25rem;
+        padding-bottom: 4rem;
+    }
+
+    .diligence-course-hero-art {
+        max-width: 27rem;
+    }
+
+    .diligence-course-main > .container {
+        padding-top: 2.5rem;
+        padding-bottom: 4rem;
+    }
+}
+
 body .diligence-fullscreen-viewer .o_wslides_fs_content iframe,
 body .diligence-fullscreen-viewer .o_wslides_fs_content video {
     display: block;
@@ -2434,4 +2963,517 @@ body .diligence-fullscreen-viewer .o_wslides_js_lesson_quiz_reset:hover {
     background: #6c757d !important;
     color: #fff !important;
     letter-spacing: .06em;
+}
+
+/* Lesson reader layout matching the reference lesson-detail page. */
+body.o_wslides_body:has(.diligence-lesson-viewer) {
+    background: #f8f8f5;
+}
+
+.diligence-lesson-viewer .diligence-lesson-main {
+    max-width: 1180px;
+    padding-top: 2rem;
+}
+
+.diligence-lesson-viewer .diligence-lesson-main > .row {
+    align-items: flex-start;
+}
+
+.diligence-lesson-viewer .diligence-lesson-aside,
+.diligence-lesson-viewer .o_wslides_lesson_aside {
+    position: sticky;
+    top: 1rem;
+}
+
+.diligence-reader-sidebar-header {
+    margin-top: 1.5rem;
+    margin-bottom: .75rem;
+    padding: 1.25rem 1rem 1rem;
+    border-bottom: 1px solid #d9dcd7;
+}
+
+.diligence-reader-sidebar-header h2 {
+    margin: .4rem 0 1.35rem;
+    color: #172b36;
+    font-size: 1.25rem;
+    font-weight: 750;
+    letter-spacing: -.025em;
+    line-height: 1.15;
+}
+
+.diligence-reader-progress-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: .55rem;
+    color: #68777d;
+    font-size: .78rem;
+}
+
+.diligence-reader-progress-heading strong {
+    color: #116b83;
+    font-size: .85rem;
+}
+
+.diligence-reader-sidebar-header .progress {
+    height: .45rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e4e7e2;
+}
+
+.diligence-reader-sidebar-header .progress-bar {
+    border-radius: inherit;
+    background: #c6a76b;
+}
+
+.diligence-lesson-viewer .o_wslides_lesson_aside_list {
+    margin-top: 0 !important;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.diligence-lesson-viewer .o_wslides_lesson_aside_list > div:first-child {
+    padding: .75rem 1rem !important;
+    border-bottom: 2px solid #172b36;
+    background: transparent !important;
+    color: #172b36 !important;
+    font-size: .76rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.diligence-lesson-viewer .o_wslides_lesson_aside_list_links > li > .diligence-sidebar-lesson-card,
+.diligence-lesson-viewer .o_wslides_lesson_aside_list_links > li > .o_wslides_lesson_aside_list_link {
+    margin: 0;
+    padding: .75rem .5rem !important;
+    border: 0;
+    border-bottom: 1px solid #e1e3de;
+    border-radius: 0;
+    background: transparent;
+    color: #53666d;
+}
+
+.diligence-lesson-viewer .o_wslides_lesson_aside_list_links > li > .active {
+    border-left: .2rem solid #c6a76b;
+    background: #fff;
+    color: #172b36;
+}
+
+.diligence-lesson-viewer .o_wslides_lesson_content {
+    max-width: 760px;
+    padding: 0 0 5rem 2.5rem;
+}
+
+.diligence-lesson-viewer .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 {
+    display: flex !important;
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 1rem;
+    margin: 1.5rem 0 2rem !important;
+}
+
+.diligence-lesson-viewer .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 > .col-12,
+.diligence-lesson-viewer .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 > .col-md {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 auto !important;
+}
+
+.diligence-reader-module-label {
+    display: block;
+    margin-bottom: .35rem;
+    color: #116b83;
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+}
+
+.diligence-lesson-viewer .o_wslides_lesson_content h1 {
+    color: #172b36;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    letter-spacing: -.055em;
+    line-height: 1;
+}
+
+.diligence-lesson-viewer .diligence-lesson-explanation {
+    margin-top: 2.5rem;
+    padding: 0 0 2.5rem;
+    border: 0;
+    border-bottom: 1px solid #d9dcd7;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.diligence-lesson-viewer .diligence-lesson-explanation h2 {
+    font-size: 1.7rem;
+}
+
+@media (max-width: 991.98px) {
+    .diligence-lesson-viewer .o_wslides_lesson_aside {
+        position: static;
+    }
+
+    .diligence-lesson-viewer .diligence-lesson-main {
+        padding-right: 1rem;
+        padding-left: 1rem;
+    }
+
+    .diligence-lesson-viewer .diligence-lesson_content,
+    .diligence-lesson-viewer .o_wslides_lesson_content {
+        padding-left: 0;
+    }
+}
+
+/* Full-width lesson reader: keep the outline anchored to the viewport edge
+   and give the material pane all remaining horizontal space. */
+@media (min-width: 992px) {
+    body.o_wslides_body:has(.diligence-lesson-viewer) {
+        overflow-x: hidden;
+    }
+
+    .diligence-lesson-viewer .diligence-lesson-main {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .diligence-lesson-viewer .diligence-lesson-main > .row {
+        display: flex;
+        flex-wrap: nowrap;
+        width: 100%;
+        margin: 0;
+    }
+
+    .diligence-lesson-viewer .diligence-lesson-aside,
+    .diligence-lesson-viewer .o_wslides_lesson_aside {
+        position: sticky;
+        top: 0;
+        flex: 0 0 360px;
+        width: 360px;
+        max-width: 360px;
+        height: calc(100vh - 72px);
+        margin: 0;
+        padding: 1.5rem 1rem 2rem 1.5rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+        align-self: flex-start;
+        scrollbar-width: thin;
+        scrollbar-color: #b99a5c #edf0ec;
+    }
+
+    /* Keep the sidebar visible while scrolling, but constrain it to the
+       lesson area so it never overlaps the page footer. */
+    body.o_wslides_body .diligence-lesson-viewer .o_wslides_lesson_aside {
+        position: sticky !important;
+        z-index: 2;
+        top: 0 !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        min-height: 100vh !important;
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+        min-height: 100dvh !important;
+        margin: 0 !important;
+        box-sizing: border-box;
+        background: #fbfaf7;
+    }
+
+    body.o_wslides_body .diligence-lesson-viewer .diligence-lesson-main {
+        width: 100% !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+        overflow: visible !important;
+    }
+
+    body.o_wslides_body .diligence-lesson-viewer .diligence-lesson-main > .row {
+        position: relative;
+        overflow: visible !important;
+        align-items: flex-start !important;
+    }
+
+    /* Override the native Bootstrap column sizing and its fixed-height
+       lesson shell.  The outline must remain usable until the last lesson. */
+    body.o_wslides_body .diligence-lesson-viewer .o_wslides_lesson_aside {
+        flex: 0 0 380px !important;
+        width: 380px !important;
+        max-width: 380px !important;
+        height: calc(100vh - 72px) !important;
+        max-height: none !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        border-right: 1px solid #dce3e3;
+    }
+
+    .diligence-lesson-viewer .o_wslides_lesson_content {
+        flex: 1 1 auto;
+        width: auto;
+        max-width: none;
+        min-width: 0;
+        padding: 2rem clamp(1.5rem, 4vw, 5rem) 5rem;
+    }
+
+    .diligence-lesson-viewer .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3,
+    .diligence-lesson-viewer .diligence-custom-media-preview,
+    .diligence-lesson-viewer .diligence-lesson-explanation,
+    .diligence-lesson-viewer .o_wslides_js_quiz_container {
+        width: 100%;
+        max-width: none;
+    }
+
+    /* Keep the lesson label, title and type badge in separate, predictable
+       areas so a long title cannot cover the section label or the preview. */
+    body.o_wslides_body .diligence-lesson-viewer .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 > .col-12:first-child > .d-flex {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        width: 100%;
+        min-width: 0;
+        gap: .35rem 1rem;
+        overflow: visible !important;
+    }
+
+    body.o_wslides_body .diligence-lesson-viewer .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 > .col-12:first-child .diligence-reader-module-label {
+        grid-column: 1 / -1;
+        min-width: 0;
+        margin: 0;
+    }
+
+    body.o_wslides_body .diligence-lesson-viewer .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 > .col-12:first-child h1 {
+        grid-column: 1;
+        min-width: 0;
+        width: 100%;
+        overflow: hidden !important;
+        white-space: normal !important;
+        text-overflow: ellipsis;
+        line-height: 1.12;
+    }
+
+    body.o_wslides_body .diligence-lesson-viewer .diligence-lesson-type-badge {
+        grid-column: 2;
+        grid-row: 2;
+        white-space: nowrap;
+    }
+
+    /* Avoid an oversized media pane on wide monitors. The reader remains
+       full-height, while its readable content keeps a comfortable measure. */
+    body.o_wslides_body .diligence-lesson-viewer .o_wslides_lesson_content {
+        width: 100% !important;
+        max-width: 1180px !important;
+        padding-right: clamp(1.5rem, 3vw, 3.5rem);
+    }
+
+    body.o_wslides_body .diligence-lesson-viewer .diligence-custom-media-preview,
+    body.o_wslides_body .diligence-lesson-viewer .diligence-custom-media-stage,
+    body.o_wslides_body .diligence-lesson-viewer .o_wslides_js_quiz_container {
+        max-width: 1180px !important;
+    }
+
+    .diligence-lesson-viewer .diligence-custom-video-frame,
+    .diligence-lesson-viewer .diligence-custom-media-stage,
+    .diligence-lesson-viewer .o_wslides_lesson_content iframe {
+        max-width: none;
+    }
+
+    .diligence-lesson-viewer .o_wslides_lesson_aside_list_links,
+    .diligence-lesson-viewer .o_wslides_lesson_aside_list_links > li,
+    .diligence-lesson-viewer .o_wslides_lesson_aside_list_links > li > a,
+    .diligence-lesson-viewer .o_wslides_lesson_aside_list_link {
+        min-width: 0;
+    }
+
+    .diligence-lesson-viewer .o_wslides_lesson_aside_list_link > a {
+        flex: 1 1 auto;
+        min-width: 0;
+        gap: .45rem;
+        align-items: center;
+    }
+
+    .diligence-lesson-viewer .o_wslides_lesson_link_name {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+    }
+
+    .diligence-lesson-viewer .diligence-sidebar-lesson-number,
+    .diligence-lesson-viewer .diligence-lesson-link-icon,
+    .diligence-lesson-viewer .diligence-sidebar-lesson-duration,
+    .diligence-lesson-viewer .o_wslides_lesson_aside_list_link > a > i {
+        flex: 0 0 auto;
+    }
+
+    .diligence-lesson-viewer .diligence-sidebar-lesson-duration {
+        margin-left: auto;
+        white-space: nowrap;
+    }
+}
+
+/* The lesson reader is a focused learning surface, like fullscreen mode;
+   keep the global marketing footer out of it. Other website pages retain it. */
+body.o_wslides_body:has(.diligence-lesson-viewer) #footer,
+body.o_wslides_body:has(.diligence-lesson-viewer) footer#bottom,
+body.o_wslides_body:has(.diligence-lesson-viewer) .o_footer_copyright {
+    display: none !important;
+}
+
+.diligence-reader-course-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    width: 100%;
+    margin: 0 0 1.5rem;
+    padding: 1.25rem 1.5rem 1.5rem;
+    border-bottom: 0;
+}
+
+/* The course progress is already visible in the sidebar. Keep the top
+   reader header clean and remove structural divider lines from this view. */
+body.o_wslides_body:has(.diligence-lesson-viewer) .diligence-reader-sidebar-header,
+body.o_wslides_body:has(.diligence-lesson-viewer) .o_wslides_lesson_content,
+body.o_wslides_body:has(.diligence-lesson-viewer) .o_wslides_lesson_aside_list > div:first-child {
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+}
+
+.diligence-reader-course-header-copy,
+.diligence-reader-course-header-progress {
+    min-width: 0;
+}
+
+.diligence-reader-breadcrumb {
+    display: flex;
+    gap: .5rem;
+    margin-top: .45rem;
+    color: #7a898c;
+    font-size: .8rem;
+}
+
+.diligence-reader-breadcrumb a {
+    color: #116b83;
+    text-decoration: none;
+}
+
+.diligence-reader-course-header h1 {
+    margin: .35rem 0 0;
+    color: #172b36;
+    font-size: clamp(1.7rem, 3vw, 2.7rem);
+    letter-spacing: -.045em;
+    line-height: 1.05;
+}
+
+.diligence-reader-course-header-progress {
+    flex: 0 0 240px;
+}
+
+.diligence-reader-course-header-progress > span {
+    color: #68777d;
+    font-size: .78rem;
+}
+
+.diligence-reader-course-header-progress strong {
+    float: right;
+    color: #116b83;
+    font-size: .85rem;
+}
+
+.diligence-reader-course-header-progress .progress {
+    clear: both;
+    height: .45rem;
+    margin-top: .55rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e4e7e2;
+}
+
+.diligence-reader-course-header-progress .progress-bar {
+    background: #c6a76b;
+}
+
+@media (max-width: 767.98px) {
+    .diligence-reader-course-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem 0;
+    }
+
+    .diligence-reader-course-header-progress {
+        width: 100%;
+        flex-basis: auto;
+    }
+}
+
+/* Keep the public course entry page aligned like the reference layout.
+   The explicit grid prevents the hero artwork from dropping below the copy
+   when inherited Odoo course styles are active. */
+body.o_wslides_body .diligence-course-hero-inner {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "art copy";
+    align-items: center;
+    gap: clamp(2rem, 6vw, 6rem);
+    max-width: 1180px;
+    min-height: 28rem;
+    padding: 3rem 1.25rem 3.5rem;
+}
+
+body.o_wslides_body .diligence-course-hero .o_wslides_course_nav {
+    min-height: 2.75rem;
+}
+
+body.o_wslides_body .diligence-course-hero .o_wslides_course_nav .container {
+    padding-top: .55rem;
+    padding-bottom: .55rem;
+}
+
+body.o_wslides_body .diligence-course-hero-copy {
+    grid-area: copy;
+    width: 100%;
+    max-width: 42rem;
+    transform: translateY(2.25rem);
+}
+
+body.o_wslides_body .diligence-course-hero-art {
+    grid-area: art;
+    width: 100%;
+    max-width: 32rem;
+    justify-self: start;
+    transform: translateY(2.25rem);
+}
+
+@media (max-width: 767.98px) {
+    body.o_wslides_body .diligence-course-hero-inner {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas: "copy" "art";
+        gap: 2rem;
+        min-height: 0;
+        padding: 3rem 1rem 4rem;
+    }
+
+    body.o_wslides_body .diligence-course-hero-art {
+        max-width: 30rem;
+        transform: translateY(1rem);
+    }
+
+    body.o_wslides_body .diligence-course-hero-copy {
+        transform: none;
+    }
+}
+
+/* Keep the main website navbar search, but remove the duplicate course
+   search control from the course landing sub-header. */
+body.o_wslides_body .diligence-course-hero .o_wslides_course_nav_search,
+body.o_wslides_body .diligence-course-hero .o_wslides_course_nav .btn-group.ms-1.position-static {
+    display: none !important;
 }

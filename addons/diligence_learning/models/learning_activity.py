@@ -16,6 +16,13 @@ class DiligenceLearningActivity(models.Model):
         ('lesson', 'Lesson completed'),
         ('quiz', 'Quiz completed'),
     ], required=True, default='lesson')
+    activity_type_id = fields.Many2one('diligence.activity.type', string='Activity Type (Configurable)', ondelete='restrict')
+
+    @api.onchange('activity_type_id')
+    def _onchange_activity_type_id(self):
+        for activity in self:
+            if activity.activity_type_id and activity.activity_type_id.code in ('lesson', 'quiz'):
+                activity.activity_type = activity.activity_type_id.code
 
     _activity_uniq = models.Constraint(
         'unique(partner_id, slide_id, activity_date, activity_type)',

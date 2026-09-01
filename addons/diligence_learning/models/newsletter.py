@@ -133,6 +133,13 @@ class DiligenceNewsletterDelivery(models.Model):
                 # when both records represent the same email address.
                 if partner and existing.partner_id == partner and not existing.mailing_contact_id:
                     existing.write({'mailing_contact_id': contact.id})
+                # Repair pending records created with the old partner-based
+                # anchor. Sent records are immutable; only future delivery
+                # dates are corrected to the subscription timeline.
+                if existing.state == 'pending':
+                    expected_date = anchor + timedelta(days=stage.delay_days)
+                    if existing.scheduled_date != expected_date:
+                        existing.write({'scheduled_date': expected_date})
                 continue
             created |= self.sudo().create({
                 'partner_id': partner.id if partner else False,
@@ -155,7 +162,11 @@ class DiligenceNewsletterDelivery(models.Model):
         for subscription in subscriptions:
             contact = subscription.contact_id
             partner = self._partner_for_contact(contact)
-            anchor = (partner.create_date if partner else False) or fields.Datetime.now()
+            # The drip timeline belongs to this newsletter subscription, not to
+            # the partner account. An existing Odoo account may subscribe much
+            # later, and using partner.create_date would make all overdue
+            # stages eligible in the same cron run.
+            anchor = subscription.create_date or contact.create_date or fields.Datetime.now()
             self._create_deliveries_for_contact(contact, anchor=anchor, partner=partner)
 
     @api.model

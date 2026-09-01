@@ -36,7 +36,10 @@ class SaleOrder(models.Model):
         if (
             new_qty > 0
             and product
-            and product.product_tmpl_id.diligence_package_type
+            and (
+                product.product_tmpl_id.diligence_package_type_id
+                or product.product_tmpl_id.diligence_package_type
+            )
             and product.product_tmpl_id.diligence_sales_status == 'full'
         ):
             current_quantity = order_line.product_uom_qty if order_line else 0
@@ -49,27 +52,45 @@ class SaleOrder(models.Model):
     def _diligence_package_lines(self):
         return self.order_line.filtered(lambda line: line.product_template_id._diligence_is_package())
 
+    def _diligence_referrer_for_code(self, code):
+        """Return the active referrer for *code*, or an empty recordset.
+
+        This is shared by the checkout form and the post-payment attribution
+        flow so that a code preview cannot use rules different from the final
+        referral attribution.
+        """
+        self.ensure_one()
+        code = (code or '').strip().upper()
+        if not code:
+            return self.env['res.partner'].browse()
+        referrer = self.env['res.partner'].sudo().search([
+            ('diligence_referral_code', '=', code),
+            ('diligence_is_affiliate', '=', True),
+        ], limit=1)
+        today = fields.Date.today()
+        active_dates = referrer and (
+            (not referrer.diligence_affiliate_start_date or referrer.diligence_affiliate_start_date <= today)
+            and (not referrer.diligence_affiliate_end_date or referrer.diligence_affiliate_end_date >= today)
+        )
+        package = self._diligence_package_lines()[:1].product_template_id
+        allowed_program = not referrer.diligence_affiliate_program_ids or package in referrer.diligence_affiliate_program_ids
+        if not (referrer and active_dates and allowed_program):
+            return self.env['res.partner'].browse()
+        if referrer.commercial_partner_id == self.partner_id.commercial_partner_id:
+            return self.env['res.partner'].browse()
+        return referrer
+
     def _diligence_apply_referral(self):
         for order in self:
             code = (order.diligence_referral_code or '').strip().upper()
             if not code or order.diligence_referrer_id:
                 continue
-            package = order._diligence_package_lines()[:1].product_template_id
-            referrer = self.env['res.partner'].search([
-                ('diligence_referral_code', '=', code),
-                ('diligence_is_affiliate', '=', True),
-            ], limit=1)
-            today = fields.Date.today()
-            active_dates = referrer and (
-                (not referrer.diligence_affiliate_start_date or referrer.diligence_affiliate_start_date <= today)
-                and (not referrer.diligence_affiliate_end_date or referrer.diligence_affiliate_end_date >= today)
-            )
-            allowed_program = not referrer.diligence_affiliate_program_ids or package in referrer.diligence_affiliate_program_ids
+            referrer = order._diligence_referrer_for_code(code)
             previous_referral = self.env['diligence.referral'].search([
                 ('student_id', 'child_of', order.partner_id.commercial_partner_id.id),
                 ('status', 'not in', ('cancelled', 'reversed')),
             ], limit=1)
-            if referrer and active_dates and allowed_program and not previous_referral and referrer.commercial_partner_id != order.partner_id.commercial_partner_id:
+            if referrer and not previous_referral:
                 values = {
                     'diligence_referrer_id': referrer.id,
                     'diligence_commission_status': 'eligible',
@@ -81,7 +102,8 @@ class SaleOrder(models.Model):
                     'sale_order_id': order.id,
                     'program_id': package.id if package else False,
                     'referral_code': code,
-                    'cashback_type': referrer.diligence_cashback_type,
+                    'cashback_type': referrer._diligence_cashback_type_code(),
+                    'cashback_type_id': referrer.diligence_cashback_type_id.id or False,
                     'cashback_rate': referrer.diligence_cashback_rate,
                     'cashback_fixed': referrer.diligence_cashback_fixed,
                     'status': 'pending_payment',
@@ -124,7 +146,7 @@ class SaleOrder(models.Model):
                 )
 
             session_packages = package_products.filtered(
-                lambda package: package.diligence_delivery_mode != 'self'
+                lambda package: package._diligence_delivery_mode_code() != 'self'
             )
             for package in session_packages:
                 session = self.env['diligence.session'].search([
@@ -142,22 +164,7 @@ class SaleOrder(models.Model):
             if self.env['ir.config_parameter'].sudo().get_param(
                 'diligence.whatsapp.send_on_payment', 'False'
             ) == 'True':
-                group_links = package_products.mapped('diligence_whatsapp_group_link')
-                group_message = (
-                    _('\nWhatsApp Community Group: %(link)s', link=group_links[0])
-                    if group_links else ''
-                )
-                service = self.env['diligence.whatsapp.service']
-                service.send_text(
-                    order.partner_id.phone,
-                    _(
-                        'Pembayaran order %(order)s berhasil divalidasi. '
-                        'Akses paket belajar Anda sudah aktif di Diligence Academy.'
-                        '%(group_message)s',
-                        order=order.name,
-                        group_message=group_message,
-                    ),
-                )
+                self.env['diligence.whatsapp.service'].queue_payment_confirmation(order)
 
     def _diligence_has_valid_package_payment(self):
         self.ensure_one()

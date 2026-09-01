@@ -9,6 +9,36 @@ from odoo.http import request
 
 
 class DiligenceWebsiteSlides(WebsiteSlides):
+    @http.route()
+    def channel(self, channel=False, channel_id=False, **kwargs):
+        """Open an accessible course directly in the lesson reader.
+
+        The reader is the actual learning surface: it contains the lesson
+        outline on the left and the active PDF/audio/video/quiz on the right.
+        Keep an explicit overview escape hatch for Website Builder and course
+        administration.
+        """
+        if channel and not kwargs.get('overview') and not kwargs.get('enable_editor'):
+            current_user = request.env.user
+            has_access = (
+                current_user._is_admin()
+                or channel.can_publish
+                or channel.is_member
+            )
+            if has_access:
+                progress = self._get_channel_progress(channel, include_quiz=True)
+                learning_slides = channel.slide_ids.filtered(
+                    lambda lesson: lesson.active and not lesson.is_category
+                )
+                next_slide = learning_slides.filtered(
+                    lambda lesson: not progress.get(lesson.id, {}).get('completed')
+                )[:1] or learning_slides[:1]
+                if next_slide:
+                    return request.redirect(
+                        '/slides/slide/%s' % request.env['ir.http']._slug(next_slide)
+                    )
+        return super().channel(channel=channel, channel_id=channel_id, **kwargs)
+
     def _get_channel_progress(self, channel, include_quiz=False):
         """Include completion records for publishers/admins in the sidebar."""
         progress = super()._get_channel_progress(channel, include_quiz=include_quiz)
@@ -239,12 +269,13 @@ class DiligenceWebsiteSlides(WebsiteSlides):
             if question.question_type in ('short_answer', 'essay') or (
                     question.question_type == 'listening' and question.listening_answer_type == 'short_answer'):
                 item['answer_ids'] = []
-            # The answer key is returned only by the submit response.  Native
-            # quiz payloads may contain these fields for officer views, but
-            # they must never be sent to a student while the quiz is open.
+            # Odoo's native QWeb template reads these keys while rendering
+            # every answer, even before the quiz is completed.  Keep the
+            # keys present with safe values so the template cannot raise a
+            # KeyError, without exposing the answer key before submission.
             for answer in item.get('answer_ids', []):
-                answer.pop('is_correct', None)
-                answer.pop('comment', None)
+                answer.setdefault('is_correct', False)
+                answer.setdefault('comment', '')
             questions.append(item)
         values['slide_questions'] = questions
         return values

@@ -12,6 +12,7 @@ class ResPartner(models.Model):
         ('affiliate', 'Affiliate / Referrer'),
         ('other', 'Other'),
     ], string='Diligence Contact Segment', default='other', index=True, copy=False)
+    diligence_contact_segment_id = fields.Many2one('diligence.contact.segment', string='Contact Segment', ondelete='restrict', index=True)
 
     diligence_referral_code = fields.Char('Referral Code', copy=False, index=True)
     diligence_referral_link = fields.Char('Affiliate Link', compute='_compute_diligence_referral_link')
@@ -24,6 +25,7 @@ class ResPartner(models.Model):
         ('agent', 'Agent'),
         ('school', 'School'),
     ], string='Affiliate Type', copy=False)
+    diligence_affiliate_type_id = fields.Many2one('diligence.affiliate.type', string='Affiliate Type', ondelete='restrict', copy=False)
     diligence_affiliate_bank_name = fields.Char('Bank Name', copy=False)
     diligence_affiliate_bank_account = fields.Char('Bank Account Number', copy=False)
     diligence_affiliate_bank_holder = fields.Char('Bank Account Holder', copy=False)
@@ -31,6 +33,11 @@ class ResPartner(models.Model):
         ('percent', 'Percentage'),
         ('fixed', 'Fixed Amount'),
     ], string='Cashback Type', default='percent', copy=False)
+    diligence_cashback_type_id = fields.Many2one('diligence.cashback.type', string='Cashback Type', ondelete='restrict', copy=False)
+
+    def _diligence_cashback_type_code(self):
+        self.ensure_one()
+        return self.diligence_cashback_type_id.code if self.diligence_cashback_type_id else self.diligence_cashback_type
     diligence_cashback_rate = fields.Float('Cashback Rate (%)', copy=False)
     diligence_cashback_fixed = fields.Monetary('Fixed Cashback', copy=False)
     diligence_affiliate_start_date = fields.Date('Agreement Start Date', copy=False)
@@ -49,6 +56,18 @@ class ResPartner(models.Model):
         'Diligence Forum Access',
         compute='_compute_diligence_forum_access',
         help='Granted when the partner has a confirmed Community or Consultation package.',
+    )
+    diligence_referral_count = fields.Integer(
+        'Total Referrals', compute='_compute_diligence_referral_summary',
+    )
+    diligence_valid_referral_count = fields.Integer(
+        'Valid Referrals', compute='_compute_diligence_referral_summary',
+    )
+    diligence_cashback_total = fields.Monetary(
+        'Total Cashback', compute='_compute_diligence_referral_summary',
+    )
+    diligence_cashback_outstanding = fields.Monetary(
+        'Outstanding Cashback', compute='_compute_diligence_referral_summary',
     )
 
     _diligence_referral_code_uniq = models.Constraint(
@@ -83,6 +102,18 @@ class ResPartner(models.Model):
         entitled_partner_ids = set(orders.mapped('partner_id.commercial_partner_id').ids)
         for partner in self:
             partner.diligence_forum_access = partner.commercial_partner_id.id in entitled_partner_ids
+
+    def _compute_diligence_referral_summary(self):
+        Referral = self.env['diligence.referral'].sudo()
+        for partner in self:
+            referrals = Referral.search([('affiliate_id', '=', partner.commercial_partner_id.id)])
+            valid = referrals.filtered(lambda referral: referral.status not in ('draft', 'pending_payment', 'cancelled', 'reversed'))
+            total = sum(valid.mapped('cashback_amount'))
+            outstanding = sum(valid.filtered(lambda referral: referral.status != 'paid').mapped('cashback_amount'))
+            partner.diligence_referral_count = len(referrals)
+            partner.diligence_valid_referral_count = len(valid)
+            partner.diligence_cashback_total = total
+            partner.diligence_cashback_outstanding = outstanding
 
     @api.model_create_multi
     def create(self, vals_list):

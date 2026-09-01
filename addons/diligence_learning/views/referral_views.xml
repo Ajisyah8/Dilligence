@@ -49,11 +49,11 @@
             <form string="Affiliate Referral">
                 <header>
                     <button name="action_refresh_payment" type="object" string="Refresh Payment" class="btn-primary" invisible="status in ('paid', 'cancelled', 'reversed')"/>
-                    <button name="action_approve" type="object" string="Approve" invisible="status not in ('eligible', 'waiting_period')"/>
-                    <button name="action_ready_to_pay" type="object" string="Ready to Pay" invisible="status != 'approved'"/>
-                    <button name="action_mark_paid" type="object" string="Mark Paid" class="btn-primary" invisible="status not in ('approved', 'ready_to_pay')"/>
-                    <button name="action_cancel" type="object" string="Cancel" invisible="status in ('paid', 'cancelled', 'reversed')"/>
-                    <button name="action_reverse" type="object" string="Reverse" invisible="status != 'paid'"/>
+                    <button name="action_approve" type="object" string="Approve" groups="sales_team.group_sale_manager,account.group_account_invoice" invisible="status not in ('eligible', 'waiting_period')"/>
+                    <button name="action_ready_to_pay" type="object" string="Ready to Pay" groups="sales_team.group_sale_manager,account.group_account_invoice" invisible="status != 'approved'"/>
+                    <button name="action_mark_paid" type="object" string="Mark Paid" class="btn-primary" groups="sales_team.group_sale_manager,account.group_account_invoice" invisible="status not in ('approved', 'ready_to_pay')"/>
+                    <button name="action_cancel" type="object" string="Cancel" groups="sales_team.group_sale_manager,account.group_account_invoice" invisible="status in ('paid', 'cancelled', 'reversed')"/>
+                    <button name="action_reverse" type="object" string="Reverse" groups="sales_team.group_sale_manager,account.group_account_invoice" invisible="status != 'paid'"/>
                     <field name="status" widget="statusbar" statusbar_visible="draft,pending_payment,eligible,waiting_period,approved,ready_to_pay,paid"/>
                 </header>
                 <sheet>
@@ -72,12 +72,15 @@
                             <field name="payment_date"/>
                             <field name="payment_amount"/>
                             <field name="net_payment"/>
-                            <field name="cashback_type"/>
-                            <field name="cashback_rate" invisible="cashback_type != 'percent'"/>
-                            <field name="cashback_fixed" invisible="cashback_type != 'fixed'"/>
+                            <field name="cashback_type_id" options="{'no_quick_create': False, 'no_create_edit': False}"/>
+                            <field name="cashback_type" invisible="True"/>
+                            <field name="cashback_rate" invisible="cashback_type_id.code != 'percent' and cashback_type != 'percent'"/>
+                            <field name="cashback_fixed" invisible="cashback_type_id.code != 'fixed' and cashback_type != 'fixed'"/>
                             <field name="cashback_amount"/>
                             <field name="waiting_until"/>
                             <field name="payout_reference"/>
+                            <field name="approved_by"/>
+                            <field name="paid_by"/>
                         </group>
                     </group>
                     <notebook>

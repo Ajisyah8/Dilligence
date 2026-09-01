@@ -71,15 +71,21 @@ class ResConfigSettings(models.TransientModel):
     diligence_whatsapp_api_key = fields.Char(string='Evolution API Key', config_parameter='diligence.whatsapp.api_key')
     diligence_whatsapp_default_country_code = fields.Char(string='Default Country Code', config_parameter='diligence.whatsapp.default_country_code', default='62')
     diligence_whatsapp_send_on_payment = fields.Boolean(string='Send Payment Confirmation', config_parameter='diligence.whatsapp.send_on_payment')
-    diligence_whatsapp_signup_message = fields.Char(
+    diligence_whatsapp_signup_message = fields.Text(
         string='Signup Welcome Message',
         config_parameter='diligence.whatsapp.signup_message',
         help='Use %(name)s for the new user name.',
     )
-    diligence_whatsapp_test_message = fields.Char(
+    diligence_whatsapp_test_message = fields.Text(
         string='Test WhatsApp Message',
         config_parameter='diligence.whatsapp.test_message',
         help='Use %(name)s for the contact name.',
+    )
+    diligence_whatsapp_payment_message = fields.Text(
+        string='Payment Confirmation Message',
+        config_parameter='diligence.whatsapp.payment_message',
+        default='Pembayaran order %(order)s berhasil divalidasi. Akses paket belajar Anda sudah aktif di Diligence Academy.%(group_message)s',
+        help='Available placeholders: %(name)s, %(order)s, and %(group_message)s.',
     )
 
 

@@ -1,68 +1,90 @@
+#. module: diligence_learning
 msgid ""
 msgstr ""
 "Project-Id-Version: diligence_learning\n"
 "Language: id\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
+#. module: diligence_learning
 msgid "My Courses"
 msgstr "Kursus Saya"
 
+#. module: diligence_learning
 msgid "Back to My Account"
 msgstr "Kembali ke Akun Saya"
 
+#. module: diligence_learning
 msgid "Open Course"
 msgstr "Buka Kursus"
 
+#. module: diligence_learning
 msgid "Paket:"
 msgstr "Paket:"
 
+#. module: diligence_learning
 msgid "Akses sampai:"
 msgstr "Akses sampai:"
 
+#. module: diligence_learning
 msgid "Buka course dan lihat materi pembelajaran Anda"
 msgstr "Buka kursus dan lihat materi pembelajaran Anda"
 
+#. module: diligence_learning
 msgid "My Consultation"
 msgstr "Konsultasi Saya"
 
+#. module: diligence_learning
 msgid "Jadwal berikutnya"
 msgstr "Jadwal berikutnya"
 
+#. module: diligence_learning
 msgid "Buka Link Consultation"
 msgstr "Buka Link Konsultasi"
 
+#. module: diligence_learning
 msgid "Lihat jadwal, coach, dan link konsultasi"
 msgstr "Lihat jadwal, coach, dan link konsultasi"
 
+#. module: diligence_learning
 msgid "There are no active courses on this account. Please make sure the package payment has been confirmed."
 msgstr "Belum ada kursus aktif pada akun ini. Pastikan pembayaran paket sudah dikonfirmasi."
 
+#. module: diligence_learning
 msgid "Package:"
 msgstr "Paket:"
 
+#. module: diligence_learning
 msgid "Access until:"
 msgstr "Akses sampai:"
 
+#. module: diligence_learning
 msgid "Open Course"
 msgstr "Buka Kursus"
 
+#. module: diligence_learning
 msgid "There is no confirmed Consultation package purchase on this account."
 msgstr "Belum ada pembelian paket Consultation yang dikonfirmasi pada akun ini."
 
+#. module: diligence_learning
 msgid "Next schedule"
 msgstr "Jadwal berikutnya"
 
+#. module: diligence_learning
 msgid "Open Consultation Link"
 msgstr "Buka Link Konsultasi"
 
+#. module: diligence_learning
 msgid "Coach note"
 msgstr "Catatan coach"
 
+#. module: diligence_learning
 msgid "The coach will arrange the schedule and contact you."
 msgstr "Coach akan mengatur jadwal dan menghubungi Anda."
 
+#. module: diligence_learning
 msgid "Open your courses and learning materials"
 msgstr "Buka kursus dan materi pembelajaran Anda"
 
+#. module: diligence_learning
 msgid "View your coach, schedule, and consultation link"
 msgstr "Lihat coach, jadwal, dan link konsultasi Anda"

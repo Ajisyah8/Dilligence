@@ -61,6 +61,98 @@ class DiligenceWhatsAppService(models.AbstractModel):
             return {'sent': False, 'error': 'request_failed'}
         return {'sent': True, 'status_code': response.status_code}
 
+    @api.model
+    def render_message(self, template, partner=None, **values):
+        """Render a configured message without leaking configuration values."""
+        values = dict(values, name=partner.name if partner else '')
+        try:
+            return (template or '') % values
+        except (KeyError, TypeError, ValueError):
+            _logger.warning('WhatsApp message template could not be rendered')
+            return template or ''
+
+    @api.model
+    def queue_payment_confirmation(self, order):
+        """Create one delivery per order and send it once after valid payment."""
+        delivery = self.env['diligence.whatsapp.delivery'].sudo().search([
+            ('sale_order_id', '=', order.id),
+            ('kind', '=', 'payment_confirmation'),
+        ], limit=1)
+        if not delivery:
+            group_links = order.order_line.mapped(
+                'product_template_id.diligence_whatsapp_group_link'
+            )
+            group_message = (
+                _('\nWhatsApp Community Group: %(link)s', link=group_links[0])
+                if group_links else ''
+            )
+            template = self._parameter(
+                'diligence.whatsapp.payment_message',
+                'Pembayaran order %(order)s berhasil divalidasi. '
+                'Akses paket belajar Anda sudah aktif di Diligence Academy.'
+                '%(group_message)s',
+            )
+            delivery = self.env['diligence.whatsapp.delivery'].sudo().create({
+                'sale_order_id': order.id,
+                'partner_id': order.partner_id.commercial_partner_id.id,
+                'kind': 'payment_confirmation',
+                'message': self.render_message(
+                    template,
+                    order.partner_id,
+                    order=order.name,
+                    group_message=group_message,
+                ),
+            })
+        return delivery.action_send()
+
+
+class DiligenceWhatsAppDelivery(models.Model):
+    _name = 'diligence.whatsapp.delivery'
+    _description = 'Diligence WhatsApp Delivery'
+    _order = 'create_date desc'
+
+    partner_id = fields.Many2one('res.partner', required=True, index=True, ondelete='restrict')
+    sale_order_id = fields.Many2one('sale.order', index=True, ondelete='set null')
+    kind = fields.Selection([
+        ('payment_confirmation', 'Payment Confirmation'),
+        ('survey', 'Bulk Survey'),
+        ('test', 'Test'),
+    ], required=True, index=True)
+    phone = fields.Char(compute='_compute_phone', store=True)
+    message = fields.Text(required=True)
+    state = fields.Selection([
+        ('pending', 'Pending'),
+        ('sent', 'Sent'),
+        ('skipped', 'Skipped'),
+        ('error', 'Error'),
+    ], default='pending', required=True, index=True, copy=False)
+    sent_at = fields.Datetime(copy=False, readonly=True)
+    error_message = fields.Char(copy=False, readonly=True)
+
+    _payment_delivery_uniq = models.Constraint(
+        'unique(sale_order_id, kind)',
+        'Only one WhatsApp delivery of each type is allowed per order.',
+    )
+
+    @api.depends('partner_id.phone')
+    def _compute_phone(self):
+        for delivery in self:
+            delivery.phone = self.env['diligence.whatsapp.service'].normalize_number(
+                delivery.partner_id.phone
+            ) if delivery.partner_id else False
+
+    def action_send(self):
+        service = self.env['diligence.whatsapp.service'].sudo()
+        for delivery in self.filtered(lambda record: record.state not in ('sent',)):
+            result = service.send_text(delivery.phone, delivery.message)
+            values = {
+                'state': 'sent' if result.get('sent') else 'skipped' if result.get('skipped') else 'error',
+                'error_message': result.get('error') or False,
+                'sent_at': fields.Datetime.now() if result.get('sent') else False,
+            }
+            delivery.write(values)
+        return True
+
 
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
@@ -71,17 +163,23 @@ class ResConfigSettings(models.TransientModel):
     diligence_whatsapp_api_key = fields.Char(string='Evolution API Key', config_parameter='diligence.whatsapp.api_key')
     diligence_whatsapp_default_country_code = fields.Char(string='Default Country Code', config_parameter='diligence.whatsapp.default_country_code', default='62')
     diligence_whatsapp_send_on_payment = fields.Boolean(string='Send Payment Confirmation', config_parameter='diligence.whatsapp.send_on_payment')
-    diligence_whatsapp_signup_message = fields.Char(
+    diligence_whatsapp_signup_message = fields.Text(
         string='Signup Welcome Message',
         config_parameter='diligence.whatsapp.signup_message',
         default='Halo %(name)s, selamat datang di Diligence Academy. Akun Anda berhasil dibuat. Selamat belajar!',
         help='Use %(name)s for the new user name.',
     )
-    diligence_whatsapp_test_message = fields.Char(
+    diligence_whatsapp_test_message = fields.Text(
         string='Test WhatsApp Message',
         config_parameter='diligence.whatsapp.test_message',
         default='Hello %(name)s, this is a test message from Diligence Academy.',
         help='Use %(name)s for the contact name.',
+    )
+    diligence_whatsapp_payment_message = fields.Text(
+        string='Payment Confirmation Message',
+        config_parameter='diligence.whatsapp.payment_message',
+        default='Pembayaran order %(order)s berhasil divalidasi. Akses paket belajar Anda sudah aktif di Diligence Academy.%(group_message)s',
+        help='Available placeholders: %(name)s, %(order)s, and %(group_message)s.',
     )
 
 
