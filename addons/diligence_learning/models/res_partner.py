@@ -86,6 +86,17 @@ class ResPartner(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        # Website signup creates a regular customer partner without opening
+        # the accounting form. Reuse the company's partner properties so the
+        # new contact receives valid receivable/payable accounts.
+        company_partner = self.env.company.partner_id.with_company(self.env.company)
+        receivable = company_partner.property_account_receivable_id
+        payable = company_partner.property_account_payable_id
+        for vals in vals_list:
+            if receivable and not vals.get('property_account_receivable_id'):
+                vals['property_account_receivable_id'] = receivable.id
+            if payable and not vals.get('property_account_payable_id'):
+                vals['property_account_payable_id'] = payable.id
         partners = super().create(vals_list)
         for partner in partners.filtered(lambda record: not record.diligence_referral_code):
             partner.diligence_referral_code = f'DIL{partner.id:05d}'
