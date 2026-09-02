@@ -59,11 +59,13 @@
         'views/newsletter_views.xml',
         'views/survey_views.xml',
         'views/homepage_newsletter.xml',
+        'views/homepage_builder_drop_zones.xml',
         'views/course_detail_templates.xml',
         'views/website_global_actions.xml',
         'views/whatsapp_views.xml',
         'views/whatsapp_settings_views.xml',
         'views/whatsapp_campaign_views.xml',
+        'views/seo_views.xml',
     ],
         'assets': {
         'web.assets_frontend': [

@@ -33,3 +33,5 @@ access_diligence_cashback_type_manager,diligence.cashback.type manager,model_dil
 access_diligence_quiz_type_officer,diligence.quiz.type officer,model_diligence_quiz_type,website_slides.group_website_slides_officer,1,1,1,0
 access_diligence_activity_type_officer,diligence.activity.type officer,model_diligence_activity_type,website_slides.group_website_slides_officer,1,1,1,0
 access_diligence_session_type_officer,diligence.session.type officer,model_diligence_session_type,website_slides.group_website_slides_officer,1,1,1,0
+access_diligence_seo_item_editor,diligence.seo.item editor,model_diligence_seo_item,website.group_website_designer,1,1,0,0
+access_diligence_seo_item_manager,diligence.seo.item manager,model_diligence_seo_item,diligence_learning.group_diligence_seo_manager,1,1,1,1

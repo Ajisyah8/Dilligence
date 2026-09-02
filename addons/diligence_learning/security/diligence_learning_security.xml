@@ -1,4 +1,10 @@
 <odoo>
+    <record id="group_diligence_seo_manager" model="res.groups">
+        <field name="name">SEO Manager</field>
+        <field name="comment">May publish and control indexing from Diligence SEO Manager.</field>
+        <field name="implied_ids" eval="[(4, ref('website.group_website_designer'))]"/>
+    </record>
+
     <record id="diligence_invoice_officer_privilege" model="res.groups.privilege">
         <field name="name">Diligence Billing</field>
         <field name="category_id" ref="base.module_category_accounting"/>

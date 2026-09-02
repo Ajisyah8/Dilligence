@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="diligence_seo_item_list" model="ir.ui.view">
+        <field name="name">diligence.seo.item.list</field>
+        <field name="model">diligence.seo.item</field>
+        <field name="arch" type="xml">
+            <list string="SEO Manager" create="0">
+                <header>
+                    <button name="action_sync_all_sources" type="object" string="Sync All Sources" class="btn-primary" groups="diligence_learning.group_diligence_seo_manager" confirm="Create SEO items for supported content without an SEO item?"/>
+                    <button name="action_set_indexed" type="object" string="Set Indexed" groups="diligence_learning.group_diligence_seo_manager" confirm="Enable indexing for the selected published content?"/>
+                    <button name="action_set_noindex" type="object" string="Set No Index" groups="diligence_learning.group_diligence_seo_manager"/>
+                    <button name="action_set_published" type="object" string="Set Published" groups="diligence_learning.group_diligence_seo_manager" confirm="Publish the selected content?"/>
+                    <button name="action_set_unpublished" type="object" string="Set Unpublished" groups="diligence_learning.group_diligence_seo_manager" confirm="Unpublish the selected content and disable indexing?"/>
+                </header>
+                <field name="name"/>
+                <field name="content_type"/>
+                <field name="url"/>
+                <field name="seo_score" widget="progressbar"/>
+                <field name="is_indexed"/>
+                <field name="is_published"/>
+                <field name="seo_status" widget="badge" decoration-success="seo_status == 'complete'" decoration-warning="seo_status == 'warning'" decoration-danger="seo_status == 'needs_improvement'"/>
+                <field name="last_updated"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="diligence_seo_item_search" model="ir.ui.view">
+        <field name="name">diligence.seo.item.search</field>
+        <field name="model">diligence.seo.item</field>
+        <field name="arch" type="xml">
+            <search string="SEO Manager">
+                <field name="name"/>
+                <field name="url"/>
+                <field name="content_type"/>
+                <filter name="missing_title" string="Missing SEO Title" domain="[('seo_title', '=', False)]"/>
+                <filter name="missing_description" string="Missing Description" domain="[('seo_description', '=', False)]"/>
+                <filter name="indexed" string="Indexed" domain="[('is_indexed', '=', True)]"/>
+                <filter name="not_indexed" string="Not Indexed" domain="[('is_indexed', '=', False)]"/>
+                <filter name="published" string="Published" domain="[('is_published', '=', True)]"/>
+                <filter name="unpublished" string="Unpublished" domain="[('is_published', '=', False)]"/>
+                <filter name="needs_improvement" string="Needs Improvement" domain="[('seo_status', '=', 'needs_improvement')]"/>
+                <filter name="complete" string="Complete" domain="[('seo_status', '=', 'complete')]"/>
+                <filter name="group_content_type" string="Group by Content Type" context="{'group_by': 'content_type'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="diligence_seo_item_form" model="ir.ui.view">
+        <field name="name">diligence.seo.item.form</field>
+        <field name="model">diligence.seo.item</field>
+        <field name="arch" type="xml">
+            <form string="SEO Manager">
+                <header>
+                    <button name="action_set_indexed" type="object" string="Set Indexed" class="btn-primary" groups="diligence_learning.group_diligence_seo_manager"/>
+                    <button name="action_set_noindex" type="object" string="Set No Index" groups="diligence_learning.group_diligence_seo_manager"/>
+                    <button name="action_sync_from_source" type="object" string="Reload from Source"/>
+                    <button name="action_generate_defaults" type="object" string="Generate Empty Defaults" groups="diligence_learning.group_diligence_seo_manager" confirm="Fill only empty SEO fields? Existing custom SEO will not be overwritten."/>
+                </header>
+                <sheet>
+                    <group string="Content Information">
+                        <field name="name"/>
+                        <field name="content_type"/>
+                        <field name="res_model" invisible="1"/>
+                        <field name="res_id"/>
+                        <field name="url"/>
+                        <field name="is_published" groups="diligence_learning.group_diligence_seo_manager"/>
+                        <field name="is_indexed" groups="diligence_learning.group_diligence_seo_manager"/>
+                    </group>
+                    <notebook>
+                        <page string="Search Engine Preview">
+                            <group>
+                                <field name="seo_title" placeholder="Recommended: 30-60 characters"/>
+                                <field name="seo_description" placeholder="Recommended: 120-160 characters"/>
+                                <field name="canonical_url"/>
+                            </group>
+                            <group string="Google Preview">
+                                <div class="border rounded p-3">
+                                    <div class="text-success"><field name="url" nolabel="1" readonly="1"/></div>
+                                    <div class="h5 text-primary"><field name="seo_title" nolabel="1" readonly="1"/></div>
+                                    <div class="text-muted"><field name="seo_description" nolabel="1" readonly="1"/></div>
+                                </div>
+                            </group>
+                        </page>
+                        <page string="Social Sharing">
+                            <group><field name="og_image" widget="image" options="{'preview_image': 'og_image'}"/></group>
+                        </page>
+                        <page string="SEO Analysis">
+                            <group>
+                                <field name="seo_score" widget="progressbar"/>
+                                <field name="seo_status" widget="badge"/>
+                                <field name="seo_warnings" readonly="1" nolabel="1"/>
+                                <field name="last_updated" readonly="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_diligence_seo_manager" model="ir.actions.act_window">
+        <field name="name">SEO Manager</field>
+        <field name="res_model">diligence.seo.item</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="diligence_seo_item_search"/>
+        <field name="help" type="html"><p>Use Sync All Sources to add supported website, product, course, and blog content.</p></field>
+    </record>
+    <menuitem id="menu_diligence_seo_manager" name="SEO Manager" parent="website.menu_website_global_configuration" action="action_diligence_seo_manager" sequence="35" groups="website.group_website_designer"/>
+</odoo>

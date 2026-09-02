@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Keep the homepage content editable by Website Builder between every
+         top-level section. The existing homepage content remains unchanged. -->
+    <template id="diligence_homepage_builder_drop_zones" inherit_id="website.homepage" name="Homepage Builder Drop Zones">
+        <xpath expr="//div[@id='wrap']/section[@data-name='Hero']" position="after">
+            <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[contains(@data-name, 'What')]" position="after">
+            <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[@data-name='Available Courses']" position="after">
+            <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[@data-name='Schedule Free Interview']" position="after">
+            <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[@data-name='Testimonials']" position="after">
+            <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[@data-name='Meet Our Teachers']" position="after">
+            <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[@data-name='Career']" position="after">
+            <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
+        </xpath>
+    </template>
+</odoo>

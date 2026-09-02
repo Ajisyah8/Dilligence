@@ -22,3 +22,5 @@ from . import payment_transaction
 from . import whatsapp
 from . import whatsapp_webhook
 from . import whatsapp_campaign
+from . import seo
+from . import seo
