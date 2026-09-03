@@ -11,16 +11,16 @@
                  data-number-of-records="12">
             <div class="s_dynamic_snippet_container container">
                 <div class="row s_nb_column_fixed">
-                    <section class="s_dynamic_snippet_title d-flex flex-column mb-lg-0 pb-3 s_col_no_resize text-center">
+                    <div class="s_dynamic_snippet_title d-flex flex-column mb-lg-0 pb-3 s_col_no_resize text-center">
                         <div>
                             <p class="text-uppercase fw-bold text-primary mb-2">Learning packages</p>
                             <h2 class="display-5 fw-bold">Pilih Paket Belajar Anda</h2>
                             <p class="lead">Paket, benefit, harga, dan Early Bird terhubung langsung ke Sales.</p>
                         </div>
-                    </section>
-                    <section class="s_dynamic_snippet_content o_not_editable col s_col_no_resize">
+                    </div>
+                    <div class="s_dynamic_snippet_content o_not_editable col s_col_no_resize">
                         <div class="dynamic_snippet_template"/>
-                    </section>
+                    </div>
                 </div>
             </div>
         </section>
