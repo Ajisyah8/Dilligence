@@ -294,3 +294,46 @@ syncDiligenceFullscreenCompletionButton();
 renderDiligenceFullscreenDescription();
 window.setInterval(syncDiligenceFullscreenCompletionButton, 300);
 window.setInterval(renderDiligenceFullscreenDescription, 300);
+
+
+/* Preserve the learner's reading position when selecting another lesson. */
+const diligenceLessonScrollKey = "diligence.lesson.scroll";
+
+function captureDiligenceLessonScroll(event) {
+    const link = event.target.closest(
+        ".diligence-lesson-viewer a.o_wslides_lesson_aside_list_link, "
+        + ".diligence-lesson-viewer .diligence-sidebar-lesson-card a"
+    );
+    if (!link || !link.href || new URL(link.href, window.location.href).origin !== window.location.origin) {
+        return;
+    }
+    const aside = document.querySelector(".diligence-lesson-viewer .o_wslides_lesson_aside_list");
+    sessionStorage.setItem(diligenceLessonScrollKey, JSON.stringify({
+        pageY: window.scrollY,
+        asideY: aside?.scrollTop || 0,
+    }));
+}
+
+function restoreDiligenceLessonScroll() {
+    const raw = sessionStorage.getItem(diligenceLessonScrollKey);
+    if (!raw) return;
+    let position;
+    try {
+        position = JSON.parse(raw);
+    } catch {
+        sessionStorage.removeItem(diligenceLessonScrollKey);
+        return;
+    }
+    const restore = () => {
+        window.scrollTo({top: position.pageY || 0, left: 0, behavior: "auto"});
+        const aside = document.querySelector(".diligence-lesson-viewer .o_wslides_lesson_aside_list");
+        if (aside) aside.scrollTop = position.asideY || 0;
+    };
+    window.setTimeout(restore, 80);
+    window.setTimeout(restore, 400);
+    window.setTimeout(() => sessionStorage.removeItem(diligenceLessonScrollKey), 900);
+}
+
+document.addEventListener("click", captureDiligenceLessonScroll, true);
+window.addEventListener("pageshow", restoreDiligenceLessonScroll);
+restoreDiligenceLessonScroll();

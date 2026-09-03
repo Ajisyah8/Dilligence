@@ -79,18 +79,20 @@ class DiligenceWhatsAppService(models.AbstractModel):
             ('kind', '=', 'payment_confirmation'),
         ], limit=1)
         if not delivery:
-            group_links = order.order_line.mapped(
-                'product_template_id.diligence_whatsapp_group_link'
-            )
+            group_links = [
+                link for link in order.order_line.mapped(
+                    'product_template_id.diligence_whatsapp_group_link'
+                ) if link
+            ]
             group_message = (
                 _('\nWhatsApp Community Group: %(link)s', link=group_links[0])
                 if group_links else ''
             )
-            template = self._parameter(
-                'diligence.whatsapp.payment_message',
+            package = order._diligence_package_lines()[:1].product_template_id
+            template = package.diligence_whatsapp_payment_message or (
                 'Pembayaran order %(order)s berhasil divalidasi. '
                 'Akses paket belajar Anda sudah aktif di Diligence Academy.'
-                '%(group_message)s',
+                '%(group_message)s'
             )
             delivery = self.env['diligence.whatsapp.delivery'].sudo().create({
                 'sale_order_id': order.id,

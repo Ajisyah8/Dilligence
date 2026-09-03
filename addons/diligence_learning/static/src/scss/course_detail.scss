@@ -369,6 +369,14 @@ body,
         white-space: nowrap;
     }
 
+    .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 > .col-12 > span[style*="flex-basis: 100%"],
+    .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 > .col-md > span[style*="flex-basis: 100%"] {
+        flex: 0 0 auto !important;
+        flex-basis: auto !important;
+        width: fit-content;
+        max-width: 100%;
+    }
+
     .diligence-lesson-main .o_wslides_lesson_content > .d-flex.flex-wrap.align-items-start.my-3 .btn-group {
         display: flex;
         flex-wrap: wrap;

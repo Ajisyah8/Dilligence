@@ -56,4 +56,14 @@
             </xpath>
         </field>
     </record>
+    <record id="product_template_form_diligence_whatsapp_message" model="ir.ui.view">
+        <field name="name">product.template.form.diligence.whatsapp.message</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="diligence_learning.product_template_form_diligence_package"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='diligence_whatsapp_group_link']" position="after">
+                <field name="diligence_whatsapp_payment_message" string="Pesan WhatsApp Saat Pembayaran" widget="text" placeholder="Contoh pesan konfirmasi per paket" help="Opsional. Jika kosong, sistem memakai pesan umum dari Settings."/>
+            </xpath>
+        </field>
+    </record>
 </odoo>

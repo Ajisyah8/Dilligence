@@ -54,7 +54,7 @@
                             <div class="text-muted mb8">Use %%(name)s for the contact name.</div>
                             <field name="diligence_whatsapp_test_message" nolabel="1" widget="text" placeholder="Test message"/>
                         </div></div>
-                        <div class="col-12 col-lg-12 o_setting_box"><div class="o_setting_right_pane">
+                        <div class="col-12 col-lg-12 o_setting_box" invisible="True"><div class="o_setting_right_pane">
                             <label for="diligence_whatsapp_payment_message" string="Payment Confirmation Message"/>
                             <div class="text-muted mb8">Use %%(order)s and %%(group_message)s.</div>
                             <field name="diligence_whatsapp_payment_message" nolabel="1" widget="text" placeholder="Payment confirmation"/>

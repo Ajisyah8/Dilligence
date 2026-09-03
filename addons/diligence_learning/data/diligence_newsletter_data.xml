@@ -10,6 +10,7 @@
             <field name="name">Diligence Newsletter: Welcome</field>
             <field name="model_id" ref="model_diligence_newsletter_delivery"/>
             <field name="subject">Welcome to Diligence Academy</field>
+            <field name="email_from">{{ object.env['ir.config_parameter'].sudo().get_param('mail.default.from') }}</field>
             <field name="email_to">{{ object.email }}</field>
             <field name="use_default_to" eval="False"/>
             <field name="description">Sent on the student's registration day after explicit newsletter consent.</field>
@@ -28,6 +29,7 @@
             <field name="name">Diligence Newsletter: First Learning Material</field>
             <field name="model_id" ref="model_diligence_newsletter_delivery"/>
             <field name="subject">Your first learning material from Diligence Academy</field>
+            <field name="email_from">{{ object.env['ir.config_parameter'].sudo().get_param('mail.default.from') }}</field>
             <field name="email_to">{{ object.email }}</field>
             <field name="use_default_to" eval="False"/>
             <field name="description">Sent five days after registration.</field>
@@ -46,6 +48,7 @@
             <field name="name">Diligence Newsletter: Continue Learning</field>
             <field name="model_id" ref="model_diligence_newsletter_delivery"/>
             <field name="subject">Keep your learning momentum</field>
+            <field name="email_from">{{ object.env['ir.config_parameter'].sudo().get_param('mail.default.from') }}</field>
             <field name="email_to">{{ object.email }}</field>
             <field name="use_default_to" eval="False"/>
             <field name="description">Sent ten days after registration.</field>
@@ -83,8 +86,8 @@
             <field name="model_id" ref="model_diligence_newsletter_delivery"/>
             <field name="state">code</field>
             <field name="code">model._cron_process()</field>
-            <field name="interval_number">1</field>
-            <field name="interval_type">days</field>
+            <field name="interval_number">5</field>
+            <field name="interval_type">minutes</field>
             <field name="active">True</field>
         </record>
     </data>

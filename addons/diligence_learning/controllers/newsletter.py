@@ -42,7 +42,7 @@ class DiligenceNewsletterController(MassMailController):
             Subscriptions = request.env['mailing.subscription'].sudo()
             contact = Contacts.search([('email', '=ilike', email)], limit=1)
             if not contact:
-                name, _ = tools.parse_contact_from_email(email)
+                name, email_domain = tools.parse_contact_from_email(email)
                 contact = Contacts.create({'name': name or email.split('@')[0], 'email': email})
 
             subscription = Subscriptions.search([

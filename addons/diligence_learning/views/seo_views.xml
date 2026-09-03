@@ -6,7 +6,8 @@
         <field name="arch" type="xml">
             <list string="SEO Manager" create="0">
                 <header>
-                    <button name="action_sync_all_sources" type="object" string="Sync All Sources" class="btn-primary" groups="diligence_learning.group_diligence_seo_manager" confirm="Create SEO items for supported content without an SEO item?"/>
+                    <button name="action_sync_all_sources" type="object" string="Sync All Sources" class="btn-primary" display="always" groups="diligence_learning.group_diligence_seo_manager" confirm="Create SEO items for supported content without an SEO item?"/>
+                    <button name="action_update_all_sources" type="object" string="Update All Sources" display="always" groups="diligence_learning.group_diligence_seo_manager" confirm="Update URLs and canonical URLs from current sources without changing custom SEO text?"/>
                     <button name="action_set_indexed" type="object" string="Set Indexed" groups="diligence_learning.group_diligence_seo_manager" confirm="Enable indexing for the selected published content?"/>
                     <button name="action_set_noindex" type="object" string="Set No Index" groups="diligence_learning.group_diligence_seo_manager"/>
                     <button name="action_set_published" type="object" string="Set Published" groups="diligence_learning.group_diligence_seo_manager" confirm="Publish the selected content?"/>

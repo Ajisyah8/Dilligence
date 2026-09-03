@@ -65,6 +65,10 @@ class ProductTemplate(models.Model):
         'WhatsApp Group Link', copy=False,
         help='Private group link shown only to students with a valid paid order for this package.',
     )
+    diligence_whatsapp_payment_message = fields.Text(
+        'WhatsApp Payment Message', copy=False,
+        help='Optional payment confirmation for this package. Use %(name)s, %(order)s, and %(group_message)s.',
+    )
     diligence_early_bird_enabled = fields.Boolean('Enable Early Bird', copy=False)
     diligence_early_bird_price = fields.Float('Early Bird Price', copy=False)
     diligence_early_bird_start_date = fields.Date('Early Bird Start Date', copy=False)

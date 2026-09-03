@@ -250,7 +250,20 @@ class DiligenceSeoItem(models.Model):
                 item.write(vals)
         return True
 
-    @api.model
+    def action_update_all_sources(self):
+        """Refresh URLs and canonical URLs without overwriting custom SEO copy."""
+        items = self or self.search([])
+        for item in items:
+            target = item._get_target()
+            if not target:
+                continue
+            source_values = item._target_values(target)
+            item.write({
+                "url": source_values.get("url", False),
+                "canonical_url": source_values.get("url", False),
+            })
+        return True
+
     def action_sync_all_sources(self):
         for model in self._allowed_models():
             if model not in self.env:
