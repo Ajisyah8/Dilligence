@@ -31,6 +31,7 @@
         'data/diligence_marketing_data.xml',
         'data/diligence_newsletter_data.xml',
         'data/diligence_blog_data.xml',
+        'data/whats_new_pages.xml',
         'data/package_shop_template.xml',
         'views/package_dynamic_snippet.xml',
         'views/product_template_views.xml',

@@ -25,4 +25,26 @@
             <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
         </xpath>
     </template>
+    <!-- Make the three What’s New cards behave as public navigation cards. -->
+    <template id="diligence_homepage_whats_new_links" inherit_id="website.homepage" name="Homepage What's New Links">
+        <xpath expr="//section[contains(@data-name, 'What')]//h3[normalize-space()='Kelas Mandarin Online Terstruktur']/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' card ')]" position="attributes">
+            <attribute name="class" add="position-relative" separator=" "/>
+        </xpath>
+        <xpath expr="//section[contains(@data-name, 'What')]//h3[normalize-space()='Kelas Mandarin Online Terstruktur']/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' card-body ')]/p" position="after">
+            <a class="stretched-link" href="/slides" aria-label="Lihat courses Mandarin"><span class="visually-hidden">Lihat courses Mandarin</span></a>
+        </xpath>
+        <xpath expr="//section[contains(@data-name, 'What')]//h3[normalize-space()='Jalur Beasiswa Kuliah ke China']/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' card ')]" position="attributes">
+            <attribute name="class" add="position-relative" separator=" "/>
+        </xpath>
+        <xpath expr="//section[contains(@data-name, 'What')]//h3[normalize-space()='Jalur Beasiswa Kuliah ke China']/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' card-body ')]/p" position="after">
+            <a class="stretched-link" href="/study-in-china-success-stories" aria-label="Lihat testimoni siswa beasiswa"><span class="visually-hidden">Lihat testimoni siswa beasiswa</span></a>
+        </xpath>
+        <xpath expr="//section[contains(@data-name, 'What')]//h3[normalize-space()='Official Cambridge Certification Exam']/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' card ')]" position="attributes">
+            <attribute name="class" add="position-relative" separator=" "/>
+        </xpath>
+        <xpath expr="//section[contains(@data-name, 'What')]//h3[normalize-space()='Official Cambridge Certification Exam']/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' card-body ')]/p" position="after">
+            <a class="stretched-link" href="/cambridge-exam-schedule" aria-label="Lihat jadwal ujian Cambridge"><span class="visually-hidden">Lihat jadwal ujian Cambridge</span></a>
+        </xpath>
+    </template>
+
 </odoo>
