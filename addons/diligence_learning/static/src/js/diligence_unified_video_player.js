@@ -140,7 +140,7 @@ Fullscreen.include({
             content.classList.remove('bg-white');
             const stage = document.createElement('div');
             stage.className = 'diligence-plyr-stage w-100 h-100 d-flex align-items-center justify-content-center p-3';
-            stage.style.cssText = 'display:flex;width:100%;max-width:70rem;height:min(70vh,42rem);min-height:24rem;flex:0 0 auto;align-items:center;justify-content:center;padding:0;';
+            stage.style.cssText = 'display:flex;width:100%;max-width:70rem;height:70vh;max-height:42rem;min-height:24rem;flex:0 0 auto;align-items:center;justify-content:center;padding:0;';
             const embed = document.createElement('div');
             embed.className = 'plyr__video-embed';
             embed.style.cssText = 'position:relative;width:100%;height:100%;max-width:none;aspect-ratio:16/9;';
