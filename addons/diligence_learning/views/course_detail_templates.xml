@@ -2,7 +2,7 @@
 <odoo>
     <template id="diligence_fullscreen_lesson_description_source"
               inherit_id="website_slides.slide_fullscreen">
-        <xpath expr="//div[contains(@class, 'o_wslides_fs_main')]" position="before">
+        <xpath expr="//div[hasclass('o_wslides_fs_main')]" position="before">
             <div class="diligence-fs-description-source d-none"
                  t-att-data-slide-id="slide.id"
                  t-att-data-description="slide.description"/>
@@ -11,7 +11,7 @@
 
     <!-- Replace the native cover with a focused editorial course hero. -->
     <template id="diligence_course_main_detail" inherit_id="website_slides.course_main">
-        <xpath expr="//div[contains(@class, 'o_wslides_course_main')]" position="attributes">
+        <xpath expr="//div[hasclass('o_wslides_course_main')]" position="attributes">
             <attribute name="class" add="diligence-course-main" separator=" "/>
         </xpath>
         <xpath expr="//t[@t-call='website.record_cover']" position="replace">
@@ -50,7 +50,7 @@
             </section>
         </xpath>
 
-        <xpath expr="//div[contains(@class, 'o_wslides_course_main')]" position="replace">
+        <xpath expr="//div[hasclass('o_wslides_course_main')]" position="replace">
             <div class="diligence-editorial-course-body">
                 <div class="container diligence-editorial-course-container">
                     <main class="diligence-editorial-course-content">
@@ -85,7 +85,7 @@
     </template>
 
     <template id="diligence_course_slides_list" inherit_id="website_slides.course_slides_list">
-        <xpath expr="//ul[contains(@class, 'o_wslides_js_slides_list_container')]" position="before">
+        <xpath expr="//ul[hasclass('o_wslides_js_slides_list_container')]" position="before">
             <div class="diligence-material-heading">
                 <div>
                     <span class="diligence-eyebrow">COURSE CONTENT</span>
@@ -112,7 +112,7 @@
                 <i t-attf-class="fa #{slide.slide_icon_class}" aria-hidden="true"/>
             </div>
         </xpath>
-        <xpath expr="//div[contains(@class, 'text-truncate')][1]" position="after">
+        <xpath expr="//div[hasclass('text-truncate')][1]" position="after">
             <span class="diligence-material-type d-none d-lg-inline-flex">
                 <t t-if="slide.slide_category == 'document'">PDF / Document</t>
                 <t t-elif="slide.slide_category == 'audio'">Audio Listening</t>
@@ -129,13 +129,13 @@
         <xpath expr="//div[@id='wrap']" position="attributes">
             <attribute name="class" add="diligence-lesson-viewer" separator=" "/>
         </xpath>
-        <xpath expr="//div[contains(@class, 'o_wslides_lesson_header')]" position="attributes">
+        <xpath expr="//div[hasclass('o_wslides_lesson_header')]" position="attributes">
             <attribute name="class" add="diligence-lesson-header" separator=" "/>
         </xpath>
-        <xpath expr="//div[contains(@class, 'o_wslides_lesson_main')]" position="attributes">
+        <xpath expr="//div[hasclass('o_wslides_lesson_main')]" position="attributes">
             <attribute name="class" add="diligence-lesson-main" separator=" "/>
         </xpath>
-        <xpath expr="//div[contains(@class, 'o_wslides_lesson_main')]/div[contains(@class, 'row')]" position="before">
+        <xpath expr="//div[hasclass('o_wslides_lesson_main')]/div[hasclass('row')]" position="before">
             <header class="diligence-reader-course-header">
                 <div class="diligence-reader-course-header-copy">
                     <span class="diligence-eyebrow">NOW LEARNING</span>
@@ -148,23 +148,23 @@
                 </div>
             </header>
         </xpath>
-        <xpath expr="//div[contains(@class, 'o_wslides_lesson_main')]/div[contains(@class, 'row')]" position="attributes">
+        <xpath expr="//div[hasclass('o_wslides_lesson_main')]/div[hasclass('row')]" position="attributes">
             <attribute name="class" add="diligence-reader-course-grid" separator=" "/>
         </xpath>
     </template>
 
     <template id="diligence_fullscreen_viewer_layout" inherit_id="website_slides.slide_fullscreen">
-        <xpath expr="//div[contains(@class, 'o_wslides_fs_main')]" position="attributes">
+        <xpath expr="//div[hasclass('o_wslides_fs_main')]" position="attributes">
             <attribute name="class" add="diligence-fullscreen-viewer" separator=" "/>
         </xpath>
-        <xpath expr="//div[contains(@class, 'o_wslides_slide_fs_header')]/div[1]" position="inside">
+        <xpath expr="//div[hasclass('o_wslides_slide_fs_header')]/div[1]" position="inside">
             <a class="diligence-fullscreen-brand d-flex align-items-center px-3"
                t-attf-href="/slides/#{slug(slide.channel_id)}" title="Back to course">
                 <img t-attf-src="/web/image/website/#{website.id}/logo"
                      alt="Diligence Academy"/>
             </a>
         </xpath>
-        <xpath expr="//div[contains(@class, 'o_wslides_slide_fs_header')]/div[2]" position="inside">
+        <xpath expr="//div[hasclass('o_wslides_slide_fs_header')]/div[2]" position="inside">
             <t t-set="fullscreen_slide_completed" t-value="channel_progress[slide.id].get('completed')"/>
             <a t-if="slide.channel_id.channel_type == 'training' and (slide.channel_id.is_member or slide.channel_id.can_publish or request.env.user._is_admin())"
                t-attf-class="diligence-fullscreen-mark-completed d-flex align-items-center px-3 #{'is-completed' if fullscreen_slide_completed else ''}"
@@ -186,13 +186,13 @@
         <xpath expr="//t[@t-call='website_slides.slide_sidebar_done_button']" position="attributes">
             <attribute name="t-if">is_member or current_slide.channel_id.can_publish or request.env.user._is_admin()</attribute>
         </xpath>
-        <xpath expr="//li[contains(@class, 'o_wslides_fs_sidebar_list_item')]" position="attributes">
+        <xpath expr="//li[hasclass('o_wslides_fs_sidebar_list_item')]" position="attributes">
             <attribute name="t-att-data-description">slide.description</attribute>
         </xpath>
         <!-- Keep a description source for every lesson, not only the lesson
              used to open the fullscreen reader. The native player replaces
              its content via JavaScript when navigating between lessons. -->
-        <xpath expr="//li[contains(@class, 'o_wslides_fs_sidebar_list_item')]" position="inside">
+        <xpath expr="//li[hasclass('o_wslides_fs_sidebar_list_item')]" position="inside">
             <div class="diligence-fs-description-source d-none"
                  t-att-data-slide-id="slide.id"
                  t-att-data-description="slide.description"/>
@@ -327,7 +327,7 @@
                 <t t-out="'%02d' % (category_slide_ids.ids.index(aside_slide.id) + 1)"/>
             </span>
         </xpath>
-        <xpath expr="//div[contains(@t-att-class, 'o_wslides_lesson_aside_list_link')]//div[contains(@class, 'o_wslides_lesson_link_name')]" position="after">
+        <xpath expr="//div[contains(@t-att-class, 'o_wslides_lesson_aside_list_link')]//div[hasclass('o_wslides_lesson_link_name')]" position="after">
             <span class="diligence-sidebar-lesson-duration" t-if="aside_slide.completion_time">
                 <i class="fa fa-clock-o me-1" aria-hidden="true"/>
                 <span t-field="aside_slide.completion_time" t-options="{'widget': 'duration', 'unit': 'hour', 'round': 'minute', 'format': 'short'}"/>
@@ -336,7 +336,7 @@
     </template>
 
     <template id="diligence_lesson_sidebar_course_progress" inherit_id="website_slides.slide_aside_training">
-        <xpath expr="//div[contains(@class, 'o_wslides_lesson_aside_list')]" position="before">
+        <xpath expr="//div[hasclass('o_wslides_lesson_aside_list')]" position="before">
             <section class="diligence-reader-sidebar-header">
                 <span class="diligence-eyebrow">YOUR COURSE</span>
                 <h2 t-out="slide.channel_id.name"/>
@@ -371,7 +371,7 @@
     </template>
 
     <template id="diligence_hide_attached_quiz_fullscreen_sidebar_row" inherit_id="website_slides.slide_fullscreen_sidebar_category">
-        <xpath expr="//li[contains(@class, 'o_wslides_fs_sidebar_list_item')]" position="attributes">
+        <xpath expr="//li[hasclass('o_wslides_fs_sidebar_list_item')]" position="attributes">
             <attribute name="t-if">slide.question_ids and not slide.slide_category == 'quiz'</attribute>
         </xpath>
     </template>
@@ -399,14 +399,14 @@
         <xpath expr="//ul[hasclass('o_wslides_lesson_nav')]/li[.//a[@href='#statistic']]" position="replace"/>
         <xpath expr="//div[@id='about']" position="replace"/>
         <xpath expr="//div[@id='statistic']" position="replace"/>
-        <xpath expr="//div[contains(@class, 'mb-5 position-relative')]" position="before">
+        <xpath expr="//div[hasclass('mb-5') and hasclass('position-relative')]" position="before">
             <section t-if="slide.description" class="diligence-lesson-explanation">
                 <span class="diligence-eyebrow">ABOUT THIS LESSON</span>
                 <h2>What you will learn</h2>
                 <div t-field="slide.description"/>
             </section>
         </xpath>
-        <xpath expr="//h1[contains(@class, 'h4')]" position="before">
+        <xpath expr="//h1[hasclass('h4')]" position="before">
             <span class="diligence-reader-module-label" t-if="slide.category_id" t-out="slide.category_id.name"/>
         </xpath>
     </template>

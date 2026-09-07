@@ -20,6 +20,7 @@
                     <p>Welcome to Diligence Academy. We are happy to support your learning journey.</p>
                     <p>You will receive practical learning tips in the next few days.</p>
                     <p>Thank you,<br/>Diligence Academy</p>
+                    <p style="margin-top:24px;font-size:12px;color:#666;"><a t-att-href="object.unsubscribe_url">Unsubscribe from this newsletter</a></p>
                 </div>
             </field>
             <field name="auto_delete" eval="False"/>
@@ -39,6 +40,7 @@
                     <p>Here is a simple reminder to continue your learning practice today.</p>
                     <p>Open your Student Corner and continue the next available lesson.</p>
                     <p>Keep learning,<br/>Diligence Academy</p>
+                    <p style="margin-top:24px;font-size:12px;color:#666;"><a t-att-href="object.unsubscribe_url">Unsubscribe from this newsletter</a></p>
                 </div>
             </field>
             <field name="auto_delete" eval="False"/>
@@ -57,6 +59,7 @@
                     <p>Hi <t t-out="object.contact_name or 'there'"/>,</p>
                     <p>Small, consistent practice makes a real difference. Review your course progress and choose one lesson to complete today.</p>
                     <p>We are cheering you on,<br/>Diligence Academy</p>
+                    <p style="margin-top:24px;font-size:12px;color:#666;"><a t-att-href="object.unsubscribe_url">Unsubscribe from this newsletter</a></p>
                 </div>
             </field>
             <field name="auto_delete" eval="False"/>

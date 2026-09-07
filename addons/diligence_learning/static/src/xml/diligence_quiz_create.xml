@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-inherit="slide.quiz.question.input" t-inherit-mode="extension">
-        <xpath expr="//div[contains(@class, 'o_wslides_quiz_question')]" position="after">
+        <xpath expr="//div[hasclass('o_wslides_quiz_question')]" position="after">
             <div class="diligence-quiz-type-picker input-group mt-2">
                 <span class="input-group-text"><i class="fa fa-list-alt me-1"/> Question type</span>
                 <select class="form-select diligence-question-type">

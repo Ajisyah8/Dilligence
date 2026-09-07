@@ -17,4 +17,10 @@
             </xpath>
         </field>
     </record>
+    <menuitem id="menu_diligence_payment_transactions"
+              name="Payment Transactions"
+              parent="account.root_payment_menu"
+              action="payment.action_payment_transaction"
+              groups="account.group_account_invoice"
+              sequence="30"/>
 </odoo>

@@ -45,7 +45,7 @@ class ProductTemplate(models.Model):
         ('group_zoom', 'Group Zoom'),
         ('private_zoom', 'Private Zoom'),
         ('one_on_one', 'Private 1-on-1'),
-    ], string='Delivery Mode', default='self')
+    ], string='Delivery Mode (Legacy)', default='self')
     diligence_delivery_mode_id = fields.Many2one(
         'diligence.delivery.mode', string='Delivery Mode', ondelete='restrict', index=True,
         help='Select a configurable delivery mode. New modes can be created from Sales configuration.',
@@ -67,7 +67,7 @@ class ProductTemplate(models.Model):
     )
     diligence_whatsapp_payment_message = fields.Text(
         'WhatsApp Payment Message', copy=False,
-        help='Optional payment confirmation for this package. Use %(name)s, %(order)s, and %(group_message)s.',
+        help='Optional payment confirmation for this package. Use %(order)s for the order number. The WhatsApp group link is added automatically when configured on the package.',
     )
     diligence_early_bird_enabled = fields.Boolean('Enable Early Bird', copy=False)
     diligence_early_bird_price = fields.Float('Early Bird Price', copy=False)

@@ -58,4 +58,15 @@
     <menuitem id="menu_diligence_newsletter_root" name="Diligence Newsletter" parent="mass_mailing.mass_mailing_menu_root" sequence="80" groups="base.group_system"/>
     <menuitem id="menu_diligence_newsletter_stages" name="Drip Stages" parent="menu_diligence_newsletter_root" action="action_diligence_newsletter_stages" sequence="10" groups="base.group_system"/>
     <menuitem id="menu_diligence_newsletter_deliveries" name="Delivery Log" parent="menu_diligence_newsletter_root" action="action_diligence_newsletter_deliveries" sequence="20" groups="base.group_system"/>
+    <template id="newsletter_unsubscribed" name="Newsletter Unsubscribed">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="container py-5">
+                    <h1>You have been unsubscribed</h1>
+                    <p t-if="email">The newsletter subscription for <strong t-out="email"/> has been cancelled.</p>
+                    <p>You will not receive further Diligence Academy newsletter emails.</p>
+                </section>
+            </div>
+        </t>
+    </template>
 </odoo>

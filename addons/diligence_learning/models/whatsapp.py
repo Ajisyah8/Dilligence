@@ -94,16 +94,19 @@ class DiligenceWhatsAppService(models.AbstractModel):
                 'Akses paket belajar Anda sudah aktif di Diligence Academy.'
                 '%(group_message)s'
             )
+            message = self.render_message(
+                template,
+                order.partner_id,
+                order=order.name,
+                group_message=group_message,
+            )
+            if group_message and '%(group_message)s' not in template:
+                message = f'{message}{group_message}'
             delivery = self.env['diligence.whatsapp.delivery'].sudo().create({
                 'sale_order_id': order.id,
                 'partner_id': order.partner_id.commercial_partner_id.id,
                 'kind': 'payment_confirmation',
-                'message': self.render_message(
-                    template,
-                    order.partner_id,
-                    order=order.name,
-                    group_message=group_message,
-                ),
+                'message': message,
             })
         return delivery.action_send()
 

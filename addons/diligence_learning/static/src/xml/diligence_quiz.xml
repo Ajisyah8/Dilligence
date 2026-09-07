@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-inherit="slide.slide.quiz" t-inherit-mode="extension">
-        <xpath expr="//div[contains(@class, 'o_wslides_fs_quiz_container')]/div[1]" position="before">
+        <xpath expr="//div[hasclass('o_wslides_fs_quiz_container')]/div[1]" position="before">
             <div class="diligence-fs-lesson-title d-flex align-items-center gap-3 px-3 px-md-4 pt-3">
                 <span class="diligence-fs-lesson-title-icon">
                     <i t-if="widget.slide and widget.slide.category === 'video'" class="fa fa-play-circle"/>
@@ -15,7 +15,7 @@
                 </div>
             </div>
         </xpath>
-        <xpath expr="//div[contains(@class, 'o_wslides_fs_quiz_container')]" position="attributes">
+        <xpath expr="//div[hasclass('o_wslides_fs_quiz_container')]" position="attributes">
             <attribute name="class" add="o_diligence_fs_quiz" separator=" "/>
             <attribute name="t-att-data-id">widget.slide.id</attribute>
         </xpath>

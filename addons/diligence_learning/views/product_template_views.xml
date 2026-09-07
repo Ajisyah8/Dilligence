@@ -62,7 +62,8 @@
         <field name="inherit_id" ref="diligence_learning.product_template_form_diligence_package"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='diligence_whatsapp_group_link']" position="after">
-                <field name="diligence_whatsapp_payment_message" string="Pesan WhatsApp Saat Pembayaran" widget="text" placeholder="Contoh pesan konfirmasi per paket" help="Opsional. Jika kosong, sistem memakai pesan umum dari Settings."/>
+                        <field name="diligence_whatsapp_payment_message" string="Pesan WhatsApp Saat Pembayaran" widget="text" placeholder="Contoh pesan konfirmasi per paket" help="Opsional. Jika kosong, sistem memakai pesan default otomatis. Gunakan %%(order)s untuk nomor order. Link WhatsApp Group ditambahkan otomatis jika diisi pada paket."/>
+                <div class="text-muted small mt-1" colspan="2">Gunakan %%(order)s untuk nomor order. Link WhatsApp Group ditambahkan otomatis jika diisi pada paket.</div>
             </xpath>
         </field>
     </record>

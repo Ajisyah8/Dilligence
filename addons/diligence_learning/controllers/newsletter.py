@@ -1,3 +1,5 @@
+import hashlib
+import hmac
 import logging
 
 from odoo import _, fields, tools
@@ -81,3 +83,28 @@ class DiligenceNewsletterController(MassMailController):
                 'toast_type': 'danger',
                 'toast_content': _('Pendaftaran newsletter gagal. Silakan coba lagi.'),
             }
+
+    @route('/diligence/newsletter/unsubscribe/<int:contact_id>/<string:token>', type='http', website=True, auth='public', sitemap=False)
+    def unsubscribe(self, contact_id, token, **kwargs):
+        Delivery = request.env['diligence.newsletter.delivery'].sudo()
+        contact = request.env['mailing.contact'].sudo().browse(contact_id).exists()
+        if not contact or not contact.email:
+            return request.not_found()
+        probe = Delivery.new({'mailing_contact_id': contact.id})
+        if not hmac.compare_digest(probe._unsubscribe_token(contact), token):
+            return request.not_found()
+        mailing_list = Delivery._newsletter_list()
+        subscription = request.env['mailing.subscription'].sudo().search([
+            ('contact_id', '=', contact.id),
+            ('list_id', '=', mailing_list.id),
+        ], limit=1) if mailing_list else request.env['mailing.subscription']
+        if subscription:
+            subscription.write({'opt_out': True})
+        partner = Delivery._partner_for_contact(contact)
+        if partner:
+            partner.write({'diligence_newsletter_opt_in': False, 'diligence_newsletter_opt_in_date': False})
+        Delivery.search([
+            ('mailing_contact_id', '=', contact.id),
+            ('state', '=', 'pending'),
+        ]).write({'state': 'skipped', 'last_error': _('Unsubscribed by recipient.')})
+        return request.render('diligence_learning.newsletter_unsubscribed', {'email': contact.email})

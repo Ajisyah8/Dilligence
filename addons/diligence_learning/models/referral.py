@@ -27,7 +27,7 @@ class DiligenceReferral(models.Model):
     cashback_type = fields.Selection([
         ('percent', 'Percentage'),
         ('fixed', 'Fixed Amount'),
-    ], default='percent', required=True)
+    ], string='Cashback Type (Legacy)', default='percent', required=True)
     cashback_type_id = fields.Many2one('diligence.cashback.type', string='Cashback Type', ondelete='restrict')
     cashback_rate = fields.Float('Cashback Rate (%)', copy=False)
     cashback_fixed = fields.Monetary('Fixed Cashback', currency_field='currency_id', copy=False)

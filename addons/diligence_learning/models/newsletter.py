@@ -1,5 +1,11 @@
 from datetime import timedelta
+import hashlib
+import hmac
 import logging
+import re
+
+from markupsafe import Markup
+from odoo.tools import config
 
 from odoo import api, fields, models, _
 
@@ -74,6 +80,54 @@ class DiligenceNewsletterDelivery(models.Model):
             contact = delivery.mailing_contact_id
             delivery.email = (contact.email if contact else False) or (partner.email if partner else False)
             delivery.contact_name = (contact.name if contact else False) or (partner.name if partner else False)
+
+    def _unsubscribe_token(self, contact):
+        self.ensure_one()
+        secret = config.get('database.secret') or config.get('admin_passwd') or ''
+        payload = f'{self.env.cr.dbname}:{contact.id}:{contact.email}'.encode()
+        return hmac.new(secret.encode(), payload, hashlib.sha256).hexdigest()
+
+    def _get_unsubscribe_url(self):
+        self.ensure_one()
+        contact = self.mailing_contact_id
+        if not contact or not contact.email:
+            return False
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url', '').rstrip('/')
+        if not base_url:
+            return False
+        return f'{base_url}/diligence/newsletter/unsubscribe/{contact.id}/{self._unsubscribe_token(contact)}'
+
+    unsubscribe_url = fields.Char(compute='_compute_unsubscribe_url')
+
+    @api.depends('mailing_contact_id.email')
+    def _compute_unsubscribe_url(self):
+        for delivery in self:
+            delivery.unsubscribe_url = delivery._get_unsubscribe_url() if delivery.mailing_contact_id else False
+
+    @api.model
+    def _ensure_unsubscribe_footer(self):
+        footer = (
+            '<p style="margin-top:24px;font-size:12px;color:#666;">'
+            '<a t-att-href="object.unsubscribe_url">Unsubscribe from this newsletter</a>'
+            '</p>'
+        )
+        stages = self.env['diligence.newsletter.stage'].sudo().search([
+            ('template_id', '!=', False),
+        ])
+        for stage in stages:
+            template = stage.template_id
+            body = template.body_html or ''
+            if '&lt;p style=\"margin-top:24px;font-size:12px;color:#666;\"&gt;' in body:
+                normalized = re.sub(
+                    r'&lt;p style=\"margin-top:24px;font-size:12px;color:#666;\"&gt;.*?&lt;/p&gt;',
+                    '', body,
+                )
+                template.write({'body_html': Markup(normalized + footer)})
+            elif 'href=\"{{ object.unsubscribe_url }}\"' in body:
+                normalized = body.replace('href=\"{{ object.unsubscribe_url }}\"', 't-att-href=\"object.unsubscribe_url\"')
+                template.write({'body_html': Markup(normalized)})
+            elif 'object.unsubscribe_url' not in body:
+                template.write({'body_html': Markup(body + footer)})
 
     @api.model
     def _newsletter_list(self):
@@ -171,6 +225,7 @@ class DiligenceNewsletterDelivery(models.Model):
 
     @api.model
     def _cron_process(self):
+        self._ensure_unsubscribe_footer()
         self._ensure_deliveries()
         now = fields.Datetime.now()
         deliveries = self.sudo().search([

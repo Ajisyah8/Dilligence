@@ -5,6 +5,7 @@
     'summary': 'Normalize YouTube URLs and player parameters in eLearning slides',
     'category': 'Website/eLearning',
     'license': 'LGPL-3',
+    'author': 'Diligence Academy',
     'depends': ['website_slides'],
     'data': [],
     'assets': {

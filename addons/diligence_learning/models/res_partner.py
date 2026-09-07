@@ -24,7 +24,7 @@ class ResPartner(models.Model):
         ('tutor', 'Tutor'),
         ('agent', 'Agent'),
         ('school', 'School'),
-    ], string='Affiliate Type', copy=False)
+    ], string='Affiliate Type (Legacy)', copy=False)
     diligence_affiliate_type_id = fields.Many2one('diligence.affiliate.type', string='Affiliate Type', ondelete='restrict', copy=False)
     diligence_affiliate_bank_name = fields.Char('Bank Name', copy=False)
     diligence_affiliate_bank_account = fields.Char('Bank Account Number', copy=False)
@@ -32,7 +32,7 @@ class ResPartner(models.Model):
     diligence_cashback_type = fields.Selection([
         ('percent', 'Percentage'),
         ('fixed', 'Fixed Amount'),
-    ], string='Cashback Type', default='percent', copy=False)
+    ], string='Cashback Type (Legacy)', default='percent', copy=False)
     diligence_cashback_type_id = fields.Many2one('diligence.cashback.type', string='Cashback Type', ondelete='restrict', copy=False)
 
     def _diligence_cashback_type_code(self):

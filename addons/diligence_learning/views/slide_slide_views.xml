@@ -114,7 +114,7 @@
     <template id="slide_content_detailed_external_quiz_preview"
               inherit_id="website_slides.slide_content_detailed"
               name="Diligence: External quiz preview">
-        <xpath expr="//div[@id='quiz_container']/div[@class='row']" position="inside">
+        <xpath expr="//div[@id='quiz_container']/div[hasclass('row')]" position="inside">
             <t t-if="slide.diligence_external_quiz_url and not slide.question_ids">
                 <div class="col-12 o_diligence_external_quiz_preview">
                     <div class="card border-primary shadow-sm">

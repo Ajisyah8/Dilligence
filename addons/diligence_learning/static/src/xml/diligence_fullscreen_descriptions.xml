@@ -32,10 +32,10 @@
     </t>
 
     <t t-inherit="website.slides.fullscreen.media.local" t-inherit-mode="extension">
-        <xpath expr="//div[contains(@class, 'o_wslides_fs_player')]" position="attributes">
+        <xpath expr="//div[hasclass('o_wslides_fs_player')]" position="attributes">
             <attribute name="class" add="diligence-media-template-with-description" separator=" "/>
         </xpath>
-        <xpath expr="//div[contains(@class, 'o_wslides_fs_player')]" position="inside">
+        <xpath expr="//div[hasclass('o_wslides_fs_player')]" position="inside">
             <t t-call="diligence_learning.FullscreenLessonDescription">
                 <t t-set="slide" t-value="widget._slideValue"/>
             </t>
@@ -43,10 +43,10 @@
     </t>
 
     <t t-inherit="website.slides.fullscreen.external_quiz" t-inherit-mode="extension">
-        <xpath expr="//div[contains(@class, 'o_wslides_fs_player')]" position="attributes">
+        <xpath expr="//div[hasclass('o_wslides_fs_player')]" position="attributes">
             <attribute name="class" add="diligence-media-template-with-description" separator=" "/>
         </xpath>
-        <xpath expr="//div[contains(@class, 'o_wslides_fs_player')]" position="inside">
+        <xpath expr="//div[hasclass('o_wslides_fs_player')]" position="inside">
             <t t-call="diligence_learning.FullscreenLessonDescription">
                 <t t-set="slide" t-value="widget._slideValue"/>
             </t>
@@ -54,10 +54,10 @@
     </t>
 
     <t t-inherit="website.slides.fullscreen.video.google_drive" t-inherit-mode="extension">
-        <xpath expr="//div[contains(@class, 'player')]" position="attributes">
+        <xpath expr="//div[hasclass('player')]" position="attributes">
             <attribute name="class" add="diligence-media-template-with-description" separator=" "/>
         </xpath>
-        <xpath expr="//div[contains(@class, 'player')]" position="inside">
+        <xpath expr="//div[hasclass('player')]" position="inside">
             <t t-call="diligence_learning.FullscreenLessonDescription">
                 <t t-set="slide" t-value="widget._slideValue"/>
             </t>
@@ -65,10 +65,10 @@
     </t>
 
     <t t-inherit="website.slides.fullscreen.video.youtube" t-inherit-mode="extension">
-        <xpath expr="//div[contains(@class, 'player')]" position="attributes">
+        <xpath expr="//div[hasclass('player')]" position="attributes">
             <attribute name="class" add="diligence-media-template-with-description" separator=" "/>
         </xpath>
-        <xpath expr="//div[contains(@class, 'player')]" position="inside">
+        <xpath expr="//div[hasclass('player')]" position="inside">
             <t t-call="diligence_learning.FullscreenLessonDescription">
                 <t t-set="slide" t-value="widget.slide"/>
             </t>
@@ -76,10 +76,10 @@
     </t>
 
     <t t-inherit="website.slides.fullscreen.video.external" t-inherit-mode="extension">
-        <xpath expr="//div[contains(@class, 'player')]" position="attributes">
+        <xpath expr="//div[hasclass('player')]" position="attributes">
             <attribute name="class" add="diligence-media-template-with-description" separator=" "/>
         </xpath>
-        <xpath expr="//div[contains(@class, 'player')]" position="inside">
+        <xpath expr="//div[hasclass('player')]" position="inside">
             <t t-call="diligence_learning.FullscreenLessonDescription">
                 <t t-set="slide" t-value="widget.slide"/>
             </t>
@@ -87,10 +87,10 @@
     </t>
 
     <t t-inherit="website.slides.fullscreen.video.vimeo" t-inherit-mode="extension">
-        <xpath expr="//div[contains(@class, 'player')]" position="attributes">
+        <xpath expr="//div[hasclass('player')]" position="attributes">
             <attribute name="class" add="diligence-media-template-with-description" separator=" "/>
         </xpath>
-        <xpath expr="//div[contains(@class, 'player')]" position="inside">
+        <xpath expr="//div[hasclass('player')]" position="inside">
             <t t-call="diligence_learning.FullscreenLessonDescription">
                 <t t-set="slide" t-value="widget.slide"/>
             </t>
@@ -98,7 +98,7 @@
     </t>
 
     <t t-inherit="slide.slide.quiz" t-inherit-mode="extension">
-        <xpath expr="//div[contains(@class, 'o_wslides_fs_quiz_container')]/div[1]" position="before">
+        <xpath expr="//div[hasclass('o_wslides_fs_quiz_container')]/div[1]" position="before">
             <t t-call="diligence_learning.FullscreenLessonDescription">
                 <t t-set="slide" t-value="widget.slide"/>
             </t>

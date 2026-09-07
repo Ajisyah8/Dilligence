@@ -1,6 +1,6 @@
 <odoo>
     <template id="diligence_auth_signup_phone" inherit_id="auth_signup.signup" name="Signup WhatsApp Number">
-        <xpath expr="//div[contains(@class, 'field-login')]" position="after">
+        <xpath expr="//div[hasclass('field-login')]" position="after">
             <div class="mb-3 field-phone">
                 <label for="phone" class="form-label">WhatsApp Number</label>
                 <input type="tel" name="phone" t-att-value="phone" id="phone" class="form-control"
@@ -8,7 +8,7 @@
                 <div class="form-text">Use an active number so our team can contact you about your learning program.</div>
             </div>
         </xpath>
-        <xpath expr="//div[contains(@class, 'field-phone')]" position="after">
+        <xpath expr="//div[hasclass('field-phone')]" position="after">
             <div class="mb-3 field-newsletter-opt-in">
                 <div class="form-check">
                     <input type="checkbox" name="diligence_newsletter_opt_in" id="diligence_newsletter_opt_in"
