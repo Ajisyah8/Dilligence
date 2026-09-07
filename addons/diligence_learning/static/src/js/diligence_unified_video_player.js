@@ -80,48 +80,48 @@ function initializeVideo(element) {
 }
 
 function initializeDiligencePlayers(root = document) {
-    // Do not target Odoo's native fullscreen YouTube/Vimeo iframe. Its own
-    // VideoPlayer widget owns that iframe; observing it creates a render loop
-    // between the native widget and Plyr. Diligence-owned wrappers remain
-    // fully unified, as do HTML5/HLS video elements.
-    root.querySelectorAll?.('[data-diligence-video-player], .plyr__video-embed, .diligence-custom-video-frame video, .o_wslides_fs_content video').forEach((element) => {
-        if (element.matches('[data-diligence-video-player], .plyr__video-embed, video')) initializeVideo(element);
+    // Only initialize elements explicitly owned by Diligence. In particular,
+    // do not discover arbitrary .plyr__video-embed nodes: Plyr mutates its
+    // own iframe during startup and a DOM observer would initialize it again,
+    // producing a request/render loop with YouTube or Vimeo.
+    root.querySelectorAll?.('[data-diligence-video-player], .diligence-custom-video-frame video, .o_wslides_fs_content video').forEach((element) => {
+        initializeVideo(element);
     });
 }
 
 function start() {
     initializeDiligencePlayers();
-    let scheduled = false;
-    new MutationObserver((mutations) => {
-        if (!mutations.some((mutation) => mutation.addedNodes.length) || scheduled) return;
-        scheduled = true;
-        window.requestAnimationFrame(() => {
-            scheduled = false;
-            initializeDiligencePlayers();
-        });
-    }).observe(document.body, { childList: true, subtree: true });
 }
 
 function providerVideoId(slide) {
-    const source = slide.videoUrl || slide.embedUrl || '';
-    if (slide.videoSourceType === 'youtube' || slide.youtubeId) {
-        const id = slide.youtubeId || youtubeId(source) || source.match(/youtube(?:-nocookie)?\.com\/embed\/([^?&#/]+)/i)?.[1];
+    const source = slide.videoUrl || slide.video_url || slide.embedUrl || slide.embed_url
+        || slide.embedCode || slide.url || '';
+    const sourceText = typeof source === 'string' ? source : String(source || '');
+    const category = slide.category || slide.slideCategory || slide.slide_category;
+    const sourceType = slide.videoSourceType || slide.video_source_type;
+    const youtubeValue = slide.youtubeId || slide.youtube_id;
+    if (sourceType === 'youtube' || youtubeValue || /youtube(?:-nocookie)?\.com|youtu\.be/i.test(sourceText)) {
+        const id = youtubeValue || youtubeId(sourceText)
+            || sourceText.match(/youtube(?:-nocookie)?\.com\/embed\/([^?&#/]+)/i)?.[1];
         if (id) return ['youtube', id];
     }
-    if (slide.videoSourceType === 'vimeo' || slide.vimeoId) {
-        const id = slide.vimeoId || source.match(/vimeo\.com\/(?:video\/)?(\d+)/i)?.[1];
+    const vimeoValue = slide.vimeoId || slide.vimeo_id;
+    if (sourceType === 'vimeo' || vimeoValue || /vimeo\.com/i.test(sourceText)) {
+        const id = vimeoValue || sourceText.match(/vimeo\.com\/(?:video\/)?(\d+)/i)?.[1];
         if (id) return ['vimeo', String(id).split('/')[0]];
     }
-    const youtube = youtubeId(source);
+    const youtube = youtubeId(sourceText);
     if (youtube) return ['youtube', youtube];
-    const vimeo = source.match(/vimeo\.com\/(?:video\/)?(\d+)/i);
-    return vimeo ? ['vimeo', vimeo[1]] : [null, null];
+    const vimeo = sourceText.match(/vimeo\.com\/(?:video\/)?(\d+)/i);
+    return category === 'video' && vimeo ? ['vimeo', vimeo[1]] : [null, null];
 }
 
 /* Make the fullscreen dispatcher choose Odoo's external renderer, whose
  * content is supplied by Diligence as a Plyr wrapper. This prevents the
  * native VideoPlayerYouTube/Vimeo widgets (and their autoplay/API polling)
  * from being constructed at all. */
+if (!window.__diligenceUnifiedVideoPlayerPatch) {
+window.__diligenceUnifiedVideoPlayerPatch = true;
 Fullscreen.include({
     async _renderSlide() {
         // website_slides.fullscreen.video.external expects widget.slide,
@@ -140,8 +140,10 @@ Fullscreen.include({
             content.classList.remove('bg-white');
             const stage = document.createElement('div');
             stage.className = 'diligence-plyr-stage w-100 h-100 d-flex align-items-center justify-content-center p-3';
+            stage.style.cssText = 'display:flex;width:100%;max-width:70rem;height:min(70vh,42rem);min-height:24rem;flex:0 0 auto;align-items:center;justify-content:center;padding:0;';
             const embed = document.createElement('div');
             embed.className = 'plyr__video-embed';
+            embed.style.cssText = 'position:relative;width:100%;height:100%;max-width:none;aspect-ratio:16/9;';
             embed.dataset.diligenceVideoPlayer = '1';
             embed.dataset.plyrProvider = provider;
             embed.dataset.plyrEmbedId = embedId;
@@ -151,6 +153,7 @@ Fullscreen.include({
                 : `https://player.vimeo.com/video/${embedId}?dnt=1`;
             iframe.title = this._slideValue.name || 'Course video';
             iframe.allow = 'fullscreen; picture-in-picture';
+            iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;';
             iframe.setAttribute('allowfullscreen', 'allowfullscreen');
             embed.appendChild(iframe);
             stage.appendChild(embed);
@@ -179,6 +182,10 @@ Fullscreen.include({
         return slides;
     },
 });
+}
 
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
-else start();
+if (!window.__diligenceUnifiedVideoPlayerStarted) {
+    window.__diligenceUnifiedVideoPlayerStarted = true;
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
+    else start();
+}

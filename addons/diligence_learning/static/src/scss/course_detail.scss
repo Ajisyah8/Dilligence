@@ -1896,6 +1896,36 @@ body .diligence-fullscreen-viewer .o_wslides_fs_content {
     padding: 2rem clamp(1rem, 4vw, 4rem) !important;
 }
 
+/* Plyr provider embeds have a small intrinsic iframe size before their
+   layout is resolved. Keep the Diligence fullscreen stage explicit so the
+   video always fills the lesson preview area. */
+body .diligence-fullscreen-viewer .o_wslides_fs_content .diligence-plyr-stage {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    max-width: 70rem !important;
+    height: 70vh !important;
+    max-height: 42rem !important;
+    min-height: 24rem !important;
+    padding: 0 !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_content .diligence-plyr-stage .plyr,
+body .diligence-fullscreen-viewer .o_wslides_fs_content .diligence-plyr-stage .plyr__video-embed {
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_content .diligence-plyr-stage .plyr__video-embed iframe {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
 body .diligence-fullscreen-viewer .o_wslides_fs_content > * {
     width: 100%;
     max-width: 70rem;

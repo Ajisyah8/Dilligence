@@ -4,11 +4,24 @@
     min-height: 0;
 }
 
+/* The provider iframe has a small intrinsic size until Plyr finishes its
+   setup. Give the fullscreen stage a real box so it cannot collapse to the
+   iframe's 240px default width/height. */
+.o_wslides_fs_content .diligence-plyr-stage {
+    flex: 0 0 auto;
+    width: 100% !important;
+    max-width: 70rem !important;
+    height: 70vh !important;
+    max-height: 42rem !important;
+    min-height: 24rem;
+}
+
 .diligence-custom-video-frame .plyr,
 .o_wslides_fs_content .plyr {
     --plyr-color-main: #c8a96b;
     width: 100%;
-    max-width: 100%;
+    max-width: none !important;
+    height: 100%;
     border-radius: 1rem;
     overflow: hidden;
     background: #101820;
@@ -16,7 +29,16 @@
 
 .diligence-custom-video-frame .plyr__video-embed,
 .o_wslides_fs_content .plyr__video-embed {
+    width: 100% !important;
+    height: 100% !important;
     aspect-ratio: 16 / 9;
+}
+
+.o_wslides_fs_content .plyr__video-embed iframe {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
 }
 
 .diligence-custom-video-frame video,
