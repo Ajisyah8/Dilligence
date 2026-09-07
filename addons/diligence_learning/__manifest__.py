@@ -69,7 +69,11 @@
     ],
         'assets': {
         'web.assets_frontend': [
+            'diligence_learning/static/lib/plyr/plyr.css',
+            'diligence_learning/static/lib/plyr/plyr.min.js',
+            'diligence_learning/static/lib/hls/hls.min.js',
             'diligence_learning/static/src/js/diligence_fullscreen_sidebar.js',
+            'diligence_learning/static/src/js/diligence_unified_video_player.js',
             'diligence_learning/static/src/js/diligence_multitype_quiz.js',
             'diligence_learning/static/src/js/diligence_quiz_create.js',
             'diligence_learning/static/src/xml/diligence_quiz.xml',
@@ -81,7 +85,11 @@
             'diligence_learning/static/src/scss/website_global.scss',
         ],
         'web.assets_frontend_lazy': [
+            'diligence_learning/static/lib/plyr/plyr.css',
+            'diligence_learning/static/lib/plyr/plyr.min.js',
+            'diligence_learning/static/lib/hls/hls.min.js',
             'diligence_learning/static/src/js/diligence_fullscreen_sidebar.js',
+            'diligence_learning/static/src/js/diligence_unified_video_player.js',
             'diligence_learning/static/src/js/diligence_course_entrypoint.js',
         ],
     },

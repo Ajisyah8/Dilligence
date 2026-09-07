@@ -300,7 +300,22 @@
                             t-att-src="'/web/content?model=slide.slide&amp;id=%s&amp;field=document_binary_content#toolbar=0&amp;navpanes=0' % slide.id"
                             title="PDF lesson preview"/>
                     <div t-elif="slide.slide_category == 'video'" class="diligence-custom-video-frame">
-                        <t t-out="slide.embed_code"/>
+                        <t t-if="slide.diligence_video_provider in ('youtube', 'vimeo')">
+                            <div class="plyr__video-embed" data-diligence-video-player="1"
+                                 t-att-data-plyr-provider="slide.diligence_video_provider"
+                                 t-att-data-plyr-embed-id="slide.diligence_video_embed_id">
+                                <iframe t-att-src="slide.diligence_video_embed_url"
+                                        allow="fullscreen; picture-in-picture" allowfullscreen="allowfullscreen"/>
+                            </div>
+                        </t>
+                        <video t-elif="slide.diligence_video_provider in ('html5', 'hls', 'private_hls')"
+                               data-diligence-video-player="1" controls="controls" playsinline="playsinline"
+                               preload="metadata" t-att-poster="slide.diligence_video_poster and '/web/image/slide.slide/%s/diligence_video_poster' % slide.id or ''">
+                            <source t-att-src="slide.diligence_video_player_url" t-att-type="slide.diligence_video_mime_type"/>
+                        </video>
+                        <div t-else="" class="diligence-video-unsupported">
+                            This video URL is not supported. Use YouTube, Vimeo, MP4, WebM, or HLS (.m3u8).
+                        </div>
                     </div>
                     <div t-elif="slide.slide_category == 'audio'" class="diligence-custom-audio-frame">
                         <t t-out="slide.embed_code"/>

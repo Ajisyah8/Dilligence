@@ -77,6 +77,29 @@ class DiligenceWebsiteSlides(WebsiteSlides):
             'completed': True,
         } for item in new_slides])
 
+    @http.route('/diligence_learning/slide/<int:slide_id>/private_video_url',
+                type='http', auth='user', website=True, methods=['GET'])
+    def diligence_private_video_url(self, slide_id, **kwargs):
+        """Return a signed private-HLS URL only after access validation.
+
+        The base module intentionally has no signing provider configured. The
+        endpoint therefore returns a safe configuration error until an
+        implementation overrides ``_diligence_get_signed_video_url``.
+        """
+        slide = request.env['slide.slide'].browse(slide_id).exists()
+        if not slide or slide.slide_category != 'video' or slide.diligence_video_provider != 'private_hls':
+            return request.make_json_response({'error': 'video_not_available'}, status=404)
+        user = request.env.user
+        if user._is_public() or not (
+                user._is_admin()
+                or slide.channel_id.can_publish
+                or slide.channel_id.is_member):
+            return request.make_json_response({'error': 'forbidden'}, status=403)
+        signed_url = slide._diligence_get_signed_video_url()
+        if not signed_url:
+            return request.make_json_response({'error': 'private_hls_signer_not_configured'}, status=501)
+        return request.make_json_response({'url': signed_url})
+
     @http.route(
         '/slides/slide/<model("slide.slide"):slide>/set_completed',
         website=True, type='http', auth='user',

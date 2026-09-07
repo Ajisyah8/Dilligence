@@ -29,6 +29,29 @@
         </field>
     </record>
 
+    <record id="slide_slide_form_diligence_unified_video" model="ir.ui.view">
+        <field name="name">slide.slide.form.diligence.unified.video</field>
+        <field name="model">slide.slide</field>
+        <field name="inherit_id" ref="website_slides.view_slide_slide_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='video_url']" position="after">
+                <field name="diligence_video_provider" readonly="1"/>
+                <field name="diligence_video_embed_id" readonly="1"
+                       invisible="diligence_video_provider not in ('youtube', 'vimeo')"/>
+                <field name="diligence_video_embed_url" readonly="1"
+                       invisible="diligence_video_provider not in ('youtube', 'vimeo')" widget="url"/>
+                <field name="diligence_video_is_private"
+                       invisible="diligence_video_provider not in ('hls', 'private_hls')"/>
+                <field name="diligence_video_poster" widget="image"
+                       invisible="diligence_video_provider not in ('html5', 'hls', 'private_hls')"/>
+                <field name="diligence_video_mime_type" readonly="1"/>
+                <div class="text-muted" colspan="2">
+                    Supported providers: YouTube, Vimeo, MP4, WebM, and HLS (.m3u8). Google Drive, Facebook, TikTok, and arbitrary iframe URLs are not supported.
+                </div>
+            </xpath>
+        </field>
+    </record>
+
     <record id="slide_question_form_diligence_types" model="ir.ui.view">
         <field name="name">slide.question.form.diligence.types</field>
         <field name="model">slide.question</field>
