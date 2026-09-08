@@ -19,6 +19,6 @@
         <field name="domain">[('move_type', 'in', ('out_invoice', 'out_refund')), ('payment_state', 'in', ('not_paid', 'partial', 'in_payment'))]</field>
         <field name="context">{'search_default_unpaid': 1}</field>
     </record>
-    <menuitem id="menu_diligence_invoice_officer_root" name="Invoice Officer" sequence="35" groups="diligence_learning.group_diligence_invoice_officer"/>
+    <menuitem id="menu_diligence_invoice_officer_root" name="Invoice Officer" sequence="35" groups="diligence_learning.group_diligence_invoice_officer" web_icon="diligence_learning,static/description/invoice_officer_icon.svg"/>
     <menuitem id="menu_diligence_invoice_officer_invoices" name="Unpaid Customer Invoices" parent="menu_diligence_invoice_officer_root" action="action_diligence_invoice_officer_invoices" sequence="10" groups="diligence_learning.group_diligence_invoice_officer"/>
 </odoo>
