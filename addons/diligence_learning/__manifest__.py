@@ -28,6 +28,7 @@
         'security/ir.model.access.csv',
         'data/diligence_learning_data.xml',
         'data/diligence_accounting_data.xml',
+        'data/diligence_qris_data.xml',
         'data/diligence_marketing_data.xml',
         'data/diligence_newsletter_data.xml',
         'data/diligence_blog_data.xml',

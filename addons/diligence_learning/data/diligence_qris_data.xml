@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Keep the QRIS instructions accurate: proof submission waits for Finance verification. -->
+    <record id="payment_qris_static.payment_provider_transfer" model="payment.provider">
+        <field name="qris_instructions"><![CDATA[
+            <p>Scan QRIS di atas, bayar sesuai total order, lalu upload bukti pembayaran.</p>
+            <p><strong>Bukti dan nominal pembayaran akan diperiksa Finance. Course dan WhatsApp Group aktif setelah pembayaran disetujui.</strong></p>
+        ]]></field>
+    </record>
+</odoo>
