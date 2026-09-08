@@ -155,6 +155,49 @@
                         </a>
                     </div>
                 </div>
+
+                <div t-if="pending_qris_orders" class="alert alert-warning mt-3" role="status">
+                    <strong t-translation="yes">Pending QRIS payment</strong>
+                    <span t-translation="yes">You can continue an unfinished QRIS payment without creating a new order.</span>
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                        <a t-foreach="pending_qris_orders" t-as="qris_order"
+                           class="btn btn-sm btn-warning"
+                           t-att-href="'/my/orders/%s/qris' % qris_order.id">
+                            <span t-translation="yes">Continue payment</span> - <span t-out="qris_order.name"/>
+                        </a>
+                    </div>
+                </div>
+
+                <section t-if="qris_orders_with_proof" class="mt-4" aria-labelledby="qris-proof-heading">
+                    <h4 id="qris-proof-heading" class="mb-3" t-translation="yes">My QRIS Payment Proofs</h4>
+                    <div class="row g-3">
+                        <t t-foreach="qris_orders_with_proof" t-as="qris_order">
+                            <t t-set="qris_transaction" t-value="qris_order.transaction_ids.filtered(lambda tx: tx.provider_id.custom_mode == 'qris_static' and tx.qris_proof_attachment_id)[:1]"/>
+                            <div class="col-12 col-lg-6">
+                                <div class="card h-100 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between gap-2 flex-wrap">
+                                            <strong t-out="qris_order.name"/>
+                                            <span class="badge text-bg-info" t-out="qris_transaction.state_message or qris_transaction.state"/>
+                                        </div>
+                                        <div class="small text-muted mt-2">
+                                            <span t-translation="yes">Amount:</span>
+                                            <span t-field="qris_transaction.qris_payment_amount"/>
+                                            <span class="ms-2" t-translation="yes">Uploaded:</span>
+                                            <span t-field="qris_transaction.qris_proof_uploaded_at"/>
+                                        </div>
+                                        <a class="btn btn-sm btn-outline-primary mt-3"
+                                           target="_blank" rel="noopener"
+                                           t-att-href="'/my/orders/%s/qris/proof' % qris_order.id">
+                                            <i class="fa fa-file-image-o me-1"/>
+                                            <span t-translation="yes">View payment proof</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </section>
             </div>
         </t>
     </template>

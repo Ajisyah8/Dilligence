@@ -1910,6 +1910,7 @@ body .diligence-fullscreen-viewer .o_wslides_fs_content .diligence-plyr-stage {
     max-height: 42rem !important;
     min-height: 24rem !important;
     padding: 0 !important;
+    visibility: hidden;
 }
 
 body .diligence-fullscreen-viewer .o_wslides_fs_content .diligence-plyr-stage .plyr,
@@ -1924,6 +1925,11 @@ body .diligence-fullscreen-viewer .o_wslides_fs_content .diligence-plyr-stage .p
     inset: 0 !important;
     width: 100% !important;
     height: 100% !important;
+}
+
+body .diligence-fullscreen-viewer .o_wslides_fs_content .diligence-plyr-stage .plyr--video .plyr__video-embed > .plyr__video-embed__container {
+    padding-bottom: 56.25% !important;
+    transform: none !important;
 }
 
 body .diligence-fullscreen-viewer .o_wslides_fs_content > * {

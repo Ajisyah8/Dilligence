@@ -1,4 +1,5 @@
 import calendar
+import base64
 from datetime import timedelta
 
 from odoo import fields, http
@@ -86,6 +87,16 @@ def _student_courses_values(partner):
         ('partner_id', 'child_of', partner.id),
         ('state', 'in', ('sale', 'done')),
     ])
+    pending_qris_orders = request.env['sale.order'].sudo().search([
+        ('partner_id', 'child_of', partner.id),
+        ('transaction_ids.state', '=', 'pending'),
+        ('transaction_ids.provider_id.custom_mode', '=', 'qris_static'),
+    ])
+    qris_orders_with_proof = request.env['sale.order'].sudo().search([
+        ('partner_id', 'child_of', partner.id),
+        ('transaction_ids.provider_id.custom_mode', '=', 'qris_static'),
+        ('transaction_ids.qris_proof_attachment_id', '!=', False),
+    ])
     invoices = request.env['account.move'].sudo().search([
         ('partner_id', 'child_of', partner.id),
         ('move_type', 'in', ('out_invoice', 'out_refund')),
@@ -122,6 +133,8 @@ def _student_courses_values(partner):
         'orders_count': len(orders),
         'invoices_count': len(invoices),
         'cart_count': cart_count,
+        'pending_qris_orders': pending_qris_orders,
+        'qris_orders_with_proof': qris_orders_with_proof,
     }
 
 
@@ -139,6 +152,46 @@ class DiligenceStudentPortal(CustomerPortal):
     @http.route('/my/courses', type='http', auth='user', website=True)
     def my_courses(self, **kwargs):
         return request.redirect('/my')
+
+    @http.route('/my/orders/<int:order_id>/qris', type='http', auth='user', website=True,
+                sitemap=False)
+    def resume_qris_payment(self, order_id, **kwargs):
+        """Resume the existing pending QRIS transaction without creating a new order."""
+        partner = request.env.user.partner_id.commercial_partner_id
+        order = request.env['sale.order'].sudo().browse(order_id).exists()
+        if not order or order.partner_id.commercial_partner_id != partner:
+            raise request.not_found()
+        transaction = order.transaction_ids.filtered(
+            lambda tx: tx.state == 'pending'
+            and tx.provider_id.custom_mode == 'qris_static'
+        )[:1]
+        if not transaction:
+            return request.redirect('/my/orders')
+        request.session['__payment_monitored_tx_id__'] = transaction.id
+        return request.redirect('/payment/status')
+
+    @http.route('/my/orders/<int:order_id>/qris/proof', type='http', auth='user', website=True,
+                sitemap=False)
+    def view_qris_proof(self, order_id, **kwargs):
+        """Serve only the logged-in student's own QRIS proof inline."""
+        partner = request.env.user.partner_id.commercial_partner_id
+        order = request.env['sale.order'].sudo().browse(order_id).exists()
+        if not order or order.partner_id.commercial_partner_id != partner:
+            raise request.not_found()
+        transaction = order.transaction_ids.filtered(
+            lambda tx: tx.provider_id.custom_mode == 'qris_static'
+            and tx.qris_proof_attachment_id
+        )[:1]
+        if not transaction:
+            raise request.not_found()
+        attachment = transaction.qris_proof_attachment_id.sudo()
+        content = base64.b64decode(attachment.datas or b'')
+        return request.make_response(content, headers=[
+            ('Content-Type', attachment.mimetype or 'application/octet-stream'),
+            ('Content-Length', str(len(content))),
+            ('Content-Disposition', 'inline; filename="%s"' % attachment.name.replace('"', '')),
+            ('X-Content-Type-Options', 'nosniff'),
+        ])
 
     @http.route('/my/consultations', type='http', auth='user', website=True)
     def my_consultations(self, **kwargs):

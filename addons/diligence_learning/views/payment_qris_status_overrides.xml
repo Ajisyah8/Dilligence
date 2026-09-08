@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Static QRIS must remain on the proof-upload status page. The native
+         payment Skip link would navigate to the landing route before the
+         student submits a receipt. Keep Skip for all other payment methods. -->
+    <template id="diligence_hide_qris_pending_skip" inherit_id="payment.state_header">
+        <xpath expr="//a[@t-if='is_processing']" position="attributes">
+            <attribute name="t-if">
+                is_processing and not (tx.provider_id.sudo().custom_mode == 'qris_static' and tx.state == 'pending')
+            </attribute>
+        </xpath>
+    </template>
+</odoo>

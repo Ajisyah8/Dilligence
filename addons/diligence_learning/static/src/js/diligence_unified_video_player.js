@@ -55,7 +55,9 @@ function initializeVideo(element) {
             target.dataset.plyrEmbedId = element.dataset.plyrEmbedId || '';
         }
     }
-    if (target.dataset.diligencePlyrReady) return;
+    if (target.dataset.diligencePlyrReady || target.dataset.diligencePlyrInitializing) return;
+    target.dataset.diligencePlyrInitializing = '1';
+    target.style.visibility = 'hidden';
     const media = target.matches('video') ? target : target.querySelector('video');
     const sourceElement = media || element;
     const source = sourceElement.currentSrc || sourceElement.src || sourceElement.getAttribute('src') || '';
@@ -75,8 +77,33 @@ function initializeVideo(element) {
         tooltips: { controls: true, seek: true },
     });
     target.dataset.diligencePlyrReady = '1';
+    delete target.dataset.diligencePlyrInitializing;
     target._diligencePlyr = player;
     target._diligenceHls = hls;
+    player.on('ready', () => {
+        target.style.visibility = 'visible';
+        target.closest('.diligence-plyr-stage')?.style.setProperty('visibility', 'visible');
+        const container = player.elements?.container;
+        if (container) {
+            container.style.width = '100%';
+            container.style.maxWidth = 'none';
+            container.style.height = '100%';
+        }
+    });
+}
+
+function destroyDiligencePlayer(root) {
+    root?.querySelectorAll?.('[data-diligence-video-player], .plyr').forEach((element) => {
+        const target = element.matches('.plyr') ? element : element;
+        const player = target._diligencePlyr || element._diligencePlyr;
+        if (player) {
+            try { player.destroy(); } catch (_) { /* already destroyed by navigation */ }
+        }
+        const hls = target._diligenceHls || element._diligenceHls;
+        if (hls) {
+            try { hls.destroy(); } catch (_) { /* already destroyed */ }
+        }
+    });
 }
 
 function initializeDiligencePlayers(root = document) {
@@ -129,12 +156,13 @@ Fullscreen.include({
         // _slideValue. Keep the native template compatible without editing
         // the Odoo module.
         this.slide = this._slideValue;
+        const content = this.$('.o_wslides_fs_content')[0];
+        destroyDiligencePlayer(content);
         const [provider, embedId] = providerVideoId(this._slideValue || {});
         if (this._slideValue?.category === 'video' && provider && embedId) {
             // Do not call the parent renderer for provider videos. The parent
             // creates VideoPlayerYouTube/Vimeo before our DOM observer can see
             // it, which causes repeated native iframe requests.
-            const content = this.$('.o_wslides_fs_content')[0];
             if (!content) return;
             content.replaceChildren();
             content.classList.remove('bg-white');
@@ -143,7 +171,7 @@ Fullscreen.include({
             stage.style.cssText = 'display:flex;width:100%;max-width:70rem;height:70vh;max-height:42rem;min-height:24rem;flex:0 0 auto;align-items:center;justify-content:center;padding:0;';
             const embed = document.createElement('div');
             embed.className = 'plyr__video-embed';
-            embed.style.cssText = 'position:relative;width:100%;height:100%;max-width:none;aspect-ratio:16/9;';
+            embed.style.cssText = 'position:relative;width:100%;height:100%;max-width:none;aspect-ratio:16/9;visibility:hidden;';
             embed.dataset.diligenceVideoPlayer = '1';
             embed.dataset.plyrProvider = provider;
             embed.dataset.plyrEmbedId = embedId;
