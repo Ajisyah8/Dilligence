@@ -11,6 +11,7 @@
                 <field name="sale_order_id" string="Order"/>
                 <field name="status"/>
                 <field name="payment_date" string="Payment Date"/>
+                <field name="cashback_amount" string="Cashback Amount"/>
                 <filter name="payment_this_month" string="Payment This Month" date="payment_date"/>
                 <filter name="payment_last_month" string="Payment Last Month" date="payment_date"/>
                 <filter name="unsettled" string="Not Settled" domain="[('settlement_id', '=', False), ('status', 'not in', ('draft', 'pending_payment', 'cancelled', 'reversed', 'paid'))]"/>
@@ -31,6 +32,9 @@
         <field name="model">diligence.referral</field>
         <field name="arch" type="xml">
             <list string="Affiliate Referrals">
+                <header>
+                    <button name="action_export_csv" type="object" string="Export CSV" groups="sales_team.group_sale_manager,account.group_account_invoice"/>
+                </header>
                 <field name="name"/>
                 <field name="affiliate_id"/>
                 <field name="student_id"/>

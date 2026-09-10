@@ -1,4 +1,20 @@
 <odoo>
+    <record id="survey_invite_view_form_diligence_segment" model="ir.ui.view">
+        <field name="name">survey.invite.view.form.diligence.segment</field>
+        <field name="model">survey.invite</field>
+        <field name="inherit_id" ref="survey.survey_invite_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_ids']" position="before">
+                <group string="Diligence Audience">
+                    <field name="diligence_segment_id"/>
+                    <field name="diligence_recipient_count" readonly="1"/>
+                    <button name="action_load_diligence_segment" type="object"
+                            string="Load Contacts" class="btn-secondary"
+                            invisible="not diligence_segment_id"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
     <record id="action_diligence_surveys" model="ir.actions.act_window">
         <field name="name">Student &amp; Internal Surveys</field>
         <field name="res_model">survey.survey</field>

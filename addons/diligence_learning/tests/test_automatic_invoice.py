@@ -77,6 +77,10 @@ class TestDiligenceAutomaticInvoice(PaymentCustomCommon):
         with self.assertRaises(AccessError):
             tx.with_user(portal_user).action_diligence_verify_payment()
 
+        upload = type('Upload', (), {
+            'read': lambda self: b'fake-png', 'filename': 'proof.png', 'mimetype': 'image/png',
+        })()
+        tx._save_wire_transfer_proof(upload, tx.amount)
         with patch('odoo.addons.diligence_learning.models.payment_transaction.PaymentTransaction._post_process'):
             tx.action_diligence_verify_payment()
         self.assertEqual(tx.state, 'done')

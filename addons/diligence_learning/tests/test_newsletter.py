@@ -1,4 +1,5 @@
 from datetime import timedelta
+from unittest.mock import patch
 
 from odoo import fields
 from odoo.tests.common import TransactionCase
@@ -65,7 +66,9 @@ class TestDiligenceNewsletter(TransactionCase):
         })
         delivery_model = self.env['diligence.newsletter.delivery']
         delivery_model._ensure_deliveries()
+        self.env['ir.config_parameter'].sudo().set_param('diligence.email_test_mode', 'True')
         delivery = delivery_model.search([('partner_id', '=', partner.id)], limit=1)
+        delivery.write({'scheduled_date': fields.Datetime.now()})
         self.assertEqual(delivery.state, 'pending')
         delivery_model._cron_process()
         delivery.invalidate_recordset()
@@ -87,7 +90,9 @@ class TestDiligenceNewsletter(TransactionCase):
 
         delivery_model = self.env['diligence.newsletter.delivery']
         delivery_model._ensure_deliveries()
-        anchor = fields.Datetime.to_datetime(subscription.create_date)
+        anchor = fields.Datetime.to_datetime(
+            subscription.create_date or subscription.contact_id.create_date
+        )
         for stage in self.stages:
             delivery = delivery_model.search([
                 ('partner_id', '=', partner.id),
@@ -97,3 +102,37 @@ class TestDiligenceNewsletter(TransactionCase):
                 fields.Datetime.to_datetime(delivery.scheduled_date),
                 anchor + timedelta(days=stage.delay_days),
             )
+
+    def test_overdue_stages_are_not_sent_back_to_back(self):
+        partner = self.env['res.partner'].create({
+            'name': 'Newsletter Overdue Student',
+            'email': 'newsletter-overdue@example.com',
+            'diligence_newsletter_opt_in': True,
+        })
+        contact = self.env['mailing.contact'].search([
+            ('email', '=', partner.email),
+        ], limit=1)
+        subscription = contact.subscription_ids.filtered(
+            lambda record: record.list_id == self.newsletter
+        )[:1]
+        overdue_date = fields.Datetime.now() - timedelta(days=30)
+        subscription.write({'create_date': overdue_date})
+        contact.write({'create_date': overdue_date})
+        delivery_model = self.env['diligence.newsletter.delivery']
+        delivery_model._ensure_deliveries()
+        self.env['ir.config_parameter'].sudo().set_param('diligence.email_test_mode', 'False')
+        with patch.object(type(self.stages[0].template_id), 'send_mail') as send_mail:
+            delivery_model._cron_process()
+        deliveries = delivery_model.search([
+            ('mailing_contact_id', '=', contact.id),
+        ], order='stage_id')
+        welcome = deliveries.filtered(lambda item: item.stage_id.delay_days == 0)
+        first_material = deliveries.filtered(lambda item: item.stage_id.delay_days == 5)
+        self.assertEqual(
+            len(deliveries.filtered(lambda item: item.state == 'sent')), 1,
+        )
+        self.assertEqual(welcome.state, 'sent')
+        self.assertGreaterEqual(
+            fields.Datetime.to_datetime(first_material.scheduled_date),
+            fields.Datetime.now() + timedelta(days=4, hours=23),
+        )

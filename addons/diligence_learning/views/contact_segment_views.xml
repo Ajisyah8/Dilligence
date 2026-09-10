@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="diligence_contact_segment_view_list" model="ir.ui.view">
+        <field name="name">diligence.contact.segment.list</field>
+        <field name="model">diligence.contact.segment</field>
+        <field name="arch" type="xml">
+            <list string="Contact Segments" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+    <record id="diligence_contact_segment_view_form" model="ir.ui.view">
+        <field name="name">diligence.contact.segment.form</field>
+        <field name="model">diligence.contact.segment</field>
+        <field name="arch" type="xml">
+            <form string="Contact Segment">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="code"/>
+                        <field name="sequence"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="diligence_contact_segment_view_search" model="ir.ui.view">
+        <field name="name">diligence.contact.segment.search</field>
+        <field name="model">diligence.contact.segment</field>
+        <field name="arch" type="xml">
+            <search string="Contact Segments">
+                <field name="name"/>
+                <field name="code"/>
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+    <record id="action_diligence_contact_segments" model="ir.actions.act_window">
+        <field name="name">Contact Segments</field>
+        <field name="res_model">diligence.contact.segment</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="diligence_contact_segment_view_search"/>
+    </record>
+    <menuitem id="menu_diligence_contact_segments" name="Contact Segments" parent="contacts.menu_contacts" action="action_diligence_contact_segments" sequence="75" groups="sales_team.group_sale_manager"/>
+</odoo>

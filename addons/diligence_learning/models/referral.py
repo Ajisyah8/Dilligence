@@ -76,7 +76,8 @@ class DiligenceReferral(models.Model):
             lambda invoice: invoice.state == 'posted' and invoice.move_type in ('out_invoice', 'out_receipt')
         )
         paid = invoices.filtered(lambda invoice: invoice.payment_state == 'paid')
-        return paid[:1], sum(paid.mapped('amount_total'))
+        invoice = paid[:1]
+        return invoice, invoice.amount_total if invoice else 0.0
 
     @api.model
     def _cron_refresh_payments(self):
@@ -146,6 +147,15 @@ class DiligenceReferral(models.Model):
     def action_reverse(self):
         self._check_finance_access()
         self.write({'status': 'reversed'})
+
+    def action_export_csv(self):
+        self._check_finance_access()
+        ids = ','.join(str(referral.id) for referral in self)
+        return {
+            'type': 'ir.actions.act_url',
+            'url': '/diligence/referrals/export?ids=%s' % ids,
+            'target': 'self',
+        }
 
     def _check_finance_access(self):
         if not (

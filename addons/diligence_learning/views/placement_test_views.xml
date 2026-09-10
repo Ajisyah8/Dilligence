@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="survey_survey_view_form_diligence_placement" model="ir.ui.view">
+        <field name="name">survey.survey.form.diligence.placement</field>
+        <field name="model">survey.survey</field>
+        <field name="inherit_id" ref="survey.survey_survey_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet//notebook" position="inside">
+                <page string="Placement Test" name="diligence_placement" invisible="not diligence_is_placement_test">
+                    <group>
+                        <field name="diligence_is_placement_test"/>
+                        <field name="diligence_placement_level_ids">
+                            <list editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="name"/>
+                                <field name="min_score"/>
+                                <field name="max_score"/>
+                                <field name="recommendation"/>
+                                <field name="active"/>
+                            </list>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+            <xpath expr="//sheet//field[@name='title']" position="after">
+                <label for="diligence_is_placement_test" string="Placement Test"/>
+                <field name="diligence_is_placement_test" string="Placement Test" class="oe_inline"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="survey_user_input_view_form_diligence_placement" model="ir.ui.view">
+        <field name="name">survey.user.input.form.diligence.placement</field>
+        <field name="model">survey.user_input</field>
+        <field name="inherit_id" ref="survey.survey_user_input_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet//group" position="inside">
+                <field name="diligence_placement_level_id" readonly="1"/>
+                <field name="diligence_placement_review_state"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

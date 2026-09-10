@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="diligence_success_stories_modern_design" inherit_id="diligence_study_in_china_success_stories_view" name="Modern Study in China Success Stories">
+        <xpath expr="//div[@id='wrap']" position="replace">
+            <div id="wrap" class="oe_structure">
+                <section class="py-5 py-lg-6 o_cc o_cc1">
+                    <div class="container py-4 py-lg-5">
+                        <div class="row align-items-center g-4 g-lg-5">
+                            <div class="col-lg-8">
+                                <span class="badge rounded-pill text-bg-warning text-uppercase px-3 py-2">Student stories</span>
+                                <h1 class="display-3 fw-bold mt-3 mb-3">Langkah kecil hari ini, masa depan yang lebih luas.</h1>
+                                <p class="lead mb-4">Lihat bagaimana persiapan bahasa, pendampingan aplikasi, dan dukungan akademik membantu siswa menyiapkan perjalanan studi ke China.</p>
+                                <a href="/contactus" class="btn btn-primary btn-lg rounded-pill px-4">Mulai konsultasi <i class="fa fa-arrow-right ms-2"/></a>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="p-4 rounded-4 bg-white shadow-lg text-dark">
+                                    <div class="d-flex align-items-center gap-3 mb-3"><span class="display-6 text-primary"><i class="fa fa-quote-left"/></span><span class="text-uppercase small fw-bold text-muted">Perjalanan siswa</span></div>
+                                    <p class="h4 mb-0">Cerita nyata akan membantu calon siswa melihat prosesnya dengan lebih jelas.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="py-5 py-lg-6">
+                    <div class="container">
+                        <div class="row g-3 g-lg-4">
+                            <div class="col-md-4"><div class="h-100 p-4 rounded-4 border bg-white shadow-sm"><div class="fs-2 text-primary mb-3"><i class="fa fa-language"/></div><h2 class="h4">Persiapan bahasa</h2><p class="text-muted mb-0">Bangun fondasi Mandarin secara bertahap untuk kebutuhan akademik dan kehidupan sehari-hari.</p></div></div>
+                            <div class="col-md-4"><div class="h-100 p-4 rounded-4 border bg-white shadow-sm"><div class="fs-2 text-primary mb-3"><i class="fa fa-compass"/></div><h2 class="h4">Pendampingan terarah</h2><p class="text-muted mb-0">Pahami pilihan program, dokumen, dan tahapan persiapan dengan panduan yang terstruktur.</p></div></div>
+                            <div class="col-md-4"><div class="h-100 p-4 rounded-4 border bg-white shadow-sm"><div class="fs-2 text-primary mb-3"><i class="fa fa-users"/></div><h2 class="h4">Cerita yang autentik</h2><p class="text-muted mb-0">Tambahkan foto, kutipan, dan hasil siswa dari tim akademik saat materi final sudah tersedia.</p></div></div>
+                        </div>
+                        <div class="row g-4 mt-4">
+                            <div class="col-lg-4"><div class="h-100 p-4 rounded-4 o_cc o_cc2"><span class="small text-uppercase fw-bold">01 / Persiapan</span><h3 class="h4 mt-3">Mulai dari tujuan belajar yang jelas.</h3><p class="mb-0">Susun target bahasa dan akademik sesuai rencana studi siswa.</p></div></div>
+                            <div class="col-lg-4"><div class="h-100 p-4 rounded-4 o_cc o_cc3"><span class="small text-uppercase fw-bold">02 / Pendampingan</span><h3 class="h4 mt-3">Dapatkan arahan di setiap tahap.</h3><p class="mb-0">Review progres dan siapkan dokumen dengan lebih percaya diri.</p></div></div>
+                            <div class="col-lg-4"><div class="h-100 p-4 rounded-4 bg-dark text-white"><span class="small text-uppercase fw-bold text-warning">03 / Perjalanan</span><h3 class="h4 mt-3">Bangun langkah berikutnya.</h3><p class="mb-0 text-white-50">Cerita siswa dapat diperbarui melalui Website Builder.</p></div></div>
+                        </div>
+                    </div>
+                </section>
+                <section class="py-5 o_cc o_cc2">
+                    <div class="container py-3 text-center"><h2 class="h2">Siap merencanakan studi ke China?</h2><p class="lead">Hubungi tim Diligence Academy untuk mendiskusikan tujuan belajar Anda.</p><a href="/contactus" class="btn btn-primary rounded-pill px-4">Konsultasi dengan tim</a></div>
+                </section>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="diligence_cambridge_modern_design" inherit_id="diligence_cambridge_exam_schedule_view" name="Modern Cambridge Exam Schedule">
+        <xpath expr="//div[@id='wrap']" position="replace">
+            <div id="wrap" class="oe_structure">
+                <section class="py-5 py-lg-6 o_cc o_cc1">
+                    <div class="container py-4 py-lg-5">
+                        <div class="row g-4">
+                            <div class="col-lg-9"><span class="badge rounded-pill text-bg-warning text-uppercase px-3 py-2">Official Cambridge certification</span><h1 class="display-3 fw-bold mt-3 mb-3">Persiapkan sertifikasi Cambridge dengan arah yang jelas.</h1><p class="lead mb-4">Temukan informasi ujian dan dukungan persiapan yang membantu Anda melangkah lebih siap.</p><a href="/contactus" class="btn btn-primary btn-lg rounded-pill px-4">Tanya jadwal <i class="fa fa-arrow-right ms-2"/></a></div>
+                        </div>
+                    </div>
+                </section>
+                <section class="py-5">
+                    <div class="container">
+                        <div class="row g-3 g-lg-4">
+                            <div class="col-md-4"><div class="p-4 rounded-4 border bg-white shadow-sm h-100"><div class="fs-2 text-primary"><i class="fa fa-calendar-check-o"/></div><h2 class="h4 mt-3">Exam pathway</h2><p class="text-muted mb-0">Pantau periode pendaftaran dan jadwal ujian dari satu halaman.</p></div></div>
+                            <div class="col-md-4"><div class="p-4 rounded-4 border bg-white shadow-sm h-100"><div class="fs-2 text-primary"><i class="fa fa-book"/></div><h2 class="h4 mt-3">Preparation support</h2><p class="text-muted mb-0">Susun persiapan belajar sesuai target sertifikasi Anda.</p></div></div>
+                            <div class="col-md-4"><div class="p-4 rounded-4 border bg-white shadow-sm h-100"><div class="fs-2 text-primary"><i class="fa fa-certificate"/></div><h2 class="h4 mt-3">Official information</h2><p class="text-muted mb-0">Jadwal final mengikuti informasi resmi penyelenggara ujian.</p></div></div>
+                        </div>
+                        <div class="p-4 p-lg-5 rounded-4 border bg-white shadow-sm mt-4">
+                            <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4"><div><span class="small text-uppercase fw-bold text-primary">Schedule overview</span><h2 class="h3 mb-0 mt-2">Informasi jadwal ujian</h2></div><span class="badge rounded-pill text-bg-warning">Segera hadir</span></div>
+                            <div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr><th>Program</th><th>Periode pendaftaran</th><th>Jadwal ujian</th><th>Status</th></tr></thead><tbody><tr><td class="fw-semibold">Cambridge English Certification</td><td>Hubungi tim akademik</td><td>Akan diumumkan sesuai kalender ujian</td><td><span class="badge text-bg-warning">Segera hadir</span></td></tr></tbody></table></div>
+                            <p class="text-muted mt-4 mb-0"><i class="fa fa-info-circle me-2"/>Jadwal resmi dapat berubah mengikuti penyelenggara ujian. Halaman ini akan diperbarui ketika tanggal sudah dikonfirmasi.</p>
+                        </div>
+                    </div>
+                </section>
+                <section class="py-5 o_cc o_cc2"><div class="container py-3 text-center"><h2 class="h2">Ingin mempersiapkan diri untuk ujian?</h2><p class="lead">Konsultasikan target sertifikasi dan program persiapan yang sesuai.</p><a href="/contactus" class="btn btn-primary rounded-pill px-4">Hubungi Diligence Academy</a></div></section>
+            </div>
+        </xpath>
+    </template>
+</odoo>

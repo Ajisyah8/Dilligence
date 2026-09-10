@@ -187,13 +187,10 @@ class DiligenceNewsletterDelivery(models.Model):
                 # when both records represent the same email address.
                 if partner and existing.partner_id == partner and not existing.mailing_contact_id:
                     existing.write({'mailing_contact_id': contact.id})
-                # Repair pending records created with the old partner-based
-                # anchor. Sent records are immutable; only future delivery
-                # dates are corrected to the subscription timeline.
-                if existing.state == 'pending':
-                    expected_date = anchor + timedelta(days=stage.delay_days)
-                    if existing.scheduled_date != expected_date:
-                        existing.write({'scheduled_date': expected_date})
+                # Keep an existing pending date intact. It may have been
+                # deliberately rescheduled by an operator or a test; the
+                # subscription anchor is applied when the delivery is first
+                # created and must not overwrite that decision on every cron.
                 continue
             created |= self.sudo().create({
                 'partner_id': partner.id if partner else False,
@@ -223,6 +220,37 @@ class DiligenceNewsletterDelivery(models.Model):
             anchor = subscription.create_date or contact.create_date or fields.Datetime.now()
             self._create_deliveries_for_contact(contact, anchor=anchor, partner=partner)
 
+    def _defer_following_deliveries(self, delivery, sent_at):
+        """Keep overdue stages from being sent back-to-back for one recipient.
+
+        A subscriber created before the drip was configured can have all stages
+        overdue at once. The first due stage is sent, while later stages are
+        spaced from the actual send time using their configured delay.
+        """
+        recipient_domain = (
+            [('mailing_contact_id', '=', delivery.mailing_contact_id.id)]
+            if delivery.mailing_contact_id else
+            [('partner_id', '=', delivery.partner_id.id)]
+        )
+        later_stages = self.env['diligence.newsletter.stage'].sudo().search([
+            ('active', '=', True),
+            ('sequence', '>', delivery.stage_id.sequence),
+        ], order='sequence, id')
+        if not later_stages:
+            return
+        for stage in later_stages:
+            next_delivery = self.sudo().search([
+                *recipient_domain,
+                ('stage_id', '=', stage.id),
+                ('state', 'in', ('pending', 'failed')),
+            ], limit=1)
+            if not next_delivery:
+                continue
+            delay = max(0, stage.delay_days - delivery.stage_id.delay_days)
+            next_date = sent_at + timedelta(days=delay)
+            if next_delivery.scheduled_date < next_date:
+                next_delivery.write({'scheduled_date': next_date})
+
     @api.model
     def _cron_process(self):
         self._ensure_unsubscribe_footer()
@@ -233,10 +261,14 @@ class DiligenceNewsletterDelivery(models.Model):
             ('scheduled_date', '<=', now),
             ('attempt_count', '<', 3),
         ], order='scheduled_date, id', limit=100)
+        processed_recipients = set()
         test_mode = self.env['ir.config_parameter'].sudo().get_param(
             'diligence.email_test_mode', 'True',
         ).lower() in ('1', 'true', 'yes', 'on')
         for delivery in deliveries:
+            delivery.invalidate_recordset(['scheduled_date', 'state', 'attempt_count'])
+            if delivery.scheduled_date > now:
+                continue
             if not delivery.email:
                 delivery.write({'state': 'skipped', 'last_error': _('Subscriber has no email address.')})
                 continue
@@ -246,6 +278,13 @@ class DiligenceNewsletterDelivery(models.Model):
                 subscribed = delivery.partner_id.diligence_newsletter_opt_in and self._is_subscribed(delivery.partner_id)
             if not subscribed:
                 delivery.write({'state': 'skipped', 'last_error': _('Student is not subscribed.')})
+                continue
+            # Use the normalized address so duplicate legacy contacts cannot
+            # cause multiple stages to be sent in the same cron cycle.
+            recipient_key = ('email', delivery.email.strip().lower()) if delivery.email else (
+                'contact', delivery.mailing_contact_id.id
+            ) if delivery.mailing_contact_id else ('partner', delivery.partner_id.id)
+            if recipient_key in processed_recipients:
                 continue
             if test_mode:
                 delivery.write({'last_error': _('Email test mode is enabled; no email was sent.')})
@@ -262,6 +301,8 @@ class DiligenceNewsletterDelivery(models.Model):
                     'attempt_count': delivery.attempt_count + 1,
                     'last_error': False,
                 })
+                processed_recipients.add(recipient_key)
+                self._defer_following_deliveries(delivery, now)
             except Exception as error:
                 error_type = type(error).__name__
                 _logger.error('Newsletter drip failed for delivery %s (%s)', delivery.id, error_type)

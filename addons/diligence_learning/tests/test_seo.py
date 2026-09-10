@@ -18,11 +18,28 @@ class TestDiligenceSeoManager(TransactionCase):
             'res_id': self.page.id,
             'seo_title': 'Diligence Academy SEO Title Example',
             'seo_description': 'A useful description for the Diligence Academy website page.',
+            'seo_keywords': 'Diligence Academy, Mandarin course',
             'is_indexed': False,
         })
         self.assertEqual(self.page.website_meta_title, item.seo_title)
         self.assertEqual(self.page.website_meta_description, item.seo_description)
+        if 'website_meta_keywords' in self.page._fields:
+            self.assertEqual(self.page.website_meta_keywords, item.seo_keywords)
         self.assertFalse(item.is_indexed)
+
+    def test_generate_defaults_fills_empty_keywords_without_overwriting_custom_keywords(self):
+        item = self.seo_model.create({
+            'content_type': 'website.page',
+            'res_model': 'website.page',
+            'res_id': self.page.id,
+            'seo_keywords': False,
+            'is_indexed': False,
+        })
+        item.action_generate_defaults()
+        self.assertTrue(item.seo_keywords)
+        item.write({'seo_keywords': 'Custom keyword set'})
+        item.action_generate_defaults()
+        self.assertEqual(item.seo_keywords, 'Custom keyword set')
 
     def test_duplicate_target_and_url_are_rejected(self):
         item = self.seo_model.create({

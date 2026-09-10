@@ -31,19 +31,19 @@
             <attribute name="class" add="position-relative" separator=" "/>
         </xpath>
         <xpath expr="//section[contains(@data-name, 'What')]//h3[normalize-space()='Kelas Mandarin Online Terstruktur']/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' card-body ')]/p" position="after">
-            <a class="stretched-link" href="/slides" aria-label="Lihat courses Mandarin"><span class="visually-hidden">Lihat courses Mandarin</span></a>
+            <a class="stretched-link" href="/slides" aria-label="Lihat courses Mandarin"><span class="visually-hidden">Lihat courses Mandarin</span></a><div class="mt-4 fw-semibold text-primary">Lihat courses <i class="fa fa-arrow-right ms-2"/></div>
         </xpath>
         <xpath expr="//section[contains(@data-name, 'What')]//h3[normalize-space()='Jalur Beasiswa Kuliah ke China']/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' card ')]" position="attributes">
             <attribute name="class" add="position-relative" separator=" "/>
         </xpath>
         <xpath expr="//section[contains(@data-name, 'What')]//h3[normalize-space()='Jalur Beasiswa Kuliah ke China']/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' card-body ')]/p" position="after">
-            <a class="stretched-link" href="/study-in-china-success-stories" aria-label="Lihat testimoni siswa beasiswa"><span class="visually-hidden">Lihat testimoni siswa beasiswa</span></a>
+            <a class="stretched-link" href="/study-in-china-success-stories" aria-label="Lihat testimoni siswa beasiswa"><span class="visually-hidden">Lihat testimoni siswa beasiswa</span></a><div class="mt-4 fw-semibold text-primary">Baca cerita siswa <i class="fa fa-arrow-right ms-2"/></div>
         </xpath>
         <xpath expr="//section[contains(@data-name, 'What')]//h3[normalize-space()='Official Cambridge Certification Exam']/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' card ')]" position="attributes">
             <attribute name="class" add="position-relative" separator=" "/>
         </xpath>
         <xpath expr="//section[contains(@data-name, 'What')]//h3[normalize-space()='Official Cambridge Certification Exam']/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' card-body ')]/p" position="after">
-            <a class="stretched-link" href="/cambridge-exam-schedule" aria-label="Lihat jadwal ujian Cambridge"><span class="visually-hidden">Lihat jadwal ujian Cambridge</span></a>
+            <a class="stretched-link" href="/cambridge-exam-schedule" aria-label="Lihat jadwal ujian Cambridge"><span class="visually-hidden">Lihat jadwal ujian Cambridge</span></a><div class="mt-4 fw-semibold text-primary">Lihat jadwal ujian <i class="fa fa-arrow-right ms-2"/></div>
         </xpath>
     </template>
 

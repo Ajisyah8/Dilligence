@@ -45,6 +45,9 @@ backups/
 /*.xlsx
 /*.ods
 
+# local E2E fixture scripts must never be shipped to production
+/scripts/e2e_*
+
 # setup.py egg_info
 *.egg-info
 # emacs backup files

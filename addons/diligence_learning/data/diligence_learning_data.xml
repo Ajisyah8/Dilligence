@@ -54,6 +54,7 @@
     <record id="diligence_contact_segment_referral" model="diligence.contact.segment"><field name="name">Referral - Non Student</field><field name="code">referral_non_student</field><field name="sequence">40</field></record>
     <record id="diligence_contact_segment_affiliate" model="diligence.contact.segment"><field name="name">Affiliate / Referrer</field><field name="code">affiliate</field><field name="sequence">50</field></record>
     <record id="diligence_contact_segment_other" model="diligence.contact.segment"><field name="name">Other</field><field name="code">other</field><field name="sequence">60</field></record>
+    <record id="diligence_contact_segment_admin" model="diligence.contact.segment"><field name="name">Admin / Internal</field><field name="code">admin</field><field name="sequence">5</field></record>
     <record id="diligence_affiliate_type_student" model="diligence.affiliate.type"><field name="name">Student</field><field name="code">student</field><field name="sequence">10</field></record>
     <record id="diligence_affiliate_type_alumni" model="diligence.affiliate.type"><field name="name">Alumni</field><field name="code">alumni</field><field name="sequence">20</field></record>
     <record id="diligence_affiliate_type_parent" model="diligence.affiliate.type"><field name="name">Parent</field><field name="code">parent</field><field name="sequence">30</field></record>

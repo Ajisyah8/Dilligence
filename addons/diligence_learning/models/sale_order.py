@@ -87,11 +87,10 @@ class SaleOrder(models.Model):
                 continue
             referrer = order._diligence_referrer_for_code(code)
             package = order._diligence_package_lines()[:1].product_template_id
-            previous_referral = self.env['diligence.referral'].search([
-                ('student_id', 'child_of', order.partner_id.commercial_partner_id.id),
-                ('status', 'not in', ('cancelled', 'reversed')),
-            ], limit=1)
-            if referrer and not previous_referral:
+            # Referral attribution is per sale order.  The same student may
+            # legitimately use the same referrer on a later transaction; do
+            # not block that transaction because an earlier referral exists.
+            if referrer:
                 values = {
                     'diligence_referrer_id': referrer.id,
                     'diligence_commission_status': 'eligible',

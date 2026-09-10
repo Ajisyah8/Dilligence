@@ -16,6 +16,7 @@
                 <field name="name"/>
                 <field name="content_type"/>
                 <field name="url"/>
+                <field name="seo_keywords"/>
                 <field name="seo_score" widget="progressbar"/>
                 <field name="is_indexed"/>
                 <field name="is_published"/>
@@ -33,8 +34,10 @@
                 <field name="name"/>
                 <field name="url"/>
                 <field name="content_type"/>
+                <field name="seo_keywords"/>
                 <filter name="missing_title" string="Missing SEO Title" domain="[('seo_title', '=', False)]"/>
                 <filter name="missing_description" string="Missing Description" domain="[('seo_description', '=', False)]"/>
+                <filter name="missing_keywords" string="Missing Keywords" domain="[('seo_keywords', '=', False)]"/>
                 <filter name="indexed" string="Indexed" domain="[('is_indexed', '=', True)]"/>
                 <filter name="not_indexed" string="Not Indexed" domain="[('is_indexed', '=', False)]"/>
                 <filter name="published" string="Published" domain="[('is_published', '=', True)]"/>
@@ -72,6 +75,7 @@
                             <group>
                                 <field name="seo_title" placeholder="Recommended: 30-60 characters"/>
                                 <field name="seo_description" placeholder="Recommended: 120-160 characters"/>
+                                <field name="seo_keywords" placeholder="Comma-separated keywords"/>
                                 <field name="canonical_url"/>
                             </group>
                             <group string="Google Preview">

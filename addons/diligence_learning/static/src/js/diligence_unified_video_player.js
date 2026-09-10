@@ -189,7 +189,13 @@ Fullscreen.include({
             initializeDiligencePlayers(stage);
             return;
         }
-        return this._super(...arguments);
+        const result = await this._super(...arguments);
+        // The fullscreen widget reuses its content node for Prev/Next.  Run
+        // the explicit Diligence initializer after the native renderer has
+        // replaced that node, without observing the DOM or initializing in a
+        // loop.
+        initializeDiligencePlayers(this.$('.o_wslides_fs_content')[0]);
+        return result;
     },
     _preprocessSlideData(slidesDataList) {
         const slides = this._super(...arguments);

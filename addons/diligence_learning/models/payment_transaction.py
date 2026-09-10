@@ -153,6 +153,45 @@ class PaymentTransaction(models.Model):
                 transaction.invoice_ids = [Command.set(invoices.ids)]
         return result
 
+    def _invoice_sale_orders(self):
+        """Create QRIS invoices from the confirmed order, not the generic
+        payment-invoice branch.
+
+        Static QRIS skips payment journal creation, so its Finance approval
+        must still invoice the actual sales order.  Keeping this branch here
+        avoids the generic callback producing an empty invoice line before
+        the order confirmation has settled.
+        """
+        qris = self.filtered(
+            lambda tx: tx.provider_code == 'custom'
+            and tx.provider_id.custom_mode == 'qris_static'
+        )
+        regular = self - qris
+        if regular:
+            super(PaymentTransaction, regular)._invoice_sale_orders()
+        for transaction in qris:
+            orders = transaction.sale_order_ids.filtered(
+                lambda order: order.state in ('sale', 'done')
+            )
+            if not orders:
+                continue
+            existing = orders.mapped('invoice_ids').filtered(
+                lambda invoice: invoice.move_type == 'out_invoice'
+                and invoice.state in ('draft', 'posted')
+                and invoice.invoice_line_ids.sale_line_ids
+            )
+            if existing:
+                transaction.invoice_ids = [Command.set(existing.ids)]
+                continue
+            orders._force_lines_to_invoice_policy_order()
+            invoices = orders.with_context(
+                raise_if_nothing_to_invoice=False,
+            )._create_invoices(final=True)
+            for invoice in invoices:
+                invoice._portal_ensure_token()
+            if invoices:
+                transaction.invoice_ids = [Command.set(invoices.ids)]
+
     def _apply_updates(self, payment_data):
         # Custom providers must remain pending until a valid gateway callback
         # (QRIS) or an authorized Finance verification (bank transfer) moves

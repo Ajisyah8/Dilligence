@@ -192,6 +192,12 @@ class DiligenceSeoItem(models.Model):
                     description = target[field_name]
                     break
             values['seo_description'] = description or target.display_name
+        if not values.get('seo_keywords'):
+            keyword_parts = [target.display_name]
+            for field_name in ('diligence_package_type_id', 'diligence_delivery_mode_id'):
+                if field_name in target._fields and target[field_name]:
+                    keyword_parts.append(target[field_name].display_name)
+            values['seo_keywords'] = ', '.join(dict.fromkeys(keyword_parts))
         values['url'] = target.website_url if 'website_url' in target._fields else getattr(target, 'url', False)
         values['is_published'] = target.website_published if 'website_published' in target._fields else bool(getattr(target, 'active', False))
         values['is_indexed'] = bool(
@@ -243,7 +249,7 @@ class DiligenceSeoItem(models.Model):
             generated = item._target_values_for_create(item.res_model, target)
             vals = {
                 field_name: generated[field_name]
-                for field_name in ('seo_title', 'seo_description', 'url')
+                for field_name in ('seo_title', 'seo_description', 'seo_keywords', 'url')
                 if not item[field_name] and generated.get(field_name)
             }
             if vals:
