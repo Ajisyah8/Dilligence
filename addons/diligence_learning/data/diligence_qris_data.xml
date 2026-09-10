@@ -2,6 +2,7 @@
 <odoo>
     <!-- Keep the QRIS instructions accurate: proof submission waits for Finance verification. -->
     <record id="payment.payment_provider_transfer" model="payment.provider">
+        <field name="redirect_form_view_id" ref="payment_custom.redirect_form"/>
         <field name="qris_instructions"><![CDATA[
             <p>Scan QRIS di atas, bayar sesuai total order, lalu upload bukti pembayaran.</p>
             <p><strong>Bukti dan nominal pembayaran akan diperiksa Finance. Course dan WhatsApp Group aktif setelah pembayaran disetujui.</strong></p>

@@ -2,7 +2,8 @@ import calendar
 import base64
 from datetime import timedelta
 
-from odoo import fields, http
+from odoo import _, fields, http
+from odoo.exceptions import ValidationError
 from odoo.http import request
 from odoo.addons.portal.controllers.portal import CustomerPortal
 
@@ -91,6 +92,7 @@ def _student_courses_values(partner):
         ('partner_id', 'child_of', partner.id),
         ('transaction_ids.state', '=', 'pending'),
         ('transaction_ids.provider_id.custom_mode', '=', 'qris_static'),
+        ('transaction_ids.qris_proof_attachment_id', '=', False),
     ])
     qris_orders_with_proof = request.env['sale.order'].sudo().search([
         ('partner_id', 'child_of', partner.id),
@@ -170,8 +172,23 @@ class DiligenceStudentPortal(CustomerPortal):
         request.session['__payment_monitored_tx_id__'] = transaction.id
         return request.redirect('/payment/status')
 
-    @http.route('/my/orders/<int:order_id>/qris/proof', type='http', auth='user', website=True,
-                sitemap=False)
+    @http.route("/payment/transfer/upload", type="http", auth="public", methods=["POST"], website=True, csrf=True, sitemap=False)
+    def upload_transfer_proof(self, proof_file=None, paid_amount=None, **post):
+        transaction_id = request.session.get("__payment_monitored_tx_id__")
+        transaction = request.env["payment.transaction"].sudo().browse(transaction_id).exists()
+        if not transaction or transaction.provider_id.custom_mode != "wire_transfer":
+            return request.redirect("/payment/status")
+        try:
+            if not request.env.user._is_public():
+                partner = transaction.sale_order_ids[:1].partner_id.commercial_partner_id
+                if partner != request.env.user.partner_id.commercial_partner_id:
+                    raise ValidationError(_("You can only submit proof for your own order."))
+            transaction._save_qris_proof(proof_file, paid_amount)
+        except ValidationError as error:
+            request.session["bank_transfer_upload_error"] = str(error)
+        return request.redirect("/payment/status")
+
+    @http.route("/my/orders/<int:order_id>/qris/proof", type="http", auth="user", website=True, sitemap=False)
     def view_qris_proof(self, order_id, **kwargs):
         """Serve only the logged-in student's own QRIS proof inline."""
         partner = request.env.user.partner_id.commercial_partner_id

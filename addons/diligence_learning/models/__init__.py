@@ -19,6 +19,7 @@ from . import business_configuration
 from . import account_move
 from . import account_payment
 from . import payment_transaction
+from . import payment_provider
 from . import whatsapp
 from . import whatsapp_webhook
 from . import whatsapp_campaign

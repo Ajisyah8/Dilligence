@@ -178,6 +178,18 @@ class SaleOrder(models.Model):
             for transaction in self.transaction_ids
         )
 
+    def _send_payment_succeeded_for_order_mail(self):
+        """Send pending-payment mail only after a QRIS proof was uploaded."""
+        if self.env.context.get('diligence_allow_pending_payment_email'):
+            return super()._send_payment_succeeded_for_order_mail()
+        qris_without_proof = self.filtered(lambda order: any(
+            transaction.provider_id.custom_mode == 'qris_static'
+            and transaction.state == 'pending'
+            and not transaction.qris_proof_attachment_id
+            for transaction in order.transaction_ids
+        ))
+        return super(SaleOrder, self - qris_without_proof)._send_payment_succeeded_for_order_mail()
+
     def _action_confirm(self):
         result = super()._action_confirm()
         paid_or_non_package = self.filtered(lambda order: order._diligence_has_valid_package_payment())

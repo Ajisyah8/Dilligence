@@ -178,7 +178,14 @@
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between gap-2 flex-wrap">
                                             <strong t-out="qris_order.name"/>
-                                            <span class="badge text-bg-info" t-out="qris_transaction.state_message or qris_transaction.state"/>
+                                            <span class="badge text-bg-info text-wrap text-start"
+                                                  style="white-space: normal; overflow-wrap: anywhere; max-width: 100%;"
+                                                  t-out="qris_transaction.state_message or qris_transaction.state"/>
+                                        </div>
+                                        <div t-if="qris_transaction.qris_rejection_reason"
+                                             class="alert alert-danger py-2 px-3 mt-2 mb-0 small">
+                                            <strong t-translation="yes">Rejection reason:</strong>
+                                            <span t-out="qris_transaction.qris_rejection_reason"/>
                                         </div>
                                         <div class="small text-muted mt-2">
                                             <span t-translation="yes">Amount:</span>

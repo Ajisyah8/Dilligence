@@ -40,6 +40,7 @@
         'views/product_website_templates.xml',
         'views/checkout_templates.xml',
         'views/payment_templates.xml',
+        'views/payment_provider_views.xml',
         'views/payment_qris_status_overrides.xml',
         'views/payment_transaction_views.xml',
         'views/invoice_officer_views.xml',

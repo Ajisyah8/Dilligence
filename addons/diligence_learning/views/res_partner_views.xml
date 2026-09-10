@@ -63,4 +63,22 @@
             </xpath>
         </field>
     </record>
+
+    <record id="res_partner_view_search_diligence_broadcast" model="ir.ui.view">
+        <field name="name">res.partner.search.diligence.broadcast</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="diligence_contact_segment_id" string="Diligence Audience"/>
+                <filter name="diligence_students" string="Students" domain="[('diligence_contact_segment', '=', 'student')]"/>
+                <filter name="diligence_newsletter_subscribers" string="Newsletter Subscribers" domain="[('diligence_contact_segment', '=', 'newsletter'), ('email', '!=', False)]"/>
+                <filter name="diligence_referral_non_students" string="Referral - Non Student" domain="[('diligence_contact_segment', '=', 'referral_non_student')]"/>
+                <filter name="diligence_affiliates" string="Affiliates / Referrers" domain="[('diligence_is_affiliate', '=', True)]"/>
+                <filter name="diligence_employees" string="Employees" domain="[('employee_ids', '!=', False)]"/>
+                <separator/>
+                <filter name="diligence_has_email" string="Has Email" domain="[('email', '!=', False)]"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>

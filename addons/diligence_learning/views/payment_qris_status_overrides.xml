@@ -6,8 +6,60 @@
     <template id="diligence_hide_qris_pending_skip" inherit_id="payment.state_header">
         <xpath expr="//a[@t-if='is_processing']" position="attributes">
             <attribute name="t-if">
-                is_processing and not (tx.provider_id.sudo().custom_mode == 'qris_static' and tx.state == 'pending')
+                is_processing and not (tx.provider_id.sudo().custom_mode in ('qris_static', 'wire_transfer') and tx.state == 'pending')
             </attribute>
+        </xpath>
+        <xpath expr="//div[@name='o_payment_status_alert']" position="after">
+            <div t-if="tx.provider_id.sudo().custom_mode == 'qris_static' and tx.state == 'pending' and tx.sale_order_ids"
+                 class="container text-center mt-3 mb-4">
+                <a class="btn btn-outline-secondary"
+                   t-att-href="'/my/orders/%s/qris' % tx.sale_order_ids[:1].id">
+                    Kembali ke Student Corner
+                </a>
+            </div>
+                        <div t-if="tx.provider_id.sudo().custom_mode == 'wire_transfer' and tx.state == 'pending' and tx.sale_order_ids" class="container text-center mt-3 mb-4">
+                <div class="card border-primary text-start">
+                    <div class="card-body">
+                        <h4>Bayar dengan Transfer Bank</h4>
+                        <p class="text-muted">Total pembayaran: <strong t-out="tx.amount"/></p>
+                        <t t-set="bank_account" t-value="tx.provider_id.sudo().bank_account_id"/>
+                        <div t-if="bank_account" class="mb-3">
+                            <h6>Rekening tujuan pembayaran</h6>
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4">Bank</dt>
+                                <dd class="col-sm-8" t-out="bank_account.bank_id.name or bank_account.display_name"/>
+                                <dt class="col-sm-4">Nomor rekening</dt>
+                                <dd class="col-sm-8" t-out="bank_account.acc_number"/>
+                                <t t-if="bank_account.acc_holder_name">
+                                    <dt class="col-sm-4">Nama pemilik</dt>
+                                    <dd class="col-sm-8" t-out="bank_account.acc_holder_name"/>
+                                </t>
+                            </dl>
+                        </div>
+                        <div t-elif="tx.provider_id.sudo().pending_msg" t-out="tx.provider_id.sudo().pending_msg" class="mb-3"/>
+                        <form action="/payment/transfer/upload" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <label for="transfer_paid_amount" class="form-label">Nominal pembayaran</label>
+                            <input id="transfer_paid_amount" name="paid_amount" type="number" step="0.01" class="form-control mb-3" required="required" t-att-value="tx.amount"/>
+                            <label for="transfer_proof_file" class="form-label">Upload bukti transfer</label>
+                            <input id="transfer_proof_file" name="proof_file" type="file" class="form-control" accept="image/*,application/pdf" required="required"/>
+                            <button type="submit" class="btn btn-primary mt-3 w-100">Kirim Bukti Transfer</button>
+                        </form>
+                        <small class="text-muted d-block mt-2">Bukti akan diperiksa Finance. Akses course aktif setelah pembayaran disetujui.</small>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+    <template id="diligence_portal_invoice_qris_confirmed" inherit_id="account_payment.portal_my_invoices_payment">
+        <xpath expr="//a[i[contains(@class, 'fa-arrow-circle-right')]]" position="attributes">
+            <attribute name="t-if">invoice._has_to_be_paid() and invoice.get_portal_last_transaction().state != 'done'</attribute>
+        </xpath>
+        <xpath expr="//span[@name='invoice_status_waiting_for_payment']" position="before">
+            <span t-elif="tx_sudo.state == 'done' and tx_sudo.provider_code == 'custom' and tx_sudo.provider_id.sudo().custom_mode == 'qris_static'" class="badge rounded-pill text-bg-success">
+                <i class="fa fa-fw fa-check"/>
+                <span class="d-none d-md-inline"> Paid</span>
+            </span>
         </xpath>
     </template>
 </odoo>

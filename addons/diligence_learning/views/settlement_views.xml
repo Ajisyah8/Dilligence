@@ -70,6 +70,10 @@
                 <field name="name"/>
                 <field name="affiliate_id"/>
                 <field name="status"/>
+                <field name="period_start"/>
+                <field name="period_end"/>
+                <filter name="current_month" string="Current Month" date="period_start"/>
+                <filter name="previous_month" string="Previous Month" date="period_start"/>
                 <group>
                     <filter name="group_affiliate" string="Affiliate" context="{'group_by': 'affiliate_id'}"/>
                     <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>

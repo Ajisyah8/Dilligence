@@ -10,11 +10,17 @@
                 <field name="referral_code"/>
                 <field name="sale_order_id" string="Order"/>
                 <field name="status"/>
+                <field name="payment_date" string="Payment Date"/>
+                <filter name="payment_this_month" string="Payment This Month" date="payment_date"/>
+                <filter name="payment_last_month" string="Payment Last Month" date="payment_date"/>
+                <filter name="unsettled" string="Not Settled" domain="[('settlement_id', '=', False), ('status', 'not in', ('draft', 'pending_payment', 'cancelled', 'reversed', 'paid'))]"/>
                 <group>
                     <filter name="group_affiliate" string="Affiliate" context="{'group_by': 'affiliate_id'}"/>
                     <filter name="group_student" string="Student" context="{'group_by': 'student_id'}"/>
                     <filter name="group_program" string="Program" context="{'group_by': 'program_id'}"/>
                     <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                    <filter name="group_payment_month" string="Payment Month" context="{'group_by': 'payment_date:month'}"/>
+                    <filter name="group_settlement" string="Settlement Batch" context="{'group_by': 'settlement_id'}"/>
                 </group>
             </search>
         </field>
@@ -36,6 +42,7 @@
                 <field name="cashback_amount" sum="Cashback"/>
                 <field name="status" widget="badge"/>
                 <field name="settlement_id"/>
+                <field name="payment_date"/>
                 <field name="paid_date"/>
                 <field name="waiting_until"/>
             </list>
