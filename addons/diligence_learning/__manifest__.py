@@ -56,6 +56,7 @@
         'views/academic_views.xml',
         'views/slide_slide_views.xml',
         'views/quiz_views.xml',
+        'views/homepage_reference_content.xml',
         'views/session_views.xml',
         'views/certificate_report.xml',
         'views/reporting_views.xml',
@@ -90,6 +91,7 @@
             'diligence_learning/static/src/scss/student_portal.scss',
             'diligence_learning/static/src/scss/payment_methods.scss',
             'diligence_learning/static/src/scss/website_global.scss',
+            'diligence_learning/static/src/scss/academy_website.scss',
         ],
         'web.assets_frontend_lazy': [
             'diligence_learning/static/lib/plyr/plyr.css',

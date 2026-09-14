@@ -26,7 +26,7 @@
                         <div class="row g-3 g-lg-4">
                             <div class="col-md-4"><div class="h-100 p-4 rounded-4 border bg-white shadow-sm"><div class="fs-2 text-primary mb-3"><i class="fa fa-language"/></div><h2 class="h4">Persiapan bahasa</h2><p class="text-muted mb-0">Bangun fondasi Mandarin secara bertahap untuk kebutuhan akademik dan kehidupan sehari-hari.</p></div></div>
                             <div class="col-md-4"><div class="h-100 p-4 rounded-4 border bg-white shadow-sm"><div class="fs-2 text-primary mb-3"><i class="fa fa-compass"/></div><h2 class="h4">Pendampingan terarah</h2><p class="text-muted mb-0">Pahami pilihan program, dokumen, dan tahapan persiapan dengan panduan yang terstruktur.</p></div></div>
-                            <div class="col-md-4"><div class="h-100 p-4 rounded-4 border bg-white shadow-sm"><div class="fs-2 text-primary mb-3"><i class="fa fa-users"/></div><h2 class="h4">Cerita yang autentik</h2><p class="text-muted mb-0">Tambahkan foto, kutipan, dan hasil siswa dari tim akademik saat materi final sudah tersedia.</p></div></div>
+                            <div class="col-md-4"><div class="h-100 p-4 rounded-4 border bg-white shadow-sm"><div class="fs-2 text-primary mb-3"><i class="fa fa-quote-left"/></div><h2 class="h4">Testimoni siswa</h2><p class="text-muted mb-0">“My writing has improved after three months of studying.” — Anna, Malaysia</p></div></div>
                         </div>
                         <div class="row g-4 mt-4">
                             <div class="col-lg-4"><div class="h-100 p-4 rounded-4 o_cc o_cc2"><span class="small text-uppercase fw-bold">01 / Persiapan</span><h3 class="h4 mt-3">Mulai dari tujuan belajar yang jelas.</h3><p class="mb-0">Susun target bahasa dan akademik sesuai rencana studi siswa.</p></div></div>
@@ -35,8 +35,21 @@
                         </div>
                     </div>
                 </section>
-                <section class="py-5 o_cc o_cc2">
-                    <div class="container py-3 text-center"><h2 class="h2">Siap merencanakan studi ke China?</h2><p class="lead">Hubungi tim Diligence Academy untuk mendiskusikan tujuan belajar Anda.</p><a href="/contactus" class="btn btn-primary rounded-pill px-4">Konsultasi dengan tim</a></div>
+                <section class="s_carousel_wrapper academy-testimonials py-5" data-snippet="s_carousel" data-name="Success Stories Testimonials">
+                    <div id="diligence-success-stories-carousel" class="carousel slide" data-bs-ride="false">
+                        <div class="container">
+                            <div class="text-center mb-4"><span class="text-uppercase fw-bold text-primary">Testimoni siswa</span><h2 class="h2 mt-2">Cerita dan pengalaman belajar siswa</h2><p class="lead text-muted">Pengalaman nyata siswa dalam mempersiapkan studi dan masa depan bersama Diligence Academy.</p></div>
+                            <div class="carousel-inner">
+                                <div class="carousel-item active"><div class="row justify-content-center"><div class="col-lg-8"><div class="card border h-100 p-4"><div class="card-body text-center"><div class="text-warning mb-3">★★★★★</div><p class="lead mb-4">“My writing has improved after three months of studying. I think this English course is my best decision ever.”</p><p class="fw-bold mb-0">Anna</p><small class="text-muted">Malaysia</small></div></div></div></div></div>
+                                <div class="carousel-item"><div class="row justify-content-center"><div class="col-lg-8"><div class="card border h-100 p-4"><div class="card-body text-center"><div class="text-warning mb-3">★★★★★</div><p class="lead mb-4">“I have learned a lot from you, especially when I found out that I get to use more English now and it feels natural.”</p><p class="fw-bold mb-0">Supadmi</p><small class="text-muted">Batam</small></div></div></div></div></div>
+                                <div class="carousel-item"><div class="row justify-content-center"><div class="col-lg-8"><div class="card border h-100 p-4"><div class="card-body text-center"><div class="text-warning mb-3">★★★★★</div><p class="lead mb-4">“The class is comfortable. My listening and writing have improved a lot as well.”</p><p class="fw-bold mb-0">Yuliani</p><small class="text-muted">Batam</small></div></div></div></div></div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#diligence-success-stories-carousel" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"/><span class="visually-hidden">Previous</span></button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#diligence-success-stories-carousel" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"/><span class="visually-hidden">Next</span></button>
+                        </div>
+                    </div>
+                </section>
+                <section class="py-5 o_cc o_cc2"><div class="container py-3 text-center"><h2 class="h2">Siap merencanakan studi ke China?</h2><p class="lead">Hubungi tim Diligence Academy untuk mendiskusikan tujuan belajar Anda.</p><a href="/contactus" class="btn btn-primary rounded-pill px-4">Konsultasi dengan tim</a></div>
                 </section>
             </div>
         </xpath>
@@ -68,6 +81,17 @@
                 </section>
                 <section class="py-5 o_cc o_cc2"><div class="container py-3 text-center"><h2 class="h2">Ingin mempersiapkan diri untuk ujian?</h2><p class="lead">Konsultasikan target sertifikasi dan program persiapan yang sesuai.</p><a href="/contactus" class="btn btn-primary rounded-pill px-4">Hubungi Diligence Academy</a></div></section>
             </div>
+        </xpath>
+    </template>
+    <template id="diligence_success_stories_exact_testimonials" inherit_id="diligence_success_stories_modern_design" name="Exact Success Story Testimonials">
+        <xpath expr="//section[contains(@class, 'o_cc2')][1]" position="before">
+            <section class="s_carousel_wrapper academy-testimonials py-5" data-snippet="s_carousel" data-name="Success Stories Testimonials">
+                <div id="diligence-success-stories-carousel" class="carousel slide" data-bs-ride="false"><div class="container"><div class="text-center mb-4"><span class="text-uppercase fw-bold text-primary">Testimoni siswa</span><h2 class="h2 mt-2">Apa kata siswa tentang Diligence Academy?</h2><p class="lead text-muted">Pengalaman nyata siswa kami.</p></div><div class="carousel-indicators"><button type="button" data-bs-target="#diligence-success-stories-carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Testimonial 1"/><button type="button" data-bs-target="#diligence-success-stories-carousel" data-bs-slide-to="1" aria-label="Testimonial 2"/><button type="button" data-bs-target="#diligence-success-stories-carousel" data-bs-slide-to="2" aria-label="Testimonial 3"/></div><div class="carousel-inner">
+                    <div class="carousel-item active"><div class="row justify-content-center"><div class="col-lg-8"><div class="card border h-100 p-4"><div class="card-body text-center"><div class="text-warning mb-3">★★★★★</div><p class="mb-4">Saya sudah les Mandarin di Diligence Academy sekitar 3 tahun. Pengalaman saya selama belajar Mandarin di Diligence sangat bagus. Mandarin saya meningkat drastis seperti dalam mengenal dan menulis tulisan mandarin, mengenal nada, membaca dan menghafal. Bahkan saya sering dipuji oleh guru Mandarin di sekolah karena rata-rata nilai dikte ulanganku mencapai nilai 100.</p><p class="fw-bold mb-0">Ivonne</p><small class="text-muted">Mandarin Group Class Student</small></div></div></div></div></div>
+                    <div class="carousel-item"><div class="row justify-content-center"><div class="col-lg-8"><div class="card border h-100 p-4"><div class="card-body text-center"><div class="text-warning mb-3">★★★★★</div><p class="mb-4">Miss, thank you for choosing me as one of the most diligent students. I am so glad. Why I am able to learn so diligently is because English is my favourite subject. English is also a very important language. So I want to learn more about it. Although we are learning online because of the covid. I shall continue to learn it. I shall not give up until one day I can master English well like my teacher, miss Diana. My favourites are dictation and memorization.</p><p class="fw-bold mb-0">Nicole Febricia</p><small class="text-muted">English Group Class Student</small></div></div></div></div></div>
+                    <div class="carousel-item"><div class="row justify-content-center"><div class="col-lg-8"><div class="card border h-100 p-4"><div class="card-body text-center"><div class="text-warning mb-3">★★★★★</div><p class="mb-4">I have been learning English at Diligence Academy for 4 and a half years and my English has improved a lot since then. Before I joined the English class, I knew very little English. But since I started learning English at Diligence Academy, my English has gotten better and better every day. Now my English is at the intermediate level and I am hoping that I will get to upper intermediate level next year. So in conclusion, Diligence Academy has played a big part in my journey of learning English and I am really grateful for that.</p><p class="fw-bold mb-0">Alicia</p><small class="text-muted">English Group Class Student</small></div></div></div></div></div>
+                </div><button class="carousel-control-prev" type="button" data-bs-target="#diligence-success-stories-carousel" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"/><span class="visually-hidden">Previous</span></button><button class="carousel-control-next" type="button" data-bs-target="#diligence-success-stories-carousel" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"/><span class="visually-hidden">Next</span></button></div></div>
+            </section>
         </xpath>
     </template>
 </odoo>
