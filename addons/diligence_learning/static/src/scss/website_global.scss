@@ -80,6 +80,10 @@ header .o_wsale_my_cart {
     position: relative;
 }
 
+#diligence-testimonials-carousel .carousel-indicators {
+    display: none !important;
+}
+
 #diligence-testimonials-carousel .carousel-control-prev,
 #diligence-testimonials-carousel .carousel-control-next {
     top: 50%;
