@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Homepage content is migrated to website.homepage so Website Builder edits persist. -->
+    <record id="diligence_homepage_reference_content" model="ir.ui.view">
+        <field name="active" eval="False"/>
+    </record>
+    <record id="diligence_homepage_testimony_text_override" model="ir.ui.view">
+        <field name="active" eval="False"/>
+    </record>
+</odoo>

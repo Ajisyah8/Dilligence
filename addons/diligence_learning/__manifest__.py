@@ -58,6 +58,7 @@
         'views/bulk_upload_views.xml',
         'views/quiz_views.xml',
         'views/homepage_reference_content.xml',
+        'views/homepage_builder_persistence.xml',
         'views/session_views.xml',
         'views/certificate_report.xml',
         'views/reporting_views.xml',
