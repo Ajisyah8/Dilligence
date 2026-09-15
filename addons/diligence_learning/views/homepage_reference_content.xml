@@ -4,9 +4,6 @@
         <xpath expr="//section[@data-name='Diligence Learning Packages']//section[contains(concat(' ', normalize-space(@class), ' '), ' s_dynamic_snippet_title ')]/div" position="attributes">
             <attribute name="class" add="oe_structure" separator=" "/>
         </xpath>
-        <xpath expr="//section[@data-name='Diligence Learning Packages']//p[normalize-space()='Paket, benefit, harga, dan Early Bird terhubung langsung ke Sales.']" position="replace">
-            <p class="lead">Pilih paket belajar sesuai kebutuhan Anda dengan benefit lengkap, harga transparan, dan penawaran Early Bird.</p>
-        </xpath>
         <xpath expr="//section[@data-name='Testimonials']" position="replace">
             <section class="s_carousel_wrapper academy-testimonials pt80 pb80 oe_structure" data-snippet="s_carousel" data-name="Testimonials">
                 <div id="diligence-testimonials-carousel" class="carousel slide" data-bs-ride="false"><div class="container"><div class="oe_structure text-center mb-5"><span class="text-uppercase fw-bold text-primary">Kind words from our students</span><h2 class="display-5 fw-bold mt-2">Apa kata siswa tentang Diligence Academy?</h2><p class="lead text-muted">Pengalaman belajar yang nyata dari siswa kami.</p></div><div class="carousel-inner">
