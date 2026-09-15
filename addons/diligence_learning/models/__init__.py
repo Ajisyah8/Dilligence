@@ -27,3 +27,4 @@ from . import seo
 from . import seo
 from . import survey_invite
 from . import placement_test
+from . import bulk_upload

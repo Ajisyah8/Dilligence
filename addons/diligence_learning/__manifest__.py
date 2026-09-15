@@ -55,6 +55,7 @@
         'views/crm_lead_views.xml',
         'views/academic_views.xml',
         'views/slide_slide_views.xml',
+        'views/bulk_upload_views.xml',
         'views/quiz_views.xml',
         'views/session_views.xml',
         'views/certificate_report.xml',
