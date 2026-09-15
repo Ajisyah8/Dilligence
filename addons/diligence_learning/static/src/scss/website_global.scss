@@ -80,29 +80,6 @@ header .o_wsale_my_cart {
     position: relative;
 }
 
-#diligence-testimonials-carousel .carousel-indicators {
-    display: flex !important;
-    gap: .5rem !important;
-    bottom: -2.75rem !important;
-}
-
-#diligence-testimonials-carousel .carousel-indicators button {
-    width: .625rem !important;
-    height: .625rem !important;
-    min-width: .625rem !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: 0 !important;
-    border-radius: 50% !important;
-    background-color: #17344a !important;
-    opacity: .35 !important;
-}
-
-#diligence-testimonials-carousel .carousel-indicators button.active {
-    background-color: #c8a968 !important;
-    opacity: 1 !important;
-}
-
 #diligence-testimonials-carousel .carousel-control-prev,
 #diligence-testimonials-carousel .carousel-control-next {
     top: 50%;
