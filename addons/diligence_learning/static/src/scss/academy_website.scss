@@ -814,11 +814,11 @@ body:has(.diligence-academy-home) {
     }
 
     .academy-teacher-photo {
-        width: 9rem;
-        height: 9rem;
+        width: 9rem !important;
+        height: 9rem !important;
         margin: 0 auto 1.25rem;
         border-radius: 50%;
-        object-fit: cover;
+        object-fit: cover !important;
     }
 }
 

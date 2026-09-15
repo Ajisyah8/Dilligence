@@ -12,6 +12,9 @@
         <xpath expr="//div[@id='wrap']/section[@data-name='Available Courses']" position="after">
             <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
         </xpath>
+        <xpath expr="//section[@data-name='Diligence Learning Packages']/div[contains(concat(' ', normalize-space(@class), ' '), ' s_dynamic_snippet_container ')]" position="after">
+            <div class="oe_structure oe_empty diligence-package-drop-zone"/>
+        </xpath>
         <xpath expr="//div[@id='wrap']/section[@data-name='Schedule Free Interview']" position="after">
             <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
         </xpath>
