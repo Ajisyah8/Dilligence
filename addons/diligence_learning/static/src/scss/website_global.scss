@@ -89,8 +89,8 @@ header .o_wsale_my_cart {
     z-index: 2;
     opacity: 1;
     border: 0;
-    border-radius: 50%;
-    background: #17344a;
+    border-radius: 0;
+    background: transparent !important;
     transform: translateY(-50%);
 }
 
@@ -121,8 +121,8 @@ header .o_wsale_my_cart {
     z-index: 2;
     opacity: 1;
     border: 0;
-    border-radius: 50%;
-    background: #17344a;
+    border-radius: 0;
+    background: transparent !important;
     transform: translateY(-50%);
 }
 
