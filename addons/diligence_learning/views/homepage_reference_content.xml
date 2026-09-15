@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <template id="diligence_homepage_reference_content" inherit_id="website.homepage" name="Homepage Reference Testimonials and Teachers">
+    <template id="diligence_homepage_reference_content" inherit_id="website.homepage" name="Homepage Reference Testimonials and Teachers" active="False">
         <xpath expr="//section[@data-name='Diligence Learning Packages']//section[contains(concat(' ', normalize-space(@class), ' '), ' s_dynamic_snippet_title ')]/div" position="attributes">
             <attribute name="class" add="oe_structure" separator=" "/>
         </xpath>
@@ -27,7 +27,7 @@
             </section>
         </xpath>
     </template>
-    <template id="diligence_homepage_testimony_text_override" inherit_id="website.homepage" name="Homepage Exact Testimony Text">
+    <template id="diligence_homepage_testimony_text_override" inherit_id="website.homepage" name="Homepage Exact Testimony Text" active="False">
         <xpath expr="//div[@id='diligence-testimonials-carousel']//div[contains(concat(' ', normalize-space(@class), ' '), ' carousel-inner ')]" position="replace">
             <div class="carousel-indicators"><button type="button" data-bs-target="#diligence-testimonials-carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Testimonial 1"/><button type="button" data-bs-target="#diligence-testimonials-carousel" data-bs-slide-to="1" aria-label="Testimonial 2"/><button type="button" data-bs-target="#diligence-testimonials-carousel" data-bs-slide-to="2" aria-label="Testimonial 3"/><button type="button" data-bs-target="#diligence-testimonials-carousel" data-bs-slide-to="3" aria-label="Testimonial 4"/></div><div class="carousel-inner">
                 <div class="carousel-item active"><div class="row justify-content-center"><div class="col-lg-8"><div class="card border h-100 p-4"><div class="card-body text-center"><div class="text-warning mb-3">★★★★★</div><p class="mb-4">Saya sudah les Mandarin di Diligence Academy sekitar 3 tahun. Pengalaman saya selama belajar Mandarin di Diligence sangat bagus. Mandarin saya meningkat drastis seperti dalam mengenal dan menulis tulisan mandarin, mengenal nada, membaca dan menghafal. Bahkan saya sering dipuji oleh guru Mandarin di sekolah karena rata-rata nilai dikte ulanganku mencapai nilai 100.</p><p class="fw-bold mb-0">Ivonne</p><small class="text-muted">Mandarin Group Class Student</small></div></div></div></div></div>
