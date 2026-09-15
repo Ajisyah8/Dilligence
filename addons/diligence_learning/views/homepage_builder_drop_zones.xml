@@ -3,6 +3,9 @@
     <!-- Keep the homepage content editable by Website Builder between every
          top-level section. The existing homepage content remains unchanged. -->
     <template id="diligence_homepage_builder_drop_zones" inherit_id="website.homepage" name="Homepage Builder Drop Zones">
+        <xpath expr="//div[@id='wrap']/section" position="attributes">
+            <attribute name="class" add="oe_structure" separator=" "/>
+        </xpath>
         <xpath expr="//div[@id='wrap']/section[@data-name='Hero']" position="after">
             <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
         </xpath>
