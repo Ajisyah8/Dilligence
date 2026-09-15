@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <template id="s_diligence_package_columns" name="Diligence Package Columns">
-        <section class="s_diligence_package_columns s_dynamic_snippet pt64 pb64 o_colored_level"
+        <section class="s_diligence_package_columns s_dynamic_snippet pt64 pb64 o_colored_level oe_structure"
                  data-snippet="s_diligence_package_columns"
                  data-name="Diligence Learning Packages"
                  data-filter-id="13"
