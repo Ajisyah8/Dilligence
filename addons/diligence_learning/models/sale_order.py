@@ -119,6 +119,12 @@ class SaleOrder(models.Model):
             package_products = package_lines.mapped('product_template_id')
             courses = package_products.mapped('diligence_course_ids')
             courses.sudo()._action_add_members(order.partner_id)
+            for course in courses:
+                course._diligence_ensure_contact_segment()
+                if course.diligence_contact_segment_id:
+                    order.partner_id._diligence_assign_segment_codes([
+                        course.diligence_contact_segment_id.code,
+                    ])
             for package in package_products:
                 membership = self.env['slide.channel.partner'].search([
                     ('channel_id', 'in', package.diligence_course_ids.ids),

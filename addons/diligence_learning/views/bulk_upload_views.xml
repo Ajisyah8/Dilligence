@@ -63,6 +63,9 @@
                         class="btn-secondary"
                         groups="website_slides.group_website_slides_manager"/>
             </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="diligence_contact_segment_id" string="Course Contact Segment" readonly="1"/>
+            </xpath>
         </field>
     </record>
 </odoo>

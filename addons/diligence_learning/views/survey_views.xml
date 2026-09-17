@@ -6,11 +6,12 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='partner_ids']" position="before">
                 <group string="Diligence Audience">
-                    <field name="diligence_segment_id"/>
+                    <field name="diligence_segment_ids" widget="many2many_tags"/>
+                    <field name="diligence_segment_id" invisible="True"/>
                     <field name="diligence_recipient_count" readonly="1"/>
                     <button name="action_load_diligence_segment" type="object"
                             string="Load Contacts" class="btn-secondary"
-                            invisible="not diligence_segment_id"/>
+                            invisible="not diligence_segment_ids and not diligence_segment_id"/>
                 </group>
             </xpath>
         </field>

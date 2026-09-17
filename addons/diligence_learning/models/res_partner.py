@@ -13,6 +13,14 @@ class ResPartner(models.Model):
         ('other', 'Other'),
     ], string='Diligence Contact Segment', default='other', index=True, copy=False)
     diligence_contact_segment_id = fields.Many2one('diligence.contact.segment', string='Contact Segment', ondelete='restrict', index=True)
+    diligence_contact_segment_ids = fields.Many2many(
+        'diligence.contact.segment',
+        'diligence_partner_contact_segment_rel',
+        'partner_id', 'segment_id',
+        string='Contact Segments',
+        copy=False,
+        help='A contact may belong to multiple audiences, for example Student and Mandarin Course.',
+    )
 
     diligence_referral_code = fields.Char('Referral Code', copy=False, index=True)
     diligence_referral_link = fields.Char('Affiliate Link', compute='_compute_diligence_referral_link')
@@ -129,6 +137,20 @@ class ResPartner(models.Model):
             if payable and not vals.get('property_account_payable_id'):
                 vals['property_account_payable_id'] = payable.id
         partners = super().create(vals_list)
+        Segment = self.env['diligence.contact.segment'].sudo()
+        for partner in partners:
+            safe_partner = partner.sudo()
+            segment_ids = safe_partner.diligence_contact_segment_ids
+            if safe_partner.diligence_contact_segment_id and safe_partner.diligence_contact_segment_id not in segment_ids:
+                segment_ids |= safe_partner.diligence_contact_segment_id
+            if not segment_ids and safe_partner.diligence_contact_segment:
+                legacy_segment = Segment.search([('code', '=', safe_partner.diligence_contact_segment)], limit=1)
+                if legacy_segment and legacy_segment not in segment_ids:
+                    segment_ids |= legacy_segment
+            if segment_ids != safe_partner.diligence_contact_segment_ids:
+                partner.sudo().with_context(diligence_syncing_segments=True).write({
+                    'diligence_contact_segment_ids': [(6, 0, segment_ids.ids)],
+                })
         for partner in partners.filtered(lambda record: not record.diligence_referral_code):
             partner.diligence_referral_code = f'DIL{partner.id:05d}'
         opted_in = partners.filtered(lambda record: record.diligence_newsletter_opt_in)
@@ -143,9 +165,38 @@ class ResPartner(models.Model):
         elif vals.get('diligence_newsletter_opt_in') is False:
             vals = dict(vals, diligence_newsletter_opt_in_date=False)
         result = super().write(vals)
+        segment_fields = {'diligence_contact_segment', 'diligence_contact_segment_id', 'diligence_contact_segment_ids'}
+        if not self.env.context.get('diligence_syncing_segments') and segment_fields.intersection(vals):
+            Segment = self.env['diligence.contact.segment'].sudo()
+            for partner in self:
+                safe_partner = partner.sudo()
+                segment_ids = safe_partner.diligence_contact_segment_ids
+                if safe_partner.diligence_contact_segment_id and safe_partner.diligence_contact_segment_id not in segment_ids:
+                    segment_ids |= safe_partner.diligence_contact_segment_id
+                if vals.get('diligence_contact_segment'):
+                    legacy_segment = Segment.search([('code', '=', vals['diligence_contact_segment'])], limit=1)
+                    if legacy_segment:
+                        segment_ids |= legacy_segment
+                if vals.get('diligence_contact_segment_id') and safe_partner.diligence_contact_segment_id:
+                    segment_ids |= safe_partner.diligence_contact_segment_id
+                if segment_ids != safe_partner.diligence_contact_segment_ids:
+                    partner.sudo().with_context(diligence_syncing_segments=True).write({
+                        'diligence_contact_segment_ids': [(6, 0, segment_ids.ids)],
+                    })
         if 'diligence_newsletter_opt_in' in vals:
             self._sync_diligence_newsletter_subscription()
         return result
+
+    def _diligence_assign_segment_codes(self, codes):
+        """Add configured segments without removing existing audiences."""
+        segments = self.env['diligence.contact.segment'].sudo().search([
+            ('code', 'in', list(codes)), ('active', '=', True),
+        ])
+        if segments:
+            self.sudo().with_context(diligence_syncing_segments=True).write({
+                'diligence_contact_segment_ids': [(4, segment.id) for segment in segments],
+            })
+        return self
 
     def unlink(self):
         """Archive partners referenced by payment records instead of deleting.

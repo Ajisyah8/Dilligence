@@ -1,5 +1,9 @@
+import re
+from collections import Counter
+
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
+from odoo.tools import html2plaintext
 
 
 class DiligenceSeoItem(models.Model):
@@ -193,11 +197,7 @@ class DiligenceSeoItem(models.Model):
                     break
             values['seo_description'] = description or target.display_name
         if not values.get('seo_keywords'):
-            keyword_parts = [target.display_name]
-            for field_name in ('diligence_package_type_id', 'diligence_delivery_mode_id'):
-                if field_name in target._fields and target[field_name]:
-                    keyword_parts.append(target[field_name].display_name)
-            values['seo_keywords'] = ', '.join(dict.fromkeys(keyword_parts))
+            values['seo_keywords'] = self._generate_content_keywords(target)
         values['url'] = target.website_url if 'website_url' in target._fields else getattr(target, 'url', False)
         values['is_published'] = target.website_published if 'website_published' in target._fields else bool(getattr(target, 'active', False))
         values['is_indexed'] = bool(
@@ -205,6 +205,59 @@ class DiligenceSeoItem(models.Model):
         ) if 'website_indexed' in target._fields else False
         values['canonical_url'] = values['url']
         return values
+
+    @api.model
+    def _seo_content_text(self, target):
+        """Collect public-facing copy from the supported record without scraping URLs."""
+        field_names = (
+            'name', 'title', 'subtitle', 'description', 'description_sale',
+            'description_ecommerce', 'content', 'body', 'arch',
+            'website_meta_title', 'website_meta_description',
+            'diligence_benefit_text',
+        )
+        parts = []
+        for field_name in field_names:
+            if field_name not in target._fields:
+                continue
+            value = target[field_name]
+            if not value:
+                continue
+            if hasattr(value, 'display_name') and not isinstance(value, str):
+                value = value.display_name
+            value = html2plaintext(value) if isinstance(value, str) else str(value)
+            parts.append(value)
+        for field_name in ('diligence_package_type_id', 'diligence_delivery_mode_id'):
+            if field_name in target._fields and target[field_name]:
+                parts.append(target[field_name].display_name)
+        return ' '.join(parts)
+
+    @api.model
+    def _generate_content_keywords(self, target, limit=10):
+        """Generate deterministic keywords from the record content.
+
+        This is intentionally local and repeatable: it does not call an external
+        AI or search service, and it never changes an existing custom keyword set.
+        """
+        text = self._seo_content_text(target)
+        words = re.findall(r"[\wÀ-ÿ]{3,}", text.lower(), flags=re.UNICODE)
+        stopwords = {
+            'yang', 'dan', 'dengan', 'untuk', 'dari', 'pada', 'atau', 'adalah',
+            'akan', 'dalam', 'ini', 'itu', 'the', 'and', 'with', 'for', 'from',
+            'your', 'you', 'are', 'this', 'that', 'our', 'learn', 'course',
+            'academy', 'www', 'http', 'https',
+        }
+        words = [word for word in words if word not in stopwords and not word.isdigit()]
+        counts = Counter(words)
+        candidates = []
+        display_name = getattr(target, 'display_name', '')
+        if display_name:
+            candidates.append(display_name.strip())
+        for word, _count in counts.most_common(limit * 2):
+            if word not in candidates:
+                candidates.append(word)
+            if len(candidates) >= limit:
+                break
+        return ', '.join(candidate for candidate in candidates if candidate)[:500]
 
     def write(self, vals):
         if 'is_indexed' in vals and vals['is_indexed']:
@@ -254,6 +307,16 @@ class DiligenceSeoItem(models.Model):
             }
             if vals:
                 item.write(vals)
+        return True
+
+    def action_generate_content_keywords(self):
+        """Fill empty keywords from title, description and supported content fields."""
+        for item in self:
+            if item.seo_keywords:
+                continue
+            target = item._get_target()
+            if target:
+                item.write({'seo_keywords': item._generate_content_keywords(target)})
         return True
 
     def action_update_all_sources(self):

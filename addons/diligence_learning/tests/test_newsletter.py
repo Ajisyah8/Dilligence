@@ -128,10 +128,10 @@ class TestDiligenceNewsletter(TransactionCase):
         ], order='stage_id')
         welcome = deliveries.filtered(lambda item: item.stage_id.delay_days == 0)
         first_material = deliveries.filtered(lambda item: item.stage_id.delay_days == 5)
-        self.assertEqual(
-            len(deliveries.filtered(lambda item: item.state == 'sent')), 1,
-        )
-        self.assertEqual(welcome.state, 'sent')
+        # Queue-first delivery remains pending until Odoo's Mail Queue Manager
+        # confirms the linked mail as sent.
+        self.assertEqual(welcome.state, 'pending')
+        self.assertGreaterEqual(send_mail.call_count, 1)
         self.assertGreaterEqual(
             fields.Datetime.to_datetime(first_material.scheduled_date),
             fields.Datetime.now() + timedelta(days=4, hours=23),

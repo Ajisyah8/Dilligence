@@ -43,7 +43,8 @@
                 </page>
             </xpath>
             <xpath expr="//sheet//field[@name='category_id']" position="after">
-                <field name="diligence_contact_segment_id"/>
+                <field name="diligence_contact_segment_ids" widget="many2many_tags"/>
+                <field name="diligence_contact_segment_id" invisible="True"/>
                 <field name="diligence_contact_segment" invisible="True"/>
             </xpath>
         </field>
@@ -55,7 +56,7 @@
         <field name="arch" type="xml">
             <xpath expr="//list/field[@name='email']" position="after">
                 <field name="diligence_referral_code" optional="hide"/>
-                <field name="diligence_contact_segment" optional="hide"/>
+                <field name="diligence_contact_segment_ids" string="Diligence Contact Segments" widget="many2many_tags" optional="show"/>
                 <field name="diligence_is_affiliate" optional="hide"/>
                 <field name="diligence_referral_count" optional="hide"/>
                 <field name="diligence_valid_referral_count" optional="hide"/>
@@ -70,10 +71,10 @@
         <field name="inherit_id" ref="base.view_res_partner_filter"/>
         <field name="arch" type="xml">
             <xpath expr="//search" position="inside">
-                <field name="diligence_contact_segment_id" string="Diligence Audience"/>
-                <filter name="diligence_students" string="Students" domain="[('diligence_contact_segment', '=', 'student')]"/>
-                <filter name="diligence_newsletter_subscribers" string="Newsletter Subscribers" domain="[('diligence_contact_segment', '=', 'newsletter'), ('email', '!=', False)]"/>
-                <filter name="diligence_referral_non_students" string="Referral - Non Student" domain="[('diligence_contact_segment', '=', 'referral_non_student')]"/>
+                <field name="diligence_contact_segment_ids" string="Diligence Audience"/>
+                <filter name="diligence_students" string="Students" domain="['|', ('diligence_contact_segment_ids.code', '=', 'student'), ('diligence_contact_segment', '=', 'student')]"/>
+                <filter name="diligence_newsletter_subscribers" string="Newsletter Subscribers" domain="['&amp;', ('email', '!=', False), '|', ('diligence_contact_segment_ids.code', '=', 'newsletter'), ('diligence_contact_segment', '=', 'newsletter')]"/>
+                <filter name="diligence_referral_non_students" string="Referral - Non Student" domain="['|', ('diligence_contact_segment_ids.code', '=', 'referral_non_student'), ('diligence_contact_segment', '=', 'referral_non_student')]"/>
                 <filter name="diligence_affiliates" string="Affiliates / Referrers" domain="[('diligence_is_affiliate', '=', True)]"/>
                 <filter name="diligence_employees" string="Employees" domain="[('employee_ids', '!=', False)]"/>
                 <separator/>

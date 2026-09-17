@@ -1,6 +1,6 @@
 {
     'name': 'Diligence Learning Packages',
-    'version': '1.0.35',
+    'version': '1.0.38',
     'summary': 'Learning packages, bundle access, community, coaching, and referrals',
     'category': 'Website/eLearning',
     'author': 'Project ADS',

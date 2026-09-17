@@ -7,8 +7,13 @@ class TestDiligenceSeoManager(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.page = cls.env['website.page'].search([], limit=1)
         cls.seo_model = cls.env['diligence.seo.item']
+        existing_page_ids = cls.seo_model.search([
+            ('res_model', '=', 'website.page'),
+        ]).mapped('res_id')
+        cls.page = cls.env['website.page'].search([
+            ('id', 'not in', existing_page_ids),
+        ], limit=1)
 
     def test_create_and_sync_website_page(self):
         self.assertTrue(self.page)
@@ -39,6 +44,27 @@ class TestDiligenceSeoManager(TransactionCase):
         self.assertTrue(item.seo_keywords)
         item.write({'seo_keywords': 'Custom keyword set'})
         item.action_generate_defaults()
+        self.assertEqual(item.seo_keywords, 'Custom keyword set')
+
+    def test_content_keyword_generator_uses_description(self):
+        product = self.env['product.template'].create({
+            'name': 'Mandarin Course SEO Test',
+            'list_price': 100000,
+            'description_sale': 'Structured Mandarin speaking practice for university preparation.',
+        })
+        item = self.seo_model.create({
+            'content_type': 'product.template',
+            'res_model': 'product.template',
+            'res_id': product.id,
+            'seo_keywords': False,
+            'is_indexed': False,
+        })
+        item.action_generate_content_keywords()
+        self.assertIn('Mandarin', item.seo_keywords)
+        self.assertIn('speaking', item.seo_keywords)
+
+        item.write({'seo_keywords': 'Custom keyword set'})
+        item.action_generate_content_keywords()
         self.assertEqual(item.seo_keywords, 'Custom keyword set')
 
     def test_duplicate_target_and_url_are_rejected(self):

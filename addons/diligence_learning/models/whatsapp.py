@@ -210,6 +210,21 @@ class ResUsers(models.Model):
             'diligence_whatsapp_signup_status': 'skipped' if not normalized_phone else 'pending',
             'diligence_whatsapp_signup_error': False,
         })
+        student_segment = self.env['diligence.contact.segment'].sudo().search([
+            ('code', '=', 'student'), ('active', '=', True),
+        ], limit=1)
+        default_other_segment = self.env['diligence.contact.segment'].sudo().search([
+            ('code', '=', 'other'),
+        ], limit=1)
+        segment_commands = []
+        if default_other_segment and default_other_segment in partner.diligence_contact_segment_ids:
+            segment_commands.append((3, default_other_segment.id))
+        if student_segment:
+            segment_commands.append((4, student_segment.id))
+        partner.sudo().with_context(diligence_syncing_segments=True).write({
+            'diligence_contact_segment': 'student',
+            'diligence_contact_segment_ids': segment_commands,
+        })
         if not normalized_phone:
             return result
         params = self.env['ir.config_parameter'].sudo()

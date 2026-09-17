@@ -59,6 +59,7 @@
                     <button name="action_set_noindex" type="object" string="Set No Index" groups="diligence_learning.group_diligence_seo_manager"/>
                     <button name="action_sync_from_source" type="object" string="Reload from Source"/>
                     <button name="action_generate_defaults" type="object" string="Generate Empty Defaults" groups="diligence_learning.group_diligence_seo_manager" confirm="Fill only empty SEO fields? Existing custom SEO will not be overwritten."/>
+                    <button name="action_generate_content_keywords" type="object" string="Generate Keywords from Content" groups="diligence_learning.group_diligence_seo_manager" confirm="Generate keywords from the title and content fields only when keywords are empty?"/>
                 </header>
                 <sheet>
                     <group string="Content Information">

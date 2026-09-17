@@ -8,6 +8,7 @@ from markupsafe import Markup
 from odoo.tools import config
 
 from odoo import api, fields, models, _
+from odoo.exceptions import UserError
 
 
 _logger = logging.getLogger(__name__)
@@ -57,6 +58,7 @@ class DiligenceNewsletterDelivery(models.Model):
         ('skipped', 'Skipped'),
     ], required=True, default='pending', index=True)
     attempt_count = fields.Integer(default=0)
+    mail_id = fields.Many2one('mail.mail', readonly=True, index=True, ondelete='set null')
     sent_at = fields.Datetime(readonly=True)
     last_error = fields.Text(readonly=True)
 
@@ -252,6 +254,39 @@ class DiligenceNewsletterDelivery(models.Model):
                 next_delivery.write({'scheduled_date': next_date})
 
     @api.model
+    def _newsletter_sender(self):
+        """Return a sender accepted by the configured outgoing mail server.
+
+        Newsletter templates historically relied only on ``mail.default.from``.
+        When that parameter was empty, Odoo silently replaced it with OdooBot,
+        which can fail a provider's sender filter. Keep the fallback server-side
+        and never expose any mail credentials in logs or browser responses.
+        """
+        parameters = self.env['ir.config_parameter'].sudo()
+        # Match the sender to the active outgoing server selected by Odoo.
+        # This matters when multiple SMTP servers exist and the first server
+        # has a provider-specific from_filter.
+        server = self.env['ir.mail_server'].sudo().search([
+            ('active', '=', True),
+            ('from_filter', '!=', False),
+        ], order='sequence, id', limit=1)
+        sender = (server.from_filter if server else '').strip()
+        if not sender:
+            sender = (parameters.get_param('mail.default.from') or '').strip()
+        if not sender:
+            sender = (self.env.company.email or '').strip()
+        if not sender:
+            sender = (parameters.get_param('mail.catchall.email') or '').strip()
+        return sender or False
+
+    @api.model
+    def _newsletter_mail_server(self):
+        return self.env['ir.mail_server'].sudo().search([
+            ('active', '=', True),
+            ('from_filter', '!=', False),
+        ], order='sequence, id', limit=1)
+
+    @api.model
     def _cron_process(self):
         self._ensure_unsubscribe_footer()
         self._ensure_deliveries()
@@ -284,22 +319,60 @@ class DiligenceNewsletterDelivery(models.Model):
             recipient_key = ('email', delivery.email.strip().lower()) if delivery.email else (
                 'contact', delivery.mailing_contact_id.id
             ) if delivery.mailing_contact_id else ('partner', delivery.partner_id.id)
+            if delivery.mail_id:
+                queued_mail = delivery.mail_id.sudo()
+                if queued_mail.state == 'sent':
+                    delivery.write({
+                        'state': 'sent',
+                        'sent_at': delivery.sent_at or fields.Datetime.now(),
+                        'last_error': False,
+                    })
+                    processed_recipients.add(recipient_key)
+                    self._defer_following_deliveries(delivery, delivery.sent_at or now)
+                    continue
+                if queued_mail.state == 'outgoing':
+                    # Mail Queue Manager still owns this message. Do not
+                    # create another mail when the drip cron is retried.
+                    continue
+                # An exception mail can be retried by creating one new queued
+                # mail, subject to the delivery attempt limit.
+                delivery.write({'mail_id': False, 'state': 'failed'})
             if recipient_key in processed_recipients:
                 continue
             if test_mode:
                 delivery.write({'last_error': _('Email test mode is enabled; no email was sent.')})
                 continue
             try:
-                delivery.stage_id.template_id.sudo().send_mail(
+                mail_server = self._newsletter_mail_server()
+                sender = self._newsletter_sender()
+                if not sender or not mail_server:
+                    raise UserError(_('No sender email is configured for newsletter delivery.'))
+                template = delivery.stage_id.template_id.sudo()
+                # Odoo 19 renders the template before applying some mail
+                # overrides. Set both values on the template for this send so
+                # provider filtering cannot fall back to OdooBot.
+                template.write({
+                    'email_from': sender,
+                    'mail_server_id': mail_server.id,
+                })
+                mail_id = template.send_mail(
                     delivery.id,
+                    # Let Odoo's Mail Queue Manager perform the SMTP hand-off.
+                    # The delivery is marked sent only after a later cron sees
+                    # the linked mail in state ``sent``.
                     force_send=False,
                     raise_exception=True,
+                    email_values={
+                        'email_from': sender,
+                        'email_to': delivery.email.strip(),
+                        'mail_server_id': mail_server.id,
+                    },
                 )
                 delivery.write({
-                    'state': 'sent',
-                    'sent_at': now,
+                    'state': 'pending',
+                    'mail_id': mail_id,
                     'attempt_count': delivery.attempt_count + 1,
-                    'last_error': False,
+                    'last_error': _('Newsletter queued for delivery.'),
                 })
                 processed_recipients.add(recipient_key)
                 self._defer_following_deliveries(delivery, now)
