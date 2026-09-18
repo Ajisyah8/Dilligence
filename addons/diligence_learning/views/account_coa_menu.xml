@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Odoo Community's Invoicing app hides the native Chart of Accounts
+        menu behind the optional accounting-readonly group.  Accounting
+        Administrators already have the required model permissions, so expose
+        the native action here without granting Invoice Officers accounting
+        configuration access.
+    -->
+    <menuitem
+        id="menu_diligence_chart_of_accounts"
+        name="Chart of Accounts"
+        parent="account.menu_finance_configuration"
+        action="account.action_account_form"
+        groups="account.group_account_manager"
+        sequence="5"/>
+</odoo>

@@ -323,7 +323,7 @@
                                controls="controls" preload="metadata" class="w-100"
                                aria-label="Uploaded Audio"
                                t-att-data-diligence-audio-id="slide.id"
-                               t-att-src="'/diligence/slides/media/%s?v=%s' % (slide.id, slide.write_date)"/>
+                               t-att-src="'/diligence/slides/media/%s?v=%s' % (slide.id, slide.diligence_audio_cache_key or '')"/>
                         <t t-else="" t-out="slide.embed_code"/>
                     </div>
                     <article t-elif="slide.slide_category == 'article'" class="diligence-custom-article-frame">

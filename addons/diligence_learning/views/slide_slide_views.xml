@@ -49,6 +49,13 @@
                     Supported providers: YouTube, Vimeo, MP4, WebM, and HLS (.m3u8). Google Drive, Facebook, TikTok, and arbitrary iframe URLs are not supported.
                 </div>
             </xpath>
+            <xpath expr="(//field[@name='document_binary_content'])[2]" position="replace">
+                <field name="diligence_audio_binary_content" string="Audio File"
+                       filename="diligence_audio_filename"
+                       options="{'accepted_file_extensions': '.mp3,.wav,.ogg,.webm'}"
+                       invisible="source_type == 'external' or slide_category != 'audio'"
+                       readonly="source_type == 'external' or slide_category != 'audio'"/>
+            </xpath>
         </field>
     </record>
 

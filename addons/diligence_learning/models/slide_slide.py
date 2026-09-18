@@ -1,3 +1,5 @@
+import base64
+import hashlib
 import re
 from urllib.parse import parse_qs, quote, urlparse
 
@@ -74,6 +76,15 @@ class SlideSlide(models.Model):
         return slides
 
     def write(self, values):
+        values = dict(values)
+        # The native slide form renders the binary field for multiple media
+        # types.  Map the dedicated audio widget explicitly to the stored
+        # binary field so a later native widget cannot overwrite the upload.
+        if 'diligence_audio_binary_content' in values:
+            audio_content = values.pop('diligence_audio_binary_content')
+            if audio_content and self.filtered(lambda slide: slide.slide_category == 'audio'):
+                values['binary_content'] = audio_content
+                values['source_type'] = 'local_file'
         result = super().write(values)
         if 'diligence_external_quiz_url' in values:
             self.filtered(
@@ -119,6 +130,44 @@ class SlideSlide(models.Model):
     diligence_video_embed_url = fields.Char(
         string='Provider Embed URL', compute='_compute_diligence_video_fields', store=True, readonly=True,
     )
+    diligence_audio_cache_key = fields.Char(
+        string='Audio Cache Key',
+        compute='_compute_diligence_audio_cache_key',
+        store=True,
+        readonly=True,
+    )
+    diligence_audio_binary_content = fields.Binary(
+        string='Audio File',
+        related='binary_content',
+        readonly=False,
+    )
+    diligence_audio_filename = fields.Char('Audio Filename')
+
+    @api.onchange('diligence_audio_binary_content')
+    def _onchange_diligence_audio_binary_content(self):
+        for slide in self.filtered(lambda record: record.slide_category == 'audio'):
+            if slide.diligence_audio_binary_content:
+                slide.source_type = 'local_file'
+
+    @api.depends('slide_category', 'source_type', 'binary_content', 'url', 'write_date')
+    def _compute_diligence_audio_cache_key(self):
+        """Generate a stable browser-cache version for lesson audio.
+
+        ``write_date`` is not sufficient on its own because the rendered
+        datetime may have only second-level precision. Two quick replacements
+        could therefore produce the same media URL and leave the old audio in
+        the browser cache. Hash the actual uploaded bytes so every replacement
+        gets a new URL without exposing the file contents.
+        """
+        for slide in self:
+            if slide.slide_category == 'audio' and slide.source_type == 'local_file' and slide.binary_content:
+                try:
+                    content = base64.b64decode(slide.binary_content)
+                except (TypeError, ValueError):
+                    content = b''
+                slide.diligence_audio_cache_key = hashlib.sha1(content).hexdigest()[:20] if content else False
+            else:
+                slide.diligence_audio_cache_key = False
 
     @api.model
     def _diligence_parse_video_url(self, value):
@@ -247,7 +296,7 @@ class SlideSlide(models.Model):
         ):
             # Change the media URL whenever the uploaded file changes.
             audio_url = "/diligence/slides/media/%s?v=%s" % (
-                slide.id, quote(str(slide.write_date or ""), safe="")
+                slide.id, quote(slide.diligence_audio_cache_key or "", safe="")
             )
             slide.embed_code = Markup(
                 "<audio controls=\"controls\" preload=\"metadata\" class=\"w-100\" aria-label=\"%s\">"

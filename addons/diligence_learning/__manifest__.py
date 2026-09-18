@@ -76,6 +76,7 @@
         'views/whatsapp_settings_views.xml',
         'views/whatsapp_campaign_views.xml',
         'views/seo_views.xml',
+        'views/account_coa_menu.xml',
     ],
         'assets': {
         'web.assets_frontend_minimal': [
