@@ -180,6 +180,9 @@ class DiligenceWebsiteSlides(WebsiteSlides):
             ('Content-Type', content_type),
             ('Content-Length', str(len(content))),
             ('Content-Disposition', 'inline; filename="%s"' % filename.replace('"', '')),
+            ('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0'),
+            ('Pragma', 'no-cache'),
+            ('Expires', '0'),
             ('X-Content-Type-Options', 'nosniff'),
         ])
 

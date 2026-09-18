@@ -279,6 +279,7 @@
     <template id="diligence_custom_media_preview" inherit_id="website_slides.slide_content_detailed">
         <xpath expr="//div[@t-else and hasclass('o_wslides_lesson_content_type')]" position="replace">
             <section t-if="slide.slide_category != 'quiz'"
+                     id="diligence-lesson-content"
                      class="diligence-custom-media-preview"
                      t-att-data-media-type="slide.slide_category">
                 <header class="diligence-custom-media-header">
@@ -318,7 +319,12 @@
                         </div>
                     </div>
                     <div t-elif="slide.slide_category == 'audio'" class="diligence-custom-audio-frame">
-                        <t t-out="slide.embed_code"/>
+                        <audio t-if="slide.source_type == 'local_file' and slide.binary_content"
+                               controls="controls" preload="metadata" class="w-100"
+                               aria-label="Uploaded Audio"
+                               t-att-data-diligence-audio-id="slide.id"
+                               t-att-src="'/diligence/slides/media/%s?v=%s' % (slide.id, slide.write_date)"/>
+                        <t t-else="" t-out="slide.embed_code"/>
                     </div>
                     <article t-elif="slide.slide_category == 'article'" class="diligence-custom-article-frame">
                         <div t-field="slide.html_content"/>
@@ -336,6 +342,9 @@
     <template id="diligence_lesson_sidebar_cards" inherit_id="website_slides.slide_aside_training_category">
         <xpath expr="//div[contains(@t-att-class, 'o_wslides_lesson_aside_list_link')]" position="attributes">
             <attribute name="class" add="diligence-sidebar-lesson-card" separator=" "/>
+        </xpath>
+        <xpath expr="//div[contains(@t-att-class, 'o_wslides_lesson_aside_list_link')]/a[contains(@t-att-href, '/slides/slide/')]" position="attributes">
+            <attribute name="t-att-href">('/slides/slide/%s#diligence-lesson-content' % slug(aside_slide)) if can_access else '#'</attribute>
         </xpath>
         <xpath expr="//div[contains(@t-att-class, 'o_wslides_lesson_aside_list_link')]/t[@t-call='website_slides.slide_sidebar_done_button']" position="before">
             <span class="diligence-sidebar-lesson-number">

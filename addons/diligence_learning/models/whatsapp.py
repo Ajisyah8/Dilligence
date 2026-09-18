@@ -167,6 +167,11 @@ class ResConfigSettings(models.TransientModel):
     diligence_whatsapp_instance = fields.Char(string='Evolution Instance', config_parameter='diligence.whatsapp.instance')
     diligence_whatsapp_api_key = fields.Char(string='Evolution API Key', config_parameter='diligence.whatsapp.api_key')
     diligence_whatsapp_default_country_code = fields.Char(string='Default Country Code', config_parameter='diligence.whatsapp.default_country_code', default='62')
+    diligence_interview_whatsapp_number = fields.Char(
+        string="Free Interview WhatsApp Number",
+        config_parameter="diligence.whatsapp_number",
+        help="Use international format, for example 628123456789. Spaces, +, and a leading 0 are normalized automatically.",
+    )
     diligence_whatsapp_send_on_payment = fields.Boolean(string='Send Payment Confirmation', config_parameter='diligence.whatsapp.send_on_payment')
     # res.config.settings config_parameter fields must use a supported
     # persisted scalar type; Text fields are rejected by Odoo's settings

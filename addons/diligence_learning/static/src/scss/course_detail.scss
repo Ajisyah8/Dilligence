@@ -127,6 +127,10 @@ body,
         background: #12384f;
     }
 
+    #diligence-lesson-content {
+        scroll-margin-top: 1rem;
+    }
+
     .diligence-lesson-main .diligence-media-audio {
         min-height: 12rem;
         padding: 2rem;
@@ -338,7 +342,9 @@ body,
     .diligence-lesson-main .o_wslides_lesson_aside_list {
         position: sticky;
         top: 1rem;
-        overflow: hidden;
+        max-height: calc(100vh - 2rem);
+        overflow-x: hidden;
+        overflow-y: auto;
         border: 1px solid rgba(18, 56, 79, .10);
         border-radius: 1rem;
         box-shadow: 0 8px 24px rgba(18, 56, 79, .05);

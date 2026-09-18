@@ -875,6 +875,16 @@ body:has(.diligence-academy-home) {
     }
 }
 
+@media (max-width: 767.98px) {
+    body:has(.o_wslides_fs_sidebar:not(.o_wslides_fs_sidebar_hidden)) .academy-floating-cta,
+    body:has(.navbar-collapse.show) .academy-floating-cta,
+    body:has(#top.o_top_menu_collapse_shown) .academy-floating-cta,
+    body:has(#top_menu_collapse_mobile.show) .academy-floating-cta,
+    body:has(#top_menu_collapse_mobile.showing) .academy-floating-cta {
+        display: none !important;
+    }
+}
+
 @media (max-width: 575.98px) {
     .academy-english-feature .academy-english-stats {
         grid-template-columns: 1fr;

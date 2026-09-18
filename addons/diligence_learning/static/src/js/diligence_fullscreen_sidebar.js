@@ -212,8 +212,35 @@ async function mountDiligenceDescriptionForRenderedSlide(fullscreen, slide) {
 Fullscreen.include({
     async _renderSlide() {
         const result = await this._super(...arguments);
+        const slide = this._slideValue;
+        if (slide?.category === "audio") {
+            const media = this.$?.(".o_wslides_fs_content audio")?.[0];
+            const source = media?.querySelector("source");
+            const currentSource = source?.getAttribute("src") || "";
+            if (source && currentSource.includes("/web/content/slide.slide/")) {
+                source.setAttribute("src", "/diligence/slides/media/" + slide.id + "?v=" + Date.now());
+                media.load();
+            }
+        }
         await mountDiligenceDescriptionForRenderedSlide(this, this._slideValue);
         scheduleDiligenceFullscreenDescriptionRefresh();
+        return result;
+    },
+});
+
+/* Keep the reading position when native Odoo changes a lesson through pushState. */
+Fullscreen.include({
+    async _onChangeSlide() {
+        const pageY = window.scrollY;
+        const sidebar = document.querySelector(".o_wslides_fs_sidebar");
+        const sidebarY = sidebar?.scrollTop || 0;
+        const result = await this._super(...arguments);
+        const restore = () => {
+            window.scrollTo({top: pageY, left: 0, behavior: "auto"});
+            const currentSidebar = document.querySelector(".o_wslides_fs_sidebar");
+            if (currentSidebar) currentSidebar.scrollTop = sidebarY;
+        };
+        [0, 50, 150, 350, 700, 1200].forEach((delay) => window.setTimeout(restore, delay));
         return result;
     },
 });
@@ -221,6 +248,7 @@ Fullscreen.include({
 /* The native sidebar deliberately calls stopPropagation() on lesson clicks.
    Capture the event before that handler so the description refresh is still
    scheduled when a learner navigates without a full page reload. */
+document.addEventListener('click', (event) => { if (event.target.closest('.o_wslides_fs_sidebar_list_item .o_wslides_fs_slide_name')) event.preventDefault(); }, true);
 document.addEventListener('click', async (event) => {
     if (event.target.closest(
         '.o_wslides_fs_sidebar_list_item a, .o_wslides_fs_slide_nav, '
@@ -298,16 +326,20 @@ window.setInterval(renderDiligenceFullscreenDescription, 300);
 
 /* Preserve the learner's reading position when selecting another lesson. */
 const diligenceLessonScrollKey = "diligence.lesson.scroll";
+if ("scrollRestoration" in window.history) {
+    window.history.scrollRestoration = "manual";
+}
 
 function captureDiligenceLessonScroll(event) {
     const link = event.target.closest(
         ".diligence-lesson-viewer a.o_wslides_lesson_aside_list_link, "
-        + ".diligence-lesson-viewer .diligence-sidebar-lesson-card a"
+        + ".diligence-lesson-viewer .diligence-sidebar-lesson-card a, "
+        + ".o_wslides_fs_sidebar_list_item .o_wslides_fs_slide_name"
     );
     if (!link || !link.href || new URL(link.href, window.location.href).origin !== window.location.origin) {
         return;
     }
-    const aside = document.querySelector(".diligence-lesson-viewer .o_wslides_lesson_aside_list");
+    const aside = document.querySelector(".diligence-lesson-viewer .o_wslides_lesson_aside_list, .o_wslides_fs_sidebar");
     sessionStorage.setItem(diligenceLessonScrollKey, JSON.stringify({
         pageY: window.scrollY,
         asideY: aside?.scrollTop || 0,
@@ -326,14 +358,22 @@ function restoreDiligenceLessonScroll() {
     }
     const restore = () => {
         window.scrollTo({top: position.pageY || 0, left: 0, behavior: "auto"});
-        const aside = document.querySelector(".diligence-lesson-viewer .o_wslides_lesson_aside_list");
+        const aside = document.querySelector(".diligence-lesson-viewer .o_wslides_lesson_aside_list, .o_wslides_fs_sidebar");
         if (aside) aside.scrollTop = position.asideY || 0;
     };
-    window.setTimeout(restore, 80);
-    window.setTimeout(restore, 400);
-    window.setTimeout(() => sessionStorage.removeItem(diligenceLessonScrollKey), 900);
+    [0, 80, 250, 500, 900, 1500].forEach((delay) => window.setTimeout(restore, delay));
+    window.setTimeout(() => sessionStorage.removeItem(diligenceLessonScrollKey), 1800);
 }
 
 document.addEventListener("click", captureDiligenceLessonScroll, true);
+
+/* Native fullscreen navigation is an in-page pushState update. Restore the
+   captured position after Odoo finishes replacing the media asynchronously. */
+document.addEventListener("click", (event) => {
+    if (event.target.closest(".o_wslides_fs_sidebar_list_item .o_wslides_fs_slide_name")) {
+        [50, 150, 350, 700, 1200].forEach((delay) => window.setTimeout(restoreDiligenceLessonScroll, delay));
+    }
+}, true);
 window.addEventListener("pageshow", restoreDiligenceLessonScroll);
+window.addEventListener("load", restoreDiligenceLessonScroll);
 restoreDiligenceLessonScroll();

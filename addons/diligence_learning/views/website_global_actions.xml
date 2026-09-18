@@ -2,8 +2,9 @@
 <odoo>
     <template id="diligence_website_student_corner_nav" inherit_id="website.layout">
         <xpath expr="//body" position="inside">
+            <t t-set="interview_number" t-value="request.env['diligence.whatsapp.service'].normalize_number(request.env['ir.config_parameter'].sudo().get_param('diligence.whatsapp_number'))"/>
             <a class="btn rounded-pill shadow academy-floating-cta"
-               t-att-href="('https://wa.me/%s?text=Halo%%20Diligence%%20Academy,%%20saya%%20ingin%%20free%%20interview' % request.env['ir.config_parameter'].sudo().get_param('diligence.whatsapp_number')) if request.env['ir.config_parameter'].sudo().get_param('diligence.whatsapp_number') else '/contactus'"
+               t-att-href="('https://wa.me/' + interview_number + '?text=Halo%20Diligence%20Academy,%20saya%20ingin%20free%20interview') if interview_number else '/contactus'"
                target="_blank" rel="noopener">
                 <i class="fa fa-whatsapp me-2" aria-hidden="true"/>
                 <span>Schedule Free Interview</span>

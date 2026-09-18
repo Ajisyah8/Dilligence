@@ -23,8 +23,9 @@
                 </page>
             </xpath>
             <xpath expr="//sheet//field[@name='title']" position="after">
-                <label for="diligence_is_placement_test" string="Placement Test"/>
-                <field name="diligence_is_placement_test" string="Placement Test" class="oe_inline"/>
+                <group col="2">
+                    <field name="diligence_is_placement_test" string="Placement Test"/>
+                </group>
             </xpath>
         </field>
     </record>

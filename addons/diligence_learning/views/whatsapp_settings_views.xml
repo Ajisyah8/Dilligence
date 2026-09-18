@@ -40,6 +40,11 @@
                                 <label for="diligence_whatsapp_default_country_code" string="Default Country Code" class="d-block mb-1"/>
                                 <field name="diligence_whatsapp_default_country_code" class="w-100"/>
                             </div>
+                            <div class="mb-3">
+                                <label for="diligence_interview_whatsapp_number" string="Free Interview WhatsApp Number" class="d-block mb-1"/>
+                                <field name="diligence_interview_whatsapp_number" placeholder="628123456789" class="w-100"/>
+                                <div class="text-muted">Nomor yang digunakan oleh tombol Schedule Free Interview. Gunakan format internasional.</div>
+                            </div>
                         </div></div>
                     </div>
                     <h2>Message Templates</h2>

@@ -78,6 +78,9 @@
         'views/seo_views.xml',
     ],
         'assets': {
+        'web.assets_frontend_minimal': [
+            'diligence_learning/static/src/js/diligence_lesson_navigation.js',
+        ],
         'web.assets_frontend': [
             'diligence_learning/static/lib/plyr/plyr.css',
             'diligence_learning/static/lib/plyr/plyr.min.js',

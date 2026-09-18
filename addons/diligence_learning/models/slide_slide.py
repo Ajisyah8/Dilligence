@@ -1,5 +1,5 @@
 import re
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, quote, urlparse
 
 from markupsafe import Markup, escape
 
@@ -240,6 +240,20 @@ class SlideSlide(models.Model):
         player behaviour without copying third-party media into this database.
         """
         super()._compute_embed_code()
+        for slide in self.filtered(
+            lambda record: record.slide_category == "audio"
+            and record.source_type == "local_file"
+            and record.binary_content
+        ):
+            # Change the media URL whenever the uploaded file changes.
+            audio_url = "/diligence/slides/media/%s?v=%s" % (
+                slide.id, quote(str(slide.write_date or ""), safe="")
+            )
+            slide.embed_code = Markup(
+                "<audio controls=\"controls\" preload=\"metadata\" class=\"w-100\" aria-label=\"%s\">"
+                "<source src=\"%s\" type=\"audio/mpeg\"></source>"
+                "</audio>"
+            ) % (_("Uploaded Audio"), escape(audio_url))
         for slide in self.filtered(
             lambda record: record.slide_category == 'audio'
             and record.source_type == 'external'
