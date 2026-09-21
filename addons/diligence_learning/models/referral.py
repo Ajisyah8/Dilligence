@@ -32,6 +32,20 @@ class DiligenceReferral(models.Model):
     cashback_rate = fields.Float('Cashback Rate (%)', copy=False)
     cashback_fixed = fields.Monetary('Fixed Cashback', currency_field='currency_id', copy=False)
     cashback_amount = fields.Monetary('Cashback Amount', currency_field='currency_id', copy=False)
+    cashback_paid_amount = fields.Monetary(
+        'Cashback Paid', currency_field='currency_id',
+        compute='_compute_cashback_tracking', store=True,
+    )
+    cashback_remaining_amount = fields.Monetary(
+        'Cashback Remaining', currency_field='currency_id',
+        compute='_compute_cashback_tracking', store=True,
+    )
+    cashback_tracking_status = fields.Selection([
+        ('pending_payment', 'Awaiting Student Payment'),
+        ('pending_payout', 'Awaiting Cashback Payout'),
+        ('paid', 'Cashback Paid'),
+        ('cancelled', 'Cancelled / Reversed'),
+    ], string='Cashback Tracking', compute='_compute_cashback_tracking', store=True)
     status = fields.Selection([
         ('draft', 'Draft'),
         ('pending_payment', 'Pending Payment'),
@@ -69,6 +83,27 @@ class DiligenceReferral(models.Model):
                 referral.cashback_amount = referral.cashback_fixed
             else:
                 referral.cashback_amount = referral.net_payment * referral.cashback_rate / 100
+
+    @api.depends('cashback_amount', 'status')
+    def _compute_cashback_tracking(self):
+        for referral in self:
+            amount = referral.cashback_amount or 0.0
+            if referral.status == 'paid':
+                referral.cashback_paid_amount = amount
+                referral.cashback_remaining_amount = 0.0
+                referral.cashback_tracking_status = 'paid'
+            elif referral.status in ('cancelled', 'reversed'):
+                referral.cashback_paid_amount = 0.0
+                referral.cashback_remaining_amount = 0.0
+                referral.cashback_tracking_status = 'cancelled'
+            elif referral.status in ('eligible', 'waiting_period', 'approved', 'ready_to_pay'):
+                referral.cashback_paid_amount = 0.0
+                referral.cashback_remaining_amount = amount
+                referral.cashback_tracking_status = 'pending_payout'
+            else:
+                referral.cashback_paid_amount = 0.0
+                referral.cashback_remaining_amount = amount
+                referral.cashback_tracking_status = 'pending_payment'
 
     def _find_paid_invoice(self):
         self.ensure_one()
@@ -178,6 +213,9 @@ class DiligenceReferralSettlement(models.Model):
     referral_ids = fields.One2many('diligence.referral', 'settlement_id', string='Referrals')
     total_payment = fields.Monetary('Total Student Payments', compute='_compute_totals', currency_field='currency_id')
     total_cashback = fields.Monetary('Total Cashback', compute='_compute_totals', currency_field='currency_id')
+    total_cashback_paid = fields.Monetary('Cashback Paid', compute='_compute_totals', currency_field='currency_id')
+    total_cashback_remaining = fields.Monetary('Cashback Remaining', compute='_compute_totals', currency_field='currency_id')
+    pending_referral_count = fields.Integer('Pending Cashback Referrals', compute='_compute_totals')
     referral_count = fields.Integer('Referral Count', compute='_compute_totals')
     status = fields.Selection([
         ('draft', 'Draft'),
@@ -231,11 +269,19 @@ class DiligenceReferralSettlement(models.Model):
                 vals['name'] = self.env['ir.sequence'].next_by_code('diligence.referral.settlement') or 'SET'
         return super().create(vals_list)
 
-    @api.depends('referral_ids', 'referral_ids.net_payment', 'referral_ids.cashback_amount')
+    @api.depends(
+        'referral_ids', 'referral_ids.net_payment', 'referral_ids.cashback_amount',
+        'referral_ids.cashback_paid_amount', 'referral_ids.cashback_remaining_amount',
+    )
     def _compute_totals(self):
         for settlement in self:
             settlement.total_payment = sum(settlement.referral_ids.mapped('net_payment'))
             settlement.total_cashback = sum(settlement.referral_ids.mapped('cashback_amount'))
+            settlement.total_cashback_paid = sum(settlement.referral_ids.mapped('cashback_paid_amount'))
+            settlement.total_cashback_remaining = sum(settlement.referral_ids.mapped('cashback_remaining_amount'))
+            settlement.pending_referral_count = len(settlement.referral_ids.filtered(
+                lambda referral: referral.cashback_remaining_amount > 0
+            ))
             settlement.referral_count = len(settlement.referral_ids)
 
     def action_load_eligible(self):

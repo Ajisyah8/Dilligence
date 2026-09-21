@@ -1,6 +1,8 @@
 import re
 from collections import Counter
 
+from psycopg2 import IntegrityError
+
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import html2plaintext
@@ -12,6 +14,15 @@ class DiligenceSeoItem(models.Model):
     _order = 'seo_status, name'
 
     name = fields.Char(required=True)
+    website_id = fields.Many2one(
+        'website', string='Website', required=True, index=True,
+        default=lambda self: self.env['website'].search([], order='sequence, id', limit=1),
+        ondelete='restrict',
+        help='Website/domain for which this SEO record is managed.',
+    )
+    domain = fields.Char(
+        related='website_id.domain', string='Domain', store=True, readonly=True,
+    )
     content_type = fields.Selection([
         ('website.page', 'Website Page'),
         ('product.template', 'Product / Package'),
@@ -27,6 +38,16 @@ class DiligenceSeoItem(models.Model):
     seo_keywords = fields.Char()
     canonical_url = fields.Char()
     og_image = fields.Binary(attachment=True)
+    og_title = fields.Char(string='Social Title')
+    og_description = fields.Text(string='Social Description')
+    robots_index = fields.Boolean(string='Robots Index', default=True)
+    robots_follow = fields.Boolean(string='Robots Follow', default=True)
+    keyword_source = fields.Selection([
+        ('manual', 'Manual'),
+        ('generated', 'Generated'),
+        ('imported', 'Imported'),
+    ], string='Keyword Source', default='manual')
+    keywords_generated_at = fields.Datetime(string='Keywords Generated At', readonly=True)
     is_indexed = fields.Boolean(default=True)
     is_published = fields.Boolean(default=False)
     seo_score = fields.Integer(compute='_compute_seo_score_status', store=True)
@@ -36,7 +57,11 @@ class DiligenceSeoItem(models.Model):
         ('needs_improvement', 'Needs Improvement'),
     ], compute='_compute_seo_score_status', store=True)
     seo_warnings = fields.Text(compute='_compute_seo_warnings')
+    duplicate_title = fields.Boolean(compute='_compute_duplicate_flags', search='_search_duplicate_title')
+    duplicate_canonical = fields.Boolean(compute='_compute_duplicate_flags', search='_search_duplicate_canonical')
+    search_keyword_suggestions = fields.Text(compute='_compute_search_keyword_suggestions')
     last_updated = fields.Datetime(default=fields.Datetime.now, readonly=True)
+    last_audited_at = fields.Datetime(string='Last Audited At', readonly=True)
 
     _target_unique = models.Constraint(
         'UNIQUE(res_model, res_id)',
@@ -55,6 +80,28 @@ class DiligenceSeoItem(models.Model):
         if self.res_model not in self._allowed_models() or self.res_model not in self.env:
             return self.env[self.res_model].browse()
         return self.env[self.res_model].browse(self.res_id).exists()
+
+    @api.model
+    def _website_for_target(self, target):
+        website = target.website_id if target and 'website_id' in target._fields else self.env['website'].browse()
+        return website or self.env['website'].search([], order='sequence, id', limit=1)
+
+    def _item_website(self, target=None):
+        self.ensure_one()
+        return self.website_id or self._website_for_target(target or self._get_target())
+
+    def _canonical_for_target(self, target, website=None):
+        website = website or self._website_for_target(target)
+        path = False
+        if target:
+            if 'website_url' in target._fields:
+                path = target.website_url
+            elif self.res_model == 'website.page':
+                path = target.url
+        if not path:
+            return False
+        domain = (website.domain or '').rstrip('/')
+        return '%s%s' % (domain, path if path.startswith('/') else '/%s' % path) if domain else path
 
     def _target_is_private(self, target):
         if not target:
@@ -83,7 +130,7 @@ class DiligenceSeoItem(models.Model):
             values['is_published'] = target.active
         if 'website_indexed' in target._fields:
             values['is_indexed'] = bool(target.website_indexed and values.get('is_published'))
-        values['canonical_url'] = values.get('url')
+        values['canonical_url'] = self._canonical_for_target(target, self._item_website(target))
         return values
 
     def _sync_to_target(self, vals=None):
@@ -130,6 +177,11 @@ class DiligenceSeoItem(models.Model):
             warnings.append(_('Meta description is longer than 160 characters.'))
         if not self.url:
             warnings.append(_('URL is empty.'))
+        website = self._item_website()
+        if not website:
+            warnings.append(_('Website/domain is not configured.'))
+        elif self.canonical_url and website.domain and not self.canonical_url.startswith(website.domain.rstrip('/') + '/'):
+            warnings.append(_('Canonical URL does not match the selected website domain.'))
         target = self._get_target()
         if self.is_indexed and (not self.is_published or self._target_is_private(target)):
             warnings.append(_('Unpublished or private content must not be indexed.'))
@@ -147,6 +199,37 @@ class DiligenceSeoItem(models.Model):
             item.seo_score = max(0, 100 - len(warnings) * 15)
             item.seo_status = 'complete' if not warnings else ('needs_improvement' if len(warnings) >= 3 else 'warning')
 
+    def _compute_duplicate_flags(self):
+        for item in self:
+            item.duplicate_title = bool(item.seo_title and self.search_count([
+                ('website_id', '=', item.website_id.id),
+                ('seo_title', '=', item.seo_title),
+                ('id', '!=', item.id),
+            ]))
+            item.duplicate_canonical = bool(item.canonical_url and self.search_count([
+                ('website_id', '=', item.website_id.id),
+                ('canonical_url', '=', item.canonical_url),
+                ('id', '!=', item.id),
+            ]))
+
+    @api.model
+    def _search_duplicate_title(self, operator, value):
+        if operator not in ('=', '!='):
+            return [('id', '=', 0)]
+        items = self.search([])
+        ids = items.filtered('duplicate_title').ids
+        include = (operator == '=' and bool(value)) or (operator == '!=' and not value)
+        return [('id', 'in' if include else 'not in', ids)]
+
+    @api.model
+    def _search_duplicate_canonical(self, operator, value):
+        if operator not in ('=', '!='):
+            return [('id', '=', 0)]
+        items = self.search([])
+        ids = items.filtered('duplicate_canonical').ids
+        include = (operator == '=' and bool(value)) or (operator == '!=' and not value)
+        return [('id', 'in' if include else 'not in', ids)]
+
     @api.constrains('res_model', 'res_id', 'is_indexed', 'url')
     def _check_target(self):
         for item in self:
@@ -154,9 +237,17 @@ class DiligenceSeoItem(models.Model):
                 raise ValidationError(_('Content Type must match the selected content model.'))
             if item.res_id <= 0 or not item._get_target():
                 raise ValidationError(_('The selected content record does not exist.'))
+            target = item._get_target()
+            target_website = item._website_for_target(target)
+            if target_website and target.website_id and item.website_id != target_website:
+                raise ValidationError(_('The SEO website must match the content website.'))
             if item.is_indexed and (not item.is_published or item._target_is_private(item._get_target())):
                 raise ValidationError(_('Private or unpublished content cannot be marked as indexed.'))
-            if item.url and self.search_count([('url', '=', item.url), ('id', '!=', item.id)]):
+            if item.url and self.search_count([
+                ('website_id', '=', item.website_id.id),
+                ('url', '=', item.url),
+                ('id', '!=', item.id),
+            ]):
                 raise ValidationError(_('The URL must be unique across SEO Manager items.'))
 
     @api.model_create_multi
@@ -171,6 +262,7 @@ class DiligenceSeoItem(models.Model):
             if not target:
                 raise ValidationError(_('The selected content record does not exist.'))
             defaults = self._target_values_for_create(model, target)
+            defaults['website_id'] = vals.get('website_id') or self._website_for_target(target).id
             defaults.update(vals)
             defaults.update({'content_type': content_type, 'res_model': model, 'res_id': target.id})
             records |= super(DiligenceSeoItem, self).create(defaults)
@@ -203,7 +295,9 @@ class DiligenceSeoItem(models.Model):
         values['is_indexed'] = bool(
             target.website_indexed and values.get('is_published')
         ) if 'website_indexed' in target._fields else False
-        values['canonical_url'] = values['url']
+        website = self.env['website'].browse(target.website_id.id) if 'website_id' in target._fields and target.website_id else self.env['website'].search([], order='sequence, id', limit=1)
+        values['website_id'] = website.id
+        values['canonical_url'] = self._canonical_for_target(target, website)
         return values
 
     @api.model
@@ -264,6 +358,8 @@ class DiligenceSeoItem(models.Model):
             for item in self:
                 if not item.is_published or item._target_is_private(item._get_target()):
                     raise UserError(_('Publish the content before enabling indexing.'))
+        if 'seo_keywords' in vals and vals['seo_keywords']:
+            vals.setdefault('keyword_source', 'manual')
         result = super().write(vals)
         self.write({'last_updated': fields.Datetime.now()}) if 'last_updated' not in vals else None
         self._sync_to_target(vals)
@@ -316,7 +412,63 @@ class DiligenceSeoItem(models.Model):
                 continue
             target = item._get_target()
             if target:
-                item.write({'seo_keywords': item._generate_content_keywords(target)})
+                item.write({
+                    'seo_keywords': item._generate_content_keywords(target),
+                    'keyword_source': 'generated',
+                    'keywords_generated_at': fields.Datetime.now(),
+                })
+        return True
+
+    def _get_search_keyword_suggestions(self, target, limit=10):
+        """Return popular internal-search terms that are relevant to ``target``.
+
+        Search terms are only suggestions. They are never written to the native
+        SEO fields until a manager explicitly presses the apply button.
+        """
+        content = self._seo_content_text(target).lower()
+        content_words = set(re.findall(r"[\wÀ-ÿ]{3,}", content, flags=re.UNICODE))
+        stopwords = {
+            'yang', 'dan', 'dengan', 'untuk', 'dari', 'pada', 'atau', 'adalah',
+            'akan', 'dalam', 'ini', 'itu', 'the', 'and', 'with', 'for', 'from',
+            'your', 'you', 'are', 'this', 'that', 'our', 'learn', 'course',
+        }
+        suggestions = []
+        terms = self.env['diligence.seo.search.term'].sudo().search(
+            [('active', '=', True)],
+            order='search_count desc, last_searched desc, id desc',
+            limit=100,
+        )
+        for term in terms:
+            words = set(re.findall(r"[\wÀ-ÿ]{3,}", term.name.lower(), flags=re.UNICODE)) - stopwords
+            if words and (words & content_words or term.name.lower() in content):
+                suggestions.append(term.name)
+            if len(suggestions) >= limit:
+                break
+        return suggestions
+
+    @api.depends('seo_title', 'seo_description', 'seo_keywords', 'res_model', 'res_id')
+    def _compute_search_keyword_suggestions(self):
+        for item in self:
+            target = item._get_target()
+            item.search_keyword_suggestions = ', '.join(
+                item._get_search_keyword_suggestions(target)
+            ) if target else False
+
+    def action_apply_search_keyword_suggestions(self):
+        """Append relevant popular search terms without replacing custom SEO."""
+        for item in self:
+            target = item._get_target()
+            if not target:
+                continue
+            suggestions = item._get_search_keyword_suggestions(target)
+            existing = [part.strip() for part in (item.seo_keywords or '').split(',') if part.strip()]
+            existing_keys = {part.casefold() for part in existing}
+            for suggestion in suggestions:
+                if suggestion.casefold() not in existing_keys:
+                    existing.append(suggestion)
+                    existing_keys.add(suggestion.casefold())
+            if existing:
+                item.write({'seo_keywords': ', '.join(existing)[:500]})
         return True
 
     def action_update_all_sources(self):
@@ -329,7 +481,8 @@ class DiligenceSeoItem(models.Model):
             source_values = item._target_values(target)
             item.write({
                 "url": source_values.get("url", False),
-                "canonical_url": source_values.get("url", False),
+                "canonical_url": source_values.get("canonical_url", False),
+                "last_audited_at": fields.Datetime.now(),
             })
         return True
 
@@ -342,3 +495,61 @@ class DiligenceSeoItem(models.Model):
                 if not self.search_count([('res_model', '=', model), ('res_id', '=', target.id)]):
                     self.create({'content_type': model, 'res_model': model, 'res_id': target.id})
         return True
+
+
+class DiligenceSeoSearchTerm(models.Model):
+    _name = 'diligence.seo.search.term'
+    _description = 'Diligence Internal Search Keyword'
+    _order = 'search_count desc, last_searched desc, name'
+
+    name = fields.Char(required=True, index=True)
+    normalized_term = fields.Char(required=True, index=True)
+    search_count = fields.Integer(default=0, required=True)
+    result_count = fields.Integer(default=0)
+    first_searched = fields.Datetime(default=fields.Datetime.now, readonly=True)
+    last_searched = fields.Datetime(default=fields.Datetime.now, required=True)
+    active = fields.Boolean(default=True)
+
+    _term_unique = models.Constraint(
+        'UNIQUE(normalized_term)',
+        'This search term is already being tracked.',
+    )
+
+    @api.model
+    def record_query(self, query, result_count=0):
+        """Record an anonymous, normalized search query.
+
+        No visitor identity, IP address, cookie, or request headers are stored.
+        """
+        query = re.sub(r'\s+', ' ', str(query or '')).strip()[:120]
+        if len(query) < 2 or not re.search(r'[\wÀ-ÿ]', query, flags=re.UNICODE):
+            return self.browse()
+        normalized = query.casefold()
+        now = fields.Datetime.now()
+        values = {
+            'name': query,
+            'normalized_term': normalized,
+            'result_count': max(0, int(result_count or 0)),
+            'last_searched': now,
+        }
+        Term = self.sudo()
+        term = Term.search([('normalized_term', '=', normalized)], limit=1)
+        if term:
+            term.write({
+                'search_count': term.search_count + 1,
+                'result_count': values['result_count'],
+                'last_searched': now,
+            })
+            return term
+        try:
+            with self.env.cr.savepoint():
+                return Term.create(values | {'search_count': 1})
+        except IntegrityError:
+            term = Term.search([('normalized_term', '=', normalized)], limit=1)
+            if term:
+                term.write({
+                    'search_count': term.search_count + 1,
+                    'result_count': values['result_count'],
+                    'last_searched': now,
+                })
+            return term

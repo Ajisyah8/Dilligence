@@ -81,6 +81,7 @@
         'assets': {
         'web.assets_frontend_minimal': [
             'diligence_learning/static/src/js/diligence_lesson_navigation.js',
+            'diligence_learning/static/src/js/diligence_seo_search_tracking.js',
         ],
         'web.assets_frontend': [
             'diligence_learning/static/lib/plyr/plyr.css',

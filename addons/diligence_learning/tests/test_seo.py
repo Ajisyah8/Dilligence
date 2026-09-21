@@ -32,6 +32,23 @@ class TestDiligenceSeoManager(TransactionCase):
             self.assertEqual(self.page.website_meta_keywords, item.seo_keywords)
         self.assertFalse(item.is_indexed)
 
+    def test_seo_item_is_scoped_to_website_and_domain(self):
+        website = self.env['website'].search([], limit=1)
+        previous_domain = website.domain
+        website.domain = 'https://seo-local.example'
+        try:
+            item = self.seo_model.create({
+                'content_type': 'website.page',
+                'res_model': 'website.page',
+                'res_id': self.page.id,
+                'is_indexed': False,
+            })
+            self.assertEqual(item.website_id, website)
+            self.assertEqual(item.domain, 'https://seo-local.example')
+            self.assertTrue(item.canonical_url.startswith('https://seo-local.example/'))
+        finally:
+            website.domain = previous_domain
+
     def test_generate_defaults_fills_empty_keywords_without_overwriting_custom_keywords(self):
         item = self.seo_model.create({
             'content_type': 'website.page',
@@ -62,6 +79,8 @@ class TestDiligenceSeoManager(TransactionCase):
         item.action_generate_content_keywords()
         self.assertIn('Mandarin', item.seo_keywords)
         self.assertIn('speaking', item.seo_keywords)
+        self.assertEqual(item.keyword_source, 'generated')
+        self.assertTrue(item.keywords_generated_at)
 
         item.write({'seo_keywords': 'Custom keyword set'})
         item.action_generate_content_keywords()
@@ -110,3 +129,33 @@ class TestDiligenceSeoManager(TransactionCase):
         self.seo_model.with_user(editor).check_access('write')
         with self.assertRaises(AccessError):
             self.seo_model.with_user(editor).check_access('create')
+
+    def test_internal_search_terms_are_aggregated_without_identity(self):
+        terms = self.env['diligence.seo.search.term']
+        first = terms.record_query('  Kursus   Mandarin  ')
+        second = terms.record_query('kursus mandarin', result_count=3)
+        self.assertEqual(first, second)
+        self.assertEqual(second.name, 'Kursus Mandarin')
+        self.assertEqual(second.search_count, 2)
+        self.assertEqual(second.result_count, 3)
+        self.assertNotIn('email', second._fields)
+        self.assertNotIn('ip', second._fields)
+
+    def test_relevant_search_keywords_can_be_applied_without_overwriting_custom(self):
+        self.env['diligence.seo.search.term'].record_query('kursus Mandarin online')
+        product = self.env['product.template'].create({
+            'name': 'Kursus Mandarin Online',
+            'list_price': 100000,
+            'description_sale': 'Program belajar Mandarin online untuk pemula.',
+        })
+        item = self.seo_model.create({
+            'content_type': 'product.template',
+            'res_model': 'product.template',
+            'res_id': product.id,
+            'seo_keywords': 'keyword manual',
+            'is_indexed': False,
+        })
+        self.assertIn('kursus Mandarin online', item.search_keyword_suggestions)
+        item.action_apply_search_keyword_suggestions()
+        self.assertIn('keyword manual', item.seo_keywords)
+        self.assertIn('kursus Mandarin online', item.seo_keywords)

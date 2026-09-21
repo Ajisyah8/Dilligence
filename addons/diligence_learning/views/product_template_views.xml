@@ -17,6 +17,11 @@
                         <field name="list_price" string="Harga Normal" help="Harga normal paket sebelum potongan Early Bird. Contoh: 169000."/>
                         <field name="diligence_access_duration_days" string="Masa Akses (Hari)" help="Berapa hari siswa dapat mengakses paket setelah pembayaran dikonfirmasi. Kosong atau 0 berarti tanpa batas waktu."/>
                     </group>
+                    <group string="COA dan Accounting" col="2" groups="account.group_account_invoice,account.group_account_manager">
+                        <div class="text-muted" colspan="2">Pilih akun COA yang digunakan ketika produk paket ini masuk ke invoice. Jika dikosongkan, Odoo menggunakan akun pendapatan dan biaya dari kategori produk.</div>
+                        <field name="property_account_income_id" string="Income Account" placeholder="From Category"/>
+                        <field name="property_account_expense_id" string="Expense Account" placeholder="From Category"/>
+                    </group>
                     <group string="2. Harga Early Bird" col="2">
                         <div class="text-muted" colspan="2">Aktifkan hanya pada paket yang sedang mendapat harga promo. Harga di website akan berubah otomatis selama periode promo.</div>
                         <field name="diligence_early_bird_enabled" string="Aktifkan Early Bird" help="Centang untuk memakai harga promo pada paket ini. Paket lain yang tidak dicentang tetap memakai harga normal."/>

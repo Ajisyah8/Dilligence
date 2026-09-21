@@ -21,8 +21,8 @@ class DiligenceBulkPdfUpload(models.TransientModel):
         help='If empty, the new lessons are appended to the end of the course.',
     )
     attachment_ids = fields.Many2many(
-        'ir.attachment', string='PDF files',
-        help='Select or drag up to 50 PDF files here, then click Upload.',
+        'ir.attachment', string='PDF / Audio files',
+        help='Select or drag up to 50 PDF or audio files here, then click Upload.',
     )
     line_ids = fields.One2many(
         'diligence.bulk.pdf.upload.line', 'wizard_id', string='Upload results',
@@ -40,23 +40,46 @@ class DiligenceBulkPdfUpload(models.TransientModel):
 
     def _validate_attachment(self, attachment):
         filename = attachment.name or ''
-        if not filename.lower().endswith('.pdf'):
-            raise ValidationError(_('Only files with a .pdf extension are accepted.'))
-        if attachment.mimetype != 'application/pdf':
-            raise ValidationError(_('The file must have the application/pdf MIME type.'))
+        extension = os.path.splitext(filename)[1].lower()
+        allowed_mimetypes = {
+            '.pdf': {'application/pdf'},
+            '.mp3': {'audio/mpeg', 'audio/mp3', 'application/octet-stream'},
+            '.wav': {'audio/wav', 'audio/x-wav', 'audio/wave', 'application/octet-stream'},
+            '.ogg': {'audio/ogg', 'application/ogg', 'application/octet-stream'},
+            '.webm': {'audio/webm', 'video/webm', 'application/octet-stream'},
+        }
+        if extension not in allowed_mimetypes:
+            raise ValidationError(_('Only PDF, MP3, WAV, OGG, and WebM audio files are accepted.'))
+        if attachment.mimetype not in allowed_mimetypes[extension]:
+            raise ValidationError(_('The MIME type does not match the selected file extension.'))
         if not attachment.datas:
-            raise ValidationError(_('The PDF file is empty.'))
+            raise ValidationError(_('The uploaded file is empty.'))
         content = base64.b64decode(attachment.datas)
-        if not content or not content.startswith(b'%PDF-'):
-            raise ValidationError(_('The file is not a valid PDF.'))
-        try:
-            reader = PdfFileReader(io.BytesIO(content))
-            if reader.getNumPages() < 1:
-                raise ValidationError(_('The PDF must contain at least one page.'))
-        except ValidationError:
-            raise
-        except Exception as error:
-            raise ValidationError(_('The PDF is corrupted or cannot be read.')) from error
+        if not content:
+            raise ValidationError(_('The uploaded file is empty.'))
+        if extension == '.pdf':
+            if not content.startswith(b'%PDF-'):
+                raise ValidationError(_('The file is not a valid PDF.'))
+            try:
+                reader = PdfFileReader(io.BytesIO(content))
+                if reader.getNumPages() < 1:
+                    raise ValidationError(_('The PDF must contain at least one page.'))
+            except ValidationError:
+                raise
+            except Exception as error:
+                raise ValidationError(_('The PDF is corrupted or cannot be read.')) from error
+            category = 'document'
+        else:
+            valid_audio_header = (
+                content.startswith(b'ID3')
+                or content[:2] in (b'\xff\xfb', b'\xff\xf3', b'\xff\xf2')
+                or (content.startswith(b'RIFF') and content[8:12] == b'WAVE')
+                or content.startswith(b'OggS')
+                or content.startswith(b'\x1a\x45\xdf\xa3')
+            )
+            if not valid_audio_header:
+                raise ValidationError(_('The audio file is corrupted or has an unsupported encoding.'))
+            category = 'audio'
 
         max_size = int(self.env['ir.config_parameter'].sudo().get_param(
             'web.max_file_upload_size', 0,
@@ -65,7 +88,7 @@ class DiligenceBulkPdfUpload(models.TransientModel):
             raise ValidationError(_(
                 'The file exceeds the configured Odoo upload limit (%s bytes).', max_size,
             ))
-        return content
+        return content, category
 
     def _next_sequence(self, count):
         slides = self.course_id.slide_ids.sorted(key=lambda slide: (slide.sequence, slide.id))
@@ -83,11 +106,11 @@ class DiligenceBulkPdfUpload(models.TransientModel):
         return sequence
 
     def _existing_checksum_slide(self, checksum):
-        # Read only local PDF lessons in this course. This is independent of
+        # Read only local PDF/audio lessons in this course. This is independent of
         # how Odoo stores an attachment for the binary field and also catches
         # retries after the temporary upload attachment has been removed.
         for slide in self.course_id.slide_ids.filtered(
-            lambda item: item.slide_category == 'document'
+            lambda item: item.slide_category in ('document', 'audio')
             and item.source_type == 'local_file'
             and item.binary_content
         ):
@@ -101,7 +124,7 @@ class DiligenceBulkPdfUpload(models.TransientModel):
         self._check_manager_access()
         attachments = self.attachment_ids
         if not attachments:
-            raise UserError(_('Select at least one PDF file.'))
+            raise UserError(_('Select at least one PDF or audio file.'))
         if len(attachments) > 50:
             raise UserError(_('You can upload a maximum of 50 PDF files at once.'))
 
@@ -114,10 +137,11 @@ class DiligenceBulkPdfUpload(models.TransientModel):
                 'attachment_id': attachment.id,
                 'filename': attachment.name,
                 'file_size': attachment.file_size,
+                'content_type': 'document' if (attachment.name or '').lower().endswith('.pdf') else 'audio',
                 'state': 'pending',
             })
             try:
-                content = self._validate_attachment(attachment)
+                content, category = self._validate_attachment(attachment)
                 # Match the SHA1 checksum used by ir.attachment so retries are
                 # idempotent after the slide attachment is created.
                 checksum = hashlib.sha1(content).hexdigest()
@@ -133,7 +157,7 @@ class DiligenceBulkPdfUpload(models.TransientModel):
                 slide = self.env['slide.slide'].create({
                     'name': os.path.splitext(attachment.name)[0],
                     'channel_id': self.course_id.id,
-                    'slide_category': 'document',
+                    'slide_category': category,
                     'source_type': 'local_file',
                     'binary_content': base64.b64encode(content),
                     'is_published': False,
@@ -141,6 +165,8 @@ class DiligenceBulkPdfUpload(models.TransientModel):
                     'sequence': sequence,
                     'user_id': self.env.uid,
                 })
+                if category == 'audio' and 'diligence_audio_filename' in slide._fields:
+                    slide.write({'diligence_audio_filename': attachment.name})
                 sequence += 1
                 line.write({
                     'state': 'uploaded',
@@ -176,6 +202,10 @@ class DiligenceBulkPdfUploadLine(models.TransientModel):
     attachment_id = fields.Many2one('ir.attachment', ondelete='set null', readonly=True)
     filename = fields.Char(readonly=True)
     file_size = fields.Integer(readonly=True)
+    content_type = fields.Selection([
+        ('document', 'PDF'),
+        ('audio', 'Audio'),
+    ], string='Type', readonly=True)
     state = fields.Selection([
         ('pending', 'Pending'),
         ('uploaded', 'Uploaded'),

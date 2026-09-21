@@ -4,5 +4,6 @@ from . import test_invoice_officer
 from . import test_newsletter
 from . import test_outstanding_payment_account
 from . import test_seo
+from . import test_referral
 from . import test_contact_segments
 from . import test_video_player

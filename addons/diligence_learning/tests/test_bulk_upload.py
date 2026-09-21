@@ -37,6 +37,7 @@ class TestDiligenceBulkPdfUpload(TransactionCase):
         cls.pdf = file_open('base/tests/minimal.pdf', 'rb').read()
         if not cls.pdf or PdfFileReader(io.BytesIO(cls.pdf)).getNumPages() < 1:
             raise AssertionError('The Odoo minimal PDF fixture is not readable.')
+        cls.audio = b'ID3\x04\x00\x00\x00\x00\x00\x00' + (b'fake-audio-frame' * 8)
 
     def _wizard(self, names_and_contents=None, section=False):
         wizard = self.env['diligence.bulk.pdf.upload'].with_user(self.manager).create({
@@ -53,7 +54,7 @@ class TestDiligenceBulkPdfUpload(TransactionCase):
                 'res_id': wizard.id,
             }
             for name, content, mimetype in [
-                (name, content, 'application/pdf')
+                (name, content, 'application/pdf' if name.lower().endswith('.pdf') else 'audio/mpeg')
                 for name, content in names_and_contents
             ]
         ])
@@ -84,6 +85,18 @@ class TestDiligenceBulkPdfUpload(TransactionCase):
         second.action_upload()
         self.assertEqual(len(self.course.slide_ids), before)
         self.assertEqual(second.line_ids.state, 'duplicate')
+
+    def test_upload_creates_unpublished_audio_lesson(self):
+        wizard = self._wizard([('Listening 01.mp3', self.audio)])
+        wizard.action_upload()
+        slide = self.course.slide_ids.filtered(lambda item: item.name == 'Listening 01')
+        self.assertEqual(len(slide), 1)
+        self.assertEqual(slide.slide_category, 'audio')
+        self.assertEqual(slide.source_type, 'local_file')
+        self.assertFalse(slide.is_published)
+        self.assertEqual(slide.diligence_audio_filename, 'Listening 01.mp3')
+        self.assertTrue(slide.binary_content)
+        self.assertEqual(wizard.line_ids.content_type, 'audio')
 
     def test_invalid_files_are_reported_and_not_created(self):
         wizard = self._wizard([

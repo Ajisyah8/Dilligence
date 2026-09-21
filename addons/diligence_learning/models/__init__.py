@@ -24,7 +24,6 @@ from . import whatsapp
 from . import whatsapp_webhook
 from . import whatsapp_campaign
 from . import seo
-from . import seo
 from . import survey_invite
 from . import placement_test
 from . import bulk_upload

@@ -24,7 +24,8 @@ class DiligenceReferralExport(http.Controller):
         writer.writerow([
             'Reference', 'Affiliate', 'Student', 'Referral Code', 'Sale Order',
             'Program', 'Payment Date', 'Payment Amount', 'Net Payment',
-            'Cashback Amount', 'Status', 'Settlement', 'Paid Date',
+            'Cashback Amount', 'Cashback Paid', 'Cashback Remaining',
+            'Cashback Tracking', 'Status', 'Settlement', 'Paid Date',
         ])
         for referral in referrals:
             writer.writerow([
@@ -38,6 +39,9 @@ class DiligenceReferralExport(http.Controller):
                 referral.payment_amount,
                 referral.net_payment,
                 referral.cashback_amount,
+                referral.cashback_paid_amount,
+                referral.cashback_remaining_amount,
+                referral.cashback_tracking_status,
                 referral.status,
                 referral.settlement_id.name or '',
                 referral.paid_date or '',

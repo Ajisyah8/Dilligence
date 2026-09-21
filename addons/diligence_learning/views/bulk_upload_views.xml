@@ -6,8 +6,8 @@
             <form string="Bulk Upload Materials">
                 <sheet>
                     <div class="alert alert-info" role="status">
-                        <strong>Upload PDF materials</strong>
-                        <div>Select or drag up to 50 PDF files. New lessons remain unpublished until you publish them.</div>
+                        <strong>Upload PDF / Audio materials</strong>
+                        <div>Select or drag up to 50 PDF or audio files. New lessons remain unpublished until you publish them.</div>
                     </div>
                     <group>
                         <field name="course_id" options="{'no_create': True}"/>
@@ -15,12 +15,13 @@
                         <field name="result_message" readonly="1" invisible="not result_message"/>
                     </group>
                     <group string="Files to upload" invisible="result_message">
-                        <field name="attachment_ids" widget="many2many_binary" options="{'accepted_file_extensions': '.pdf'}" nolabel="1"/>
+                        <field name="attachment_ids" widget="many2many_binary" options="{'accepted_file_extensions': '.pdf,.mp3,.wav,.ogg,.webm'}" nolabel="1"/>
                     </group>
                     <group string="Upload results" invisible="not line_ids">
                         <field name="line_ids" nolabel="1">
                             <list create="0" delete="0">
                                 <field name="filename"/>
+                                <field name="content_type"/>
                                 <field name="file_size" string="Size (bytes)"/>
                                 <field name="state" widget="badge" decoration-success="state == 'uploaded'" decoration-danger="state == 'failed'" decoration-warning="state == 'duplicate'"/>
                                 <field name="slide_id"/>

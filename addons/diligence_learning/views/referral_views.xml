@@ -12,6 +12,11 @@
                 <field name="status"/>
                 <field name="payment_date" string="Payment Date"/>
                 <field name="cashback_amount" string="Cashback Amount"/>
+                <field name="cashback_tracking_status" string="Cashback Tracking"/>
+                <filter name="pending_payment" string="Awaiting Student Payment" domain="[('cashback_tracking_status', '=', 'pending_payment')]"/>
+                <filter name="pending_payout" string="Awaiting Cashback Payout" domain="[('cashback_tracking_status', '=', 'pending_payout')]"/>
+                <filter name="cashback_paid" string="Cashback Paid" domain="[('cashback_tracking_status', '=', 'paid')]"/>
+                <filter name="cashback_remaining" string="Cashback Remaining" domain="[('cashback_remaining_amount', '>', 0)]"/>
                 <filter name="payment_this_month" string="Payment This Month" date="payment_date"/>
                 <filter name="payment_last_month" string="Payment Last Month" date="payment_date"/>
                 <filter name="unsettled" string="Not Settled" domain="[('settlement_id', '=', False), ('status', 'not in', ('draft', 'pending_payment', 'cancelled', 'reversed', 'paid'))]"/>
@@ -44,6 +49,9 @@
                 <field name="net_payment" sum="Net Payment"/>
                 <field name="payment_amount" sum="Payment Received"/>
                 <field name="cashback_amount" sum="Cashback"/>
+                <field name="cashback_paid_amount" sum="Cashback Paid"/>
+                <field name="cashback_remaining_amount" sum="Cashback Remaining"/>
+                <field name="cashback_tracking_status" widget="badge"/>
                 <field name="status" widget="badge"/>
                 <field name="settlement_id"/>
                 <field name="payment_date"/>
@@ -88,6 +96,9 @@
                             <field name="cashback_rate" invisible="cashback_type_id.code != 'percent' and cashback_type != 'percent'"/>
                             <field name="cashback_fixed" invisible="cashback_type_id.code != 'fixed' and cashback_type != 'fixed'"/>
                             <field name="cashback_amount"/>
+                            <field name="cashback_paid_amount"/>
+                            <field name="cashback_remaining_amount"/>
+                            <field name="cashback_tracking_status" widget="badge"/>
                             <field name="waiting_until"/>
                             <field name="payout_reference"/>
                             <field name="approved_by"/>

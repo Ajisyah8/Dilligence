@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="action_diligence_account_groups" model="ir.actions.act_window">
+        <field name="name">Account Groups / Sub-accounts</field>
+        <field name="res_model">account.group</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="account.view_account_group_tree"/>
+        <field name="search_view_id" ref="account.view_account_group_search"/>
+    </record>
+
     <!--
         Odoo Community's Invoicing app hides the native Chart of Accounts
         menu behind the optional accounting-readonly group.  Accounting
@@ -14,4 +22,35 @@
         action="account.action_account_form"
         groups="account.group_account_manager"
         sequence="5"/>
+
+    <menuitem
+        id="menu_diligence_account_groups"
+        name="Account Groups / Sub-accounts"
+        parent="account.menu_finance_configuration"
+        action="action_diligence_account_groups"
+        groups="account.group_account_manager"
+        sequence="6"/>
+
+    <!-- Keep sub-account management inside the COA screen, not as a separate sidebar item. -->
+    <record id="menu_diligence_account_groups" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+
+    <record id="view_diligence_account_list_subaccounts" model="ir.ui.view">
+        <field name="name">account.account.list.diligence.subaccounts</field>
+        <field name="model">account.account</field>
+        <field name="inherit_id" ref="account.view_account_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <header>
+                    <button name="%(action_diligence_account_groups)d"
+                            type="action"
+                            string="Manage Sub-accounts"
+                            class="btn-secondary"
+                            display="always"
+                            groups="account.group_account_manager"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
 </odoo>

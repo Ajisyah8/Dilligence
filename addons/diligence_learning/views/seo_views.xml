@@ -14,6 +14,8 @@
                     <button name="action_set_unpublished" type="object" string="Set Unpublished" groups="diligence_learning.group_diligence_seo_manager" confirm="Unpublish the selected content and disable indexing?"/>
                 </header>
                 <field name="name"/>
+                <field name="website_id"/>
+                <field name="domain"/>
                 <field name="content_type"/>
                 <field name="url"/>
                 <field name="seo_keywords"/>
@@ -34,6 +36,8 @@
                 <field name="name"/>
                 <field name="url"/>
                 <field name="content_type"/>
+                <field name="website_id"/>
+                <field name="domain"/>
                 <field name="seo_keywords"/>
                 <filter name="missing_title" string="Missing SEO Title" domain="[('seo_title', '=', False)]"/>
                 <filter name="missing_description" string="Missing Description" domain="[('seo_description', '=', False)]"/>
@@ -44,7 +48,11 @@
                 <filter name="unpublished" string="Unpublished" domain="[('is_published', '=', False)]"/>
                 <filter name="needs_improvement" string="Needs Improvement" domain="[('seo_status', '=', 'needs_improvement')]"/>
                 <filter name="complete" string="Complete" domain="[('seo_status', '=', 'complete')]"/>
+                <filter name="duplicate_canonical" string="Duplicate Canonical" domain="[('duplicate_canonical', '=', True)]"/>
+                <filter name="duplicate_title" string="Duplicate Title" domain="[('duplicate_title', '=', True)]"/>
                 <filter name="group_content_type" string="Group by Content Type" context="{'group_by': 'content_type'}"/>
+                <filter name="group_website" string="Group by Website" context="{'group_by': 'website_id'}"/>
+                <filter name="group_domain" string="Group by Domain" context="{'group_by': 'domain'}"/>
             </search>
         </field>
     </record>
@@ -64,6 +72,8 @@
                 <sheet>
                     <group string="Content Information">
                         <field name="name"/>
+                        <field name="website_id" groups="diligence_learning.group_diligence_seo_manager"/>
+                        <field name="domain" readonly="1"/>
                         <field name="content_type"/>
                         <field name="res_model" invisible="1"/>
                         <field name="res_id"/>
@@ -77,6 +87,10 @@
                                 <field name="seo_title" placeholder="Recommended: 30-60 characters"/>
                                 <field name="seo_description" placeholder="Recommended: 120-160 characters"/>
                                 <field name="seo_keywords" placeholder="Comma-separated keywords"/>
+                                <field name="keyword_source" readonly="1"/>
+                                <field name="keywords_generated_at" readonly="1"/>
+                                <field name="search_keyword_suggestions" readonly="1" placeholder="No relevant internal search terms yet"/>
+                                <button name="action_apply_search_keyword_suggestions" type="object" string="Add Relevant Search Keywords" class="btn-secondary" groups="diligence_learning.group_diligence_seo_manager" confirm="Append relevant search terms without replacing existing keywords?"/>
                                 <field name="canonical_url"/>
                             </group>
                             <group string="Google Preview">
@@ -88,7 +102,11 @@
                             </group>
                         </page>
                         <page string="Social Sharing">
-                            <group><field name="og_image" widget="image" options="{'preview_image': 'og_image'}"/></group>
+                            <group>
+                                <field name="og_title"/>
+                                <field name="og_description"/>
+                                <field name="og_image" widget="image" options="{'preview_image': 'og_image'}"/>
+                            </group>
                         </page>
                         <page string="SEO Analysis">
                             <group>
@@ -96,6 +114,7 @@
                                 <field name="seo_status" widget="badge"/>
                                 <field name="seo_warnings" readonly="1" nolabel="1"/>
                                 <field name="last_updated" readonly="1"/>
+                                <field name="last_audited_at" readonly="1"/>
                             </group>
                         </page>
                     </notebook>
@@ -112,4 +131,59 @@
         <field name="help" type="html"><p>Use Sync All Sources to add supported website, product, course, and blog content.</p></field>
     </record>
     <menuitem id="menu_diligence_seo_manager" name="SEO Manager" parent="website.menu_website_global_configuration" action="action_diligence_seo_manager" sequence="35" groups="website.group_website_designer"/>
+
+    <record id="diligence_seo_search_term_list" model="ir.ui.view">
+        <field name="name">diligence.seo.search.term.list</field>
+        <field name="model">diligence.seo.search.term</field>
+        <field name="arch" type="xml">
+            <list string="User Search Keywords">
+                <field name="name"/>
+                <field name="search_count"/>
+                <field name="result_count"/>
+                <field name="first_searched"/>
+                <field name="last_searched"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+    <record id="diligence_seo_search_term_search" model="ir.ui.view">
+        <field name="name">diligence.seo.search.term.search</field>
+        <field name="model">diligence.seo.search.term</field>
+        <field name="arch" type="xml">
+            <search string="User Search Keywords">
+                <field name="name"/>
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="popular" string="Popular (10+)" domain="[('search_count', '&gt;=', 10)]"/>
+                <group>
+                    <filter name="group_active" string="Active" context="{'group_by': 'active'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="diligence_seo_search_term_form" model="ir.ui.view">
+        <field name="name">diligence.seo.search.term.form</field>
+        <field name="model">diligence.seo.search.term</field>
+        <field name="arch" type="xml">
+            <form string="User Search Keyword">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="search_count" readonly="1"/>
+                        <field name="result_count" readonly="1"/>
+                        <field name="first_searched" readonly="1"/>
+                        <field name="last_searched" readonly="1"/>
+                        <field name="active"/>
+                    </group>
+                    <p class="text-muted">Only the normalized search phrase and aggregate counts are stored; no visitor identity is recorded.</p>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_diligence_seo_search_terms" model="ir.actions.act_window">
+        <field name="name">User Search Keywords</field>
+        <field name="res_model">diligence.seo.search.term</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="diligence_seo_search_term_search"/>
+    </record>
+    <menuitem id="menu_diligence_seo_search_terms" name="User Search Keywords" parent="website.menu_website_global_configuration" action="action_diligence_seo_search_terms" sequence="36" groups="website.group_website_designer"/>
 </odoo>

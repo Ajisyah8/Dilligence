@@ -8,3 +8,4 @@ from . import website_sale
 from . import whatsapp_webhook
 from . import newsletter
 from . import referral_export
+from . import seo_search
