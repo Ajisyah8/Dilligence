@@ -1,6 +1,8 @@
 <odoo>
     <template id="diligence_homepage_newsletter" inherit_id="website.homepage" name="Diligence Homepage Newsletter">
-        <xpath expr="//section[@data-name='Testimonials']" position="before">
+        <!-- Website Builder may use a website-specific homepage copy whose
+             section labels differ. The wrapper is the stable insertion point. -->
+        <xpath expr="//div[@id='wrap']" position="inside">
             <section class="s_newsletter_block s_newsletter_list o_cc o_cc2 pt64 pb64" data-snippet="s_newsletter_block" data-name="Newsletter" data-list-id="2">
                 <div class="container">
                     <div class="row align-items-center g-4">

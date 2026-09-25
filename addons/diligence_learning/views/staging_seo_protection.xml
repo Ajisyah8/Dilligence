@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Keep the public staging host out of search indexes. Production
+         domains do not match this condition. -->
+    <template id="diligence_staging_seo_protection" inherit_id="website.layout" name="Diligence Staging SEO Protection">
+        <xpath expr="//head" position="inside">
+            <meta t-if="website.domain == 'https://diligence.arusdigital.cloud'" name="robots" content="noindex,nofollow"/>
+        </xpath>
+    </template>
+</odoo>

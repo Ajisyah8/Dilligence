@@ -72,6 +72,29 @@
                             <div class="text-muted">Send only after payment and course access are valid.</div>
                         </div>
                     </div></div>
+                    <h2>Campaign Rate Limit</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box"><div class="o_setting_right_pane">
+                            <label for="diligence_whatsapp_campaign_batch_limit" string="Campaign Batch Limit"/>
+                            <div class="text-muted mb8">Maximum campaign recipients processed by one action.</div>
+                            <field name="diligence_whatsapp_campaign_batch_limit"/>
+                        </div></div>
+                        <div class="col-12 col-lg-6 o_setting_box"><div class="o_setting_right_pane">
+                            <label for="diligence_whatsapp_daily_campaign_limit" string="Daily Campaign Limit"/>
+                            <div class="text-muted mb8">Maximum campaign messages sent per day.</div>
+                            <field name="diligence_whatsapp_daily_campaign_limit"/>
+                        </div></div>
+                        <div class="col-12 col-lg-6 o_setting_box"><div class="o_setting_right_pane">
+                            <label for="diligence_whatsapp_campaign_delay_seconds" string="Campaign Delay (Seconds)"/>
+                            <div class="text-muted mb8">Delay between campaign messages. Payment and signup messages are not delayed.</div>
+                            <field name="diligence_whatsapp_campaign_delay_seconds"/>
+                        </div></div>
+                        <div class="col-12 col-lg-6 o_setting_box"><div class="o_setting_right_pane">
+                            <label for="diligence_whatsapp_campaign_error_threshold" string="Campaign Error Threshold"/>
+                            <div class="text-muted mb8">Stop after this many consecutive errors.</div>
+                            <field name="diligence_whatsapp_campaign_error_threshold"/>
+                        </div></div>
+                    </div>
                 </div>
             </xpath>
         </field>

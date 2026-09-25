@@ -8,11 +8,38 @@
                     <i class="fa fa-graduation-cap me-2"/> Package Benefits
                 </div>
                 <div class="card-body">
-                    <div t-if="product.diligence_sales_status == 'full'" class="alert alert-secondary d-flex align-items-center" role="status">
-                        <i class="fa fa-ban me-2"/>
-                        <div><strong>Full Slot.</strong> Detail paket tetap dapat dilihat, tetapi pendaftaran baru sedang ditutup.</div>
+                    <div t-if="product.diligence_sales_status in ('full', 'coming_soon')" class="alert alert-secondary d-flex align-items-center" role="status">
+                        <i t-attf-class="fa #{'fa-clock-o' if product.diligence_sales_status == 'coming_soon' else 'fa-ban'} me-2"/>
+                        <div><strong><t t-if="product.diligence_sales_status == 'coming_soon'">Coming Soon.</t><t t-else="">Full Slot.</t></strong> Detail paket tetap dapat dilihat, tetapi pendaftaran baru sedang ditutup.</div>
                     </div>
-                    <div t-out="product.diligence_benefit_html"/>
+                    <div t-if="product.diligence_has_coming_soon_course" class="alert alert-warning d-flex align-items-center" role="status">
+                        <i class="fa fa-clock-o me-2"/>
+                        <div><strong>Coming Soon.</strong> Sebagian course dalam paket ini sedang dipersiapkan dan akan terbuka setelah dirilis.</div>
+                    </div>
+                    <div t-if="not product.diligence_has_coming_soon_course" t-out="product.diligence_benefit_html"/>
+                    <div t-else="" class="alert alert-light border d-flex align-items-center" role="status">
+                        <i class="fa fa-clock-o me-2 text-warning"/>
+                        <span>Benefit paket akan tersedia setelah course dirilis.</span>
+                    </div>
+                    <div t-if="product.diligence_course_ids" class="mt-4 pt-3 border-top o_diligence_package_courses">
+                        <h5 class="mb-3"><i class="fa fa-graduation-cap me-2"/>Course dalam Paket</h5>
+                        <div class="list-group">
+                            <div t-foreach="product.diligence_course_ids" t-as="course"
+                                 class="list-group-item d-flex align-items-center justify-content-between gap-3">
+                                <span>
+                                    <i class="fa fa-book me-2 text-primary"/>
+                                    <t t-out="course.name"/>
+                                </span>
+                                <span t-if="course.diligence_availability == 'coming_soon'"
+                                      class="badge rounded-pill text-bg-warning text-nowrap">
+                                    <i class="fa fa-clock-o me-1"/> Coming Soon
+                                </span>
+                                <span t-else="" class="badge rounded-pill text-bg-success text-nowrap">
+                                    <i class="fa fa-check me-1"/> Available
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </xpath>
@@ -22,12 +49,12 @@
               inherit_id="website_sale.cta_wrapper"
               name="Diligence Full Slot Purchase Button">
         <xpath expr="//a[@id='add_to_cart']" position="attributes">
-            <attribute name="t-if">not ((product.diligence_package_type_id or product.diligence_package_type) and product.diligence_sales_status == 'full')</attribute>
+            <attribute name="t-if">not ((product.diligence_package_type_id or product.diligence_package_type) and (product.diligence_sales_status in ('full', 'coming_soon') or not product.diligence_has_available_course))</attribute>
         </xpath>
         <xpath expr="//a[@id='add_to_cart']" position="after">
-            <button t-if="(product.diligence_package_type_id or product.diligence_package_type) and product.diligence_sales_status == 'full'"
+            <button t-if="(product.diligence_package_type_id or product.diligence_package_type) and (product.diligence_sales_status in ('full', 'coming_soon') or not product.diligence_has_available_course)"
                     type="button" class="btn btn-secondary flex-grow-1" disabled="disabled">
-                <i class="fa fa-ban me-2"/> Full Slot
+                <i class="fa fa-clock-o me-2"/><t t-if="product.diligence_sales_status != 'full'"> Coming Soon</t><t t-else=""> Full Slot</t>
             </button>
         </xpath>
     </template>
@@ -36,7 +63,7 @@
               inherit_id="website_sale.cta_wrapper"
               name="Diligence Buy Now Checkout Button">
         <xpath expr="//a[@id='add_to_cart']" position="after">
-            <a t-if="not ((product.diligence_package_type_id or product.diligence_package_type) and product.diligence_sales_status == 'full')"
+            <a t-if="not ((product.diligence_package_type_id or product.diligence_package_type) and (product.diligence_sales_status in ('full', 'coming_soon') or not product.diligence_has_available_course))"
                role="button"
                href="#"
                class="btn btn-outline-primary o_we_buy_now flex-grow-1"

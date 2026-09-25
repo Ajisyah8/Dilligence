@@ -27,8 +27,12 @@
             <t t-set="package_benefits" t-value="package.diligence_benefit_text or ''"/>
             <t t-set="early_price" t-value="package._diligence_early_bird_price_for_date()"/>
             <article t-attf-class="diligence-package-card h-100 w-100 p-4 border rounded-4 shadow-sm d-flex flex-column #{'diligence-package-card-full' if package.diligence_sales_status == 'full' else 'bg-white'}">
-                <span t-if="package.diligence_sales_status == 'full'" class="diligence-full-slot-badge badge rounded-pill align-self-start mb-2">
-                    <i class="fa fa-ban me-1"/> FULL SLOT
+                <span t-if="package.diligence_sales_status in ('full', 'coming_soon')" class="diligence-full-slot-badge badge rounded-pill align-self-start mb-2">
+                    <i t-attf-class="fa #{'fa-clock-o' if package.diligence_sales_status == 'coming_soon' else 'fa-ban'} me-1"/>
+                    <t t-if="package.diligence_sales_status == 'coming_soon'">COMING SOON</t><t t-else="">FULL SLOT</t>
+                </span>
+                <span t-if="package.diligence_has_coming_soon_course" class="badge rounded-pill text-bg-warning align-self-start mb-2">
+                    <i class="fa fa-clock-o me-1"/> COMING SOON
                 </span>
                 <span class="badge rounded-pill text-bg-light align-self-start mb-3">
                     <t t-if="package.diligence_package_type_id.website_label" t-out="package.diligence_package_type_id.website_label"/>
@@ -46,15 +50,21 @@
                     </t>
                     <strong t-else="" class="fs-3" t-out="package.list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                 </div>
-                <ul class="list-unstyled my-4">
+                <div t-if="package.diligence_has_coming_soon_course" class="alert alert-light border small my-4">
+                    <i class="fa fa-clock-o me-1 text-warning"/> Benefit paket akan tersedia setelah course dirilis.
+                </div>
+                <ul t-else="" class="list-unstyled my-4">
                     <t t-foreach="package_benefits.splitlines()" t-as="benefit">
                         <li t-if="benefit.strip()" class="mb-3"><i class="fa fa-check text-primary me-2"/><span t-out="benefit.lstrip('?• ').strip()"/></li>
                     </t>
                 </ul>
-                <a t-if="package.diligence_sales_status != 'full'" class="btn btn-outline-primary rounded-pill w-100 mt-auto" t-att-href="product.website_url">View Package</a>
+                <a t-if="package.diligence_sales_status not in ('full', 'coming_soon') and package.diligence_has_available_course" class="btn btn-outline-primary rounded-pill w-100 mt-auto" t-att-href="product.website_url">View Package</a>
                 <div t-else="" class="mt-auto">
                     <a class="btn btn-outline-secondary rounded-pill w-100 mb-2" t-att-href="product.website_url">View Details</a>
-                    <button type="button" class="btn btn-secondary rounded-pill w-100" disabled="disabled">Full Slot</button>
+                    <button type="button" class="btn btn-secondary rounded-pill w-100" disabled="disabled">
+                        <t t-if="package.diligence_sales_status == 'full'">Full Slot</t>
+                        <t t-else="">Coming Soon</t>
+                    </button>
                 </div>
             </article>
         </t>

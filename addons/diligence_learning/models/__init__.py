@@ -10,6 +10,7 @@ from . import slide_slide
 from . import session
 from . import website_menu
 from . import website
+from . import website_sync
 from . import quiz
 from . import mandarin_content
 from . import learning_activity

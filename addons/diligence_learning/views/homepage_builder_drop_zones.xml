@@ -1,56 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <!-- Keep the homepage content editable by Website Builder between every
-         top-level section. The existing homepage content remains unchanged. -->
+    <!-- Keep the homepage editable even when Website Builder stores a
+         website-specific copy with a different section structure. -->
     <template id="diligence_homepage_builder_drop_zones" inherit_id="website.homepage" name="Homepage Builder Drop Zones">
         <xpath expr="//div[@id='wrap']/section" position="attributes">
             <attribute name="class" add="oe_structure" separator=" "/>
         </xpath>
-        <xpath expr="//div[@id='wrap']/section[@data-name='Hero']" position="after">
-            <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
-        </xpath>
-        <xpath expr="//div[@id='wrap']/section[contains(@data-name, 'What')]" position="after">
-            <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
-        </xpath>
-        <xpath expr="//div[@id='wrap']/section[@data-name='Available Courses']" position="after">
-            <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
-        </xpath>
-        <xpath expr="//section[@data-name='Diligence Learning Packages']/div[contains(concat(' ', normalize-space(@class), ' '), ' s_dynamic_snippet_container ')]" position="after">
-            <div class="oe_structure oe_empty diligence-package-drop-zone"/>
-        </xpath>
-        <xpath expr="//div[@id='wrap']/section[@data-name='Schedule Free Interview']" position="after">
-            <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
-        </xpath>
-        <xpath expr="//div[@id='wrap']/section[@data-name='Testimonials']" position="after">
-            <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
-        </xpath>
-        <xpath expr="//div[@id='wrap']/section[@data-name='Meet Our Teachers']" position="after">
-            <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
-        </xpath>
-        <xpath expr="//div[@id='wrap']/section[@data-name='Career']" position="after">
+        <xpath expr="//div[@id='wrap']" position="inside">
             <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
         </xpath>
     </template>
-    <!-- Make the three What’s New cards behave as public navigation cards. -->
-    <template id="diligence_homepage_whats_new_links" inherit_id="website.homepage" name="Homepage What's New Links">
-        <xpath expr="//section[starts-with(@data-name, 'What')]//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][1]/div[1]/div[contains(concat(' ', normalize-space(@class), ' '), ' card ')]" position="attributes">
-            <attribute name="class" add="position-relative" separator=" "/>
-        </xpath>
-        <xpath expr="//section[starts-with(@data-name, 'What')]//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][1]/div[1]/div[contains(concat(' ', normalize-space(@class), ' '), ' card ')]/div[contains(concat(' ', normalize-space(@class), ' '), ' card-body ')]/p" position="after">
-            <a class="stretched-link" href="/slides" aria-label="Lihat courses Mandarin"><span class="visually-hidden">Lihat courses Mandarin</span></a><div class="mt-4 fw-semibold text-primary">Lihat courses <i class="fa fa-arrow-right ms-2"/></div>
-        </xpath>
-        <xpath expr="//section[starts-with(@data-name, 'What')]//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][1]/div[2]/div[contains(concat(' ', normalize-space(@class), ' '), ' card ')]" position="attributes">
-            <attribute name="class" add="position-relative" separator=" "/>
-        </xpath>
-        <xpath expr="//section[starts-with(@data-name, 'What')]//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][1]/div[2]/div[contains(concat(' ', normalize-space(@class), ' '), ' card ')]/div[contains(concat(' ', normalize-space(@class), ' '), ' card-body ')]/p" position="after">
-            <a class="stretched-link" href="/study-in-china-success-stories" aria-label="Lihat testimoni siswa beasiswa"><span class="visually-hidden">Lihat testimoni siswa beasiswa</span></a><div class="mt-4 fw-semibold text-primary">Baca cerita siswa <i class="fa fa-arrow-right ms-2"/></div>
-        </xpath>
-        <xpath expr="//section[starts-with(@data-name, 'What')]//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][1]/div[3]/div[contains(concat(' ', normalize-space(@class), ' '), ' card ')]" position="attributes">
-            <attribute name="class" add="position-relative" separator=" "/>
-        </xpath>
-        <xpath expr="//section[starts-with(@data-name, 'What')]//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][1]/div[3]/div[contains(concat(' ', normalize-space(@class), ' '), ' card ')]/div[contains(concat(' ', normalize-space(@class), ' '), ' card-body ')]/p" position="after">
-            <a class="stretched-link" href="/cambridge-exam-schedule" aria-label="Lihat jadwal ujian Cambridge"><span class="visually-hidden">Lihat jadwal ujian Cambridge</span></a><div class="mt-4 fw-semibold text-primary">Lihat jadwal ujian <i class="fa fa-arrow-right ms-2"/></div>
-        </xpath>
-    </template>
-
 </odoo>

@@ -27,7 +27,8 @@
                         <h1 t-field="channel.name"/>
                         <div class="diligence-course-hero-description" t-field="channel.description"/>
                         <div class="diligence-course-hero-meta">
-                            <span><i class="fa fa-book-open me-2"/><t t-out="channel.total_slides"/> lessons</span>
+                            <span t-if="channel.diligence_availability != 'coming_soon'"><i class="fa fa-book-open me-2"/><t t-out="channel.total_slides"/> lessons</span>
+                            <span t-else=""><i class="fa fa-clock-o me-2"/>Coming Soon</span>
                             <span><i class="fa fa-signal me-2"/><t t-out="channel.completion"/>% complete</span>
                         </div>
                         <div class="diligence-course-hero-actions">
@@ -63,7 +64,7 @@
                             </p>
                         </section>
 
-                        <section class="diligence-editorial-learning-path">
+                        <section t-if="channel.diligence_availability != 'coming_soon'" class="diligence-editorial-learning-path">
                             <div class="diligence-editorial-section-heading">
                                 <div>
                                     <span class="diligence-eyebrow">LEARNING PATH</span>
@@ -77,6 +78,13 @@
                             <t t-set="channel_frontend_tags" t-value="channel.tag_ids.filtered(lambda tag: tag.color)"/>
                             <t t-if="channel.channel_type == 'training'" t-call="website_slides.course_slides_list"/>
                             <t t-else="" t-call="website_slides.course_slides_cards"/>
+                        </section>
+                        <section t-else="" class="diligence-editorial-learning-path diligence-coming-soon-panel" role="status">
+                            <div class="diligence-coming-soon-card">
+                                <span class="diligence-eyebrow">COMING SOON</span>
+                                <h2>Course content is coming soon</h2>
+                                <p>Daftar isi dan materi course akan tersedia setelah course ini dirilis.</p>
+                            </div>
                         </section>
                     </main>
                 </div>
@@ -342,6 +350,7 @@
     <template id="diligence_lesson_sidebar_cards" inherit_id="website_slides.slide_aside_training_category">
         <xpath expr="//div[contains(@t-att-class, 'o_wslides_lesson_aside_list_link')]" position="attributes">
             <attribute name="class" add="diligence-sidebar-lesson-card" separator=" "/>
+            <attribute name="t-att-data-id">aside_slide.id</attribute>
         </xpath>
         <xpath expr="//div[contains(@t-att-class, 'o_wslides_lesson_aside_list_link')]/a[contains(@t-att-href, '/slides/slide/')]" position="attributes">
             <attribute name="t-att-href">('/slides/slide/%s#diligence-lesson-content' % slug(aside_slide)) if can_access else '#'</attribute>

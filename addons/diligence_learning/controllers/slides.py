@@ -25,7 +25,7 @@ class DiligenceWebsiteSlides(WebsiteSlides):
                 or channel.can_publish
                 or channel.is_member
             )
-            if has_access:
+            if has_access and channel.diligence_availability != 'coming_soon':
                 progress = self._get_channel_progress(channel, include_quiz=True)
                 learning_slides = channel.slide_ids.filtered(
                     lambda lesson: lesson.active and not lesson.is_category
@@ -76,6 +76,48 @@ class DiligenceWebsiteSlides(WebsiteSlides):
             'vote': 0,
             'completed': True,
         } for item in new_slides])
+
+    @http.route(
+        '/diligence/slides/slide/content',
+        type='jsonrpc', auth='public', website=True, methods=['POST'],
+    )
+    def diligence_slide_content(self, slide_id, **kwargs):
+        """Return one lesson page for client-side navigation.
+
+        The native slide controller remains the source of truth for access
+        checks and rendering. The browser replaces only ``#wrap`` so the
+        lesson sidebar can preserve its scroll position without a full reload.
+        """
+        try:
+            raw_slide_id = str(slide_id)
+            numeric_id = raw_slide_id if raw_slide_id.isdigit() else raw_slide_id.rsplit('-', 1)[-1]
+            slide = request.env['slide.slide'].sudo().browse(int(numeric_id)).exists()
+        except (TypeError, ValueError):
+            slide = request.env['slide.slide'].browse()
+        if not slide or slide.is_category or not slide.active:
+            return {'error': 'lesson_not_found'}
+        user_slide = slide.with_user(request.env.user)
+        if (
+            slide.channel_id.diligence_availability == 'coming_soon'
+            and not request.env.user._is_admin()
+            and not user_slide.channel_id.can_publish
+        ):
+            return {'error': 'lesson_coming_soon'}
+        if not (
+                slide.is_preview
+                or request.env.user._is_admin()
+                or user_slide.channel_id.can_publish
+                or user_slide.channel_id.is_member):
+            return {'error': 'lesson_not_available'}
+
+        response = self.slide_view(slide, **kwargs)
+        if getattr(response, 'status_code', 200) >= 300:
+            return {'error': 'lesson_not_available'}
+        return {
+            'html': response.get_data(as_text=True),
+            'url': slide.website_absolute_url,
+            'title': slide.name,
+        }
 
     @http.route('/diligence_learning/slide/<int:slide_id>/private_video_url',
                 type='http', auth='user', website=True, methods=['GET'])
@@ -452,6 +494,13 @@ class DiligenceWebsiteSlides(WebsiteSlides):
 
     @http.route()
     def slide_view(self, slide, **kwargs):
+        if (
+            slide.channel_id.diligence_availability == 'coming_soon'
+            and not request.env.user._is_admin()
+            and not slide.channel_id.can_publish
+        ):
+            raise werkzeug.exceptions.Forbidden('This course is coming soon.')
+
         # Keep Odoo's standard completion behaviour for every other course.
         if slide.channel_id.id not in (7, 8, 9):
             return super().slide_view(slide, **kwargs)

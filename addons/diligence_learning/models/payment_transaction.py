@@ -151,7 +151,41 @@ class PaymentTransaction(models.Model):
             invoices = transaction.sale_order_ids.mapped('invoice_ids')
             if invoices and transaction.invoice_ids != invoices:
                 transaction.invoice_ids = [Command.set(invoices.ids)]
+            transaction._diligence_reconcile_approved_invoice_payment()
         return result
+
+    def _diligence_reconcile_approved_invoice_payment(self):
+        """Reconcile an approved manual payment with its invoice.
+
+        Bank-transfer approval is the Finance confirmation that the money has
+        been received.  Odoo can create the payment and invoice in separate
+        steps, leaving both receivable lines unreconciled and the invoice in
+        ``Not Paid``.  Reconcile only the payment transaction's own invoice
+        and payment lines after the transaction is done; other open invoices
+        and payment entries must remain untouched.
+        """
+        for transaction in self.filtered(
+            lambda tx: tx.state == 'done'
+            and tx.provider_id.custom_mode == 'wire_transfer'
+            and tx.payment_id
+        ):
+            invoices = transaction.invoice_ids or transaction.sale_order_ids.mapped('invoice_ids')
+            payment_lines = transaction.payment_id.move_id.line_ids.filtered(
+                lambda line: line.account_id.account_type == 'asset_receivable'
+                and not line.reconciled
+            )
+            if not payment_lines:
+                continue
+            for invoice in invoices.filtered(lambda move: move.state == 'posted'):
+                invoice_lines = invoice.line_ids.filtered(
+                    lambda line: line.account_id.account_type == 'asset_receivable'
+                    and not line.reconciled
+                )
+                lines = invoice_lines | payment_lines.filtered(
+                    lambda line: line.account_id in invoice_lines.account_id
+                )
+                if lines:
+                    lines.reconcile()
 
     def _invoice_sale_orders(self):
         """Create QRIS invoices from the confirmed order, not the generic

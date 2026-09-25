@@ -27,9 +27,10 @@ class ProductTemplate(models.Model):
     )
     diligence_sales_status = fields.Selection([
         ('available', 'Available'),
+        ('coming_soon', 'Coming Soon'),
         ('full', 'Full Slot'),
     ], string='Package Availability', default='available', required=True, copy=False,
-       help='Full Slot keeps the package visible on the website, but prevents new purchases.')
+       help='Coming Soon or Full Slot keeps the package visible on the website, but prevents new purchases.')
     diligence_course_ids = fields.Many2many(
         'slide.channel',
         'diligence_package_slide_channel_rel',
@@ -37,6 +38,12 @@ class ProductTemplate(models.Model):
         'channel_id',
         string='Included Courses',
         help='Courses automatically unlocked after this package is paid.',
+    )
+    diligence_has_coming_soon_course = fields.Boolean(
+        string='Has Coming Soon Course', compute='_compute_diligence_course_availability',
+    )
+    diligence_has_available_course = fields.Boolean(
+        string='Has Available Course', compute='_compute_diligence_course_availability',
     )
     diligence_forum_access = fields.Boolean('Community Forum Access')
     diligence_consultation = fields.Boolean('Coach Consultation Included')
@@ -90,6 +97,17 @@ class ProductTemplate(models.Model):
         'Access Duration (Days)',
         help='Leave empty/zero for unlimited access. Expiry automation is not enabled in Phase 1.',
     )
+
+    @api.depends('diligence_course_ids', 'diligence_course_ids.diligence_availability')
+    def _compute_diligence_course_availability(self):
+        for product in self:
+            courses = product.diligence_course_ids
+            product.diligence_has_coming_soon_course = any(
+                course.diligence_availability == 'coming_soon' for course in courses
+            )
+            product.diligence_has_available_course = any(
+                course.diligence_availability != 'coming_soon' for course in courses
+            )
 
     @api.depends('diligence_early_bird_start_date', 'diligence_early_bird_duration_days')
     def _compute_diligence_early_bird_dates(self):

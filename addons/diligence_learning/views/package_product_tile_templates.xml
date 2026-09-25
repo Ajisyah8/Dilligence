@@ -24,9 +24,13 @@
             </div>
         </xpath>
         <xpath expr="//div[hasclass('product_price')]" position="before">
-            <span t-if="(product.diligence_package_type_id or product.diligence_package_type) and product.diligence_sales_status == 'full'"
+            <span t-if="(product.diligence_package_type_id or product.diligence_package_type) and product.diligence_sales_status in ('full', 'coming_soon')"
                   class="diligence-full-slot-badge badge rounded-pill mb-2">
                 <i class="fa fa-ban me-1"/> Full Slot
+            </span>
+            <span t-if="(product.diligence_package_type_id or product.diligence_package_type) and product.diligence_has_coming_soon_course"
+                  class="badge rounded-pill text-bg-warning mb-2">
+                <i class="fa fa-clock-o me-1"/> Coming Soon
             </span>
         </xpath>
     </template>

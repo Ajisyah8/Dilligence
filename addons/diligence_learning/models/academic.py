@@ -6,6 +6,11 @@ from odoo import api, fields, models
 class SlideChannel(models.Model):
     _inherit = 'slide.channel'
 
+    diligence_availability = fields.Selection([
+        ('available', 'Available'),
+        ('coming_soon', 'Coming Soon'),
+    ], string='Learning Availability', default='available', required=True, index=True,
+       help='Coming Soon keeps the course visible, but prevents learners from opening its lessons until it is released.')
     diligence_contact_segment_id = fields.Many2one(
         'diligence.contact.segment',
         string='Course Contact Segment',

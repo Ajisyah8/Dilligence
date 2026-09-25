@@ -13,7 +13,9 @@
                     <group string="1. Identitas dan Harga Paket" col="2">
                         <field name="diligence_package_type_id" string="Jenis Paket" options="{'no_quick_create': False, 'no_create_edit': False}" help="Pilih jenis paket atau buat jenis baru langsung dari daftar ini."/>
                         <field name="diligence_package_type" invisible="True"/>
-                        <field name="diligence_sales_status" string="Status Ketersediaan" invisible="not (diligence_package_type_id or diligence_package_type)" help="Pilih Full Slot agar paket tetap tampil, tetapi tidak dapat dibeli."/>
+                        <field name="diligence_sales_status" string="Status Ketersediaan" invisible="not (diligence_package_type_id or diligence_package_type)" help="Pilih Coming Soon atau Full Slot agar paket tetap tampil, tetapi tidak dapat dibeli."/>
+                        <field name="diligence_has_coming_soon_course" invisible="1"/>
+                        <field name="diligence_has_available_course" invisible="1"/>
                         <field name="list_price" string="Harga Normal" help="Harga normal paket sebelum potongan Early Bird. Contoh: 169000."/>
                         <field name="diligence_access_duration_days" string="Masa Akses (Hari)" help="Berapa hari siswa dapat mengakses paket setelah pembayaran dikonfirmasi. Kosong atau 0 berarti tanpa batas waktu."/>
                     </group>
@@ -32,7 +34,7 @@
                     </group>
                     <group string="3. Course yang Didapat Siswa">
                         <field name="diligence_course_ids" string="Course Termasuk dalam Paket" widget="many2many_tags" help="Pilih semua course yang otomatis boleh diakses siswa setelah pembayaran paket ini dikonfirmasi."/>
-                        <div class="text-muted" colspan="2">Jika tidak ada course yang dipilih, pembelian produk tidak akan memberikan course melalui pengaturan paket ini.</div>
+                        <div class="text-muted" colspan="2">Course Coming Soon tetap tampil di paket, tetapi belum diberikan sampai course tersebut dirilis. Jika semua course masih Coming Soon, paket belum dapat dibeli.</div>
                     </group>
                     <group string="4. Fasilitas dan Dukungan" col="2">
                         <group string="Akses Komunitas">

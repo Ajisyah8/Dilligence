@@ -173,6 +173,22 @@ class ResConfigSettings(models.TransientModel):
         help="Use international format, for example 628123456789. Spaces, +, and a leading 0 are normalized automatically.",
     )
     diligence_whatsapp_send_on_payment = fields.Boolean(string='Send Payment Confirmation', config_parameter='diligence.whatsapp.send_on_payment')
+    diligence_whatsapp_campaign_batch_limit = fields.Integer(
+        string='Campaign Batch Limit', config_parameter='diligence.whatsapp.campaign_batch_limit',
+        default=20, help='Maximum campaign recipients processed by one Send Campaign action.',
+    )
+    diligence_whatsapp_daily_campaign_limit = fields.Integer(
+        string='Daily Campaign Limit', config_parameter='diligence.whatsapp.daily_campaign_limit',
+        default=100, help='Maximum campaign messages sent by this Odoo instance per day.',
+    )
+    diligence_whatsapp_campaign_delay_seconds = fields.Integer(
+        string='Campaign Delay (Seconds)', config_parameter='diligence.whatsapp.campaign_delay_seconds',
+        default=15, help='Delay between campaign messages. Payment and signup messages are not delayed.',
+    )
+    diligence_whatsapp_campaign_error_threshold = fields.Integer(
+        string='Campaign Error Threshold', config_parameter='diligence.whatsapp.campaign_error_threshold',
+        default=5, help='Stop a campaign after this many consecutive send errors.',
+    )
     # res.config.settings config_parameter fields must use a supported
     # persisted scalar type; Text fields are rejected by Odoo's settings
     # classifier before the form is rendered.

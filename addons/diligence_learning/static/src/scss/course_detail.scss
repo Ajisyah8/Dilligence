@@ -3396,6 +3396,26 @@ body.o_wslides_body:has(.diligence-lesson-viewer) .o_wslides_lesson_aside_list >
     border-bottom: 0 !important;
 }
 
+/* The reader has two independent scroll areas: the lesson outline and the
+   lesson material. Do not expose a third, full-page scrollbar beside the
+   outline. The material pane remains scrollable, but its scrollbar is hidden
+   so the outline's short scrollbar is the only visible one. */
+@media (min-width: 992px) {
+    html:has(body.o_wslides_body .diligence-lesson-viewer),
+    body.o_wslides_body:has(.diligence-lesson-viewer) {
+        height: 100%;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+    }
+
+    body.o_wslides_body:has(.diligence-lesson-viewer) .diligence-lesson-viewer .diligence-lesson-main {
+        height: auto !important;
+        min-height: 100dvh;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+}
+
 .diligence-reader-course-header-copy,
 .diligence-reader-course-header-progress {
     min-width: 0;

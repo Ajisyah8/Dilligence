@@ -40,11 +40,22 @@ class SaleOrder(models.Model):
                 product.product_tmpl_id.diligence_package_type_id
                 or product.product_tmpl_id.diligence_package_type
             )
-            and product.product_tmpl_id.diligence_sales_status == 'full'
+            and product.product_tmpl_id.diligence_sales_status in ('full', 'coming_soon')
         ):
             current_quantity = order_line.product_uom_qty if order_line else 0
             return current_quantity, _(
                 'The learning package “%(package)s” is currently full and cannot be purchased.',
+                package=product.display_name,
+            )
+        if (
+            new_qty > 0
+            and product
+            and product.product_tmpl_id._diligence_is_package()
+            and not product.product_tmpl_id.diligence_has_available_course
+        ):
+            current_quantity = order_line.product_uom_qty if order_line else 0
+            return current_quantity, _(
+                'The learning package “%(package)s” is coming soon and cannot be purchased yet.',
                 package=product.display_name,
             )
         return quantity, warning
@@ -117,7 +128,9 @@ class SaleOrder(models.Model):
             if not package_lines:
                 continue
             package_products = package_lines.mapped('product_template_id')
-            courses = package_products.mapped('diligence_course_ids')
+            courses = package_products.mapped('diligence_course_ids').filtered(
+                lambda course: course.diligence_availability != 'coming_soon'
+            )
             courses.sudo()._action_add_members(order.partner_id)
             for course in courses:
                 course._diligence_ensure_contact_segment()

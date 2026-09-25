@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Website Builder creates this website-specific view without a stable
+         XML ID. Resolve it by key and website, never by database ID. -->
+    <record id="diligence_homepage_active_builder_drop_zone" model="ir.ui.view">
+        <field name="name">Diligence Active Homepage Builder Drop Zone</field>
+        <field name="type">qweb</field>
+        <field name="inherit_id" search="[('key', '=', 'diligence_learning.homepage_builder_active'), ('website_id', '=', ref('website.default_website'))]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='wrap']" position="inside">
+                <div class="oe_structure oe_empty diligence-homepage-drop-zone"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

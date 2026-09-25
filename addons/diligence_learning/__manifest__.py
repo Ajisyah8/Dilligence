@@ -69,6 +69,8 @@
         'views/placement_test_views.xml',
         'views/homepage_newsletter.xml',
         'views/homepage_builder_drop_zones.xml',
+        'views/homepage_active_builder.xml',
+        'views/staging_seo_protection.xml',
         'views/whats_new_page_design.xml',
         'views/course_detail_templates.xml',
         'views/website_global_actions.xml',

@@ -64,8 +64,8 @@ class DiligenceSeoItem(models.Model):
     last_audited_at = fields.Datetime(string='Last Audited At', readonly=True)
 
     _target_unique = models.Constraint(
-        'UNIQUE(res_model, res_id)',
-        'A content record can only have one SEO item.',
+        'UNIQUE(website_id, res_model, res_id)',
+        'A content record can only have one SEO item per website.',
     )
 
     @api.model
@@ -230,7 +230,7 @@ class DiligenceSeoItem(models.Model):
         include = (operator == '=' and bool(value)) or (operator == '!=' and not value)
         return [('id', 'in' if include else 'not in', ids)]
 
-    @api.constrains('res_model', 'res_id', 'is_indexed', 'url')
+    @api.constrains('website_id', 'res_model', 'res_id', 'is_indexed', 'url')
     def _check_target(self):
         for item in self:
             if item.content_type != item.res_model:

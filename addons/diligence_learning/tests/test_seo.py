@@ -8,12 +8,13 @@ class TestDiligenceSeoManager(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.seo_model = cls.env['diligence.seo.item']
-        existing_page_ids = cls.seo_model.search([
-            ('res_model', '=', 'website.page'),
-        ]).mapped('res_id')
-        cls.page = cls.env['website.page'].search([
-            ('id', 'not in', existing_page_ids),
-        ], limit=1)
+        cls.website = cls.env["website"].search([], order="sequence, id", limit=1)
+        cls.page = cls.env["website.page"].create({
+            "name": "SEO Manager Test Page",
+            "url": "/__seo_manager_test_page__",
+            "view_id": cls.env.ref("website.homepage").id,
+            "website_id": cls.website.id,
+        })
 
     def test_create_and_sync_website_page(self):
         self.assertTrue(self.page)
@@ -98,8 +99,13 @@ class TestDiligenceSeoManager(TransactionCase):
                 'content_type': 'website.page',
                 'res_model': 'website.page',
                 'res_id': self.page.id,
-            })
-        other_page = self.env['website.page'].search([('id', '!=', self.page.id)], limit=1)
+                })
+        other_page = self.env["website.page"].create({
+            "name": "SEO Manager Other Test Page",
+            "url": "/__seo_manager_other_test_page__",
+            "view_id": self.env.ref("website.homepage").id,
+            "website_id": self.website.id,
+        })
         if other_page:
             with self.assertRaises(ValidationError):
                 self.seo_model.create({

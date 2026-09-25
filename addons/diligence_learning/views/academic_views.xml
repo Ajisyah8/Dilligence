@@ -1,4 +1,16 @@
 <odoo>
+    <record id="slide_channel_form_diligence_availability" model="ir.ui.view">
+        <field name="name">slide.channel.form.diligence.availability</field>
+        <field name="model">slide.channel</field>
+        <field name="inherit_id" ref="website_slides.view_slide_channel_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='course']" position="inside">
+                <field name="diligence_availability" string="Availability"
+                       help="Coming Soon keeps the course visible while preventing lesson access and package enrollment."/>
+            </xpath>
+        </field>
+    </record>
+
     <record id="diligence_slide_channel_kpi_list" model="ir.ui.view">
         <field name="name">slide.channel.diligence.kpi.list</field>
         <field name="model">slide.channel</field>

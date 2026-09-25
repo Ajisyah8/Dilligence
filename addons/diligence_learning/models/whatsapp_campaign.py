@@ -1,3 +1,6 @@
+import time
+from datetime import datetime, time as datetime_time
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
@@ -61,8 +64,38 @@ class DiligenceWhatsAppCampaign(models.Model):
         for campaign in self:
             if campaign.state == 'draft':
                 campaign.action_prepare()
-            campaign.line_ids.action_send()
-            campaign.state = 'done'
+            params = self.env['ir.config_parameter'].sudo()
+            batch_limit = max(1, int(params.get_param('diligence.whatsapp.campaign_batch_limit', '20')))
+            daily_limit = max(1, int(params.get_param('diligence.whatsapp.daily_campaign_limit', '100')))
+            delay = max(0, int(params.get_param('diligence.whatsapp.campaign_delay_seconds', '15')))
+            error_threshold = max(1, int(params.get_param('diligence.whatsapp.campaign_error_threshold', '5')))
+            today_start = fields.Datetime.to_string(datetime.combine(fields.Date.context_today(self), datetime_time.min))
+            sent_today = self.env['diligence.whatsapp.campaign.line'].sudo().search_count([
+                ('state', '=', 'sent'), ('sent_at', '>=', today_start),
+            ])
+            remaining_daily = max(0, daily_limit - sent_today)
+            lines = campaign.line_ids.filtered(lambda line: line.state not in ('sent', 'skipped'))[:min(batch_limit, remaining_daily)]
+            service = self.env['diligence.whatsapp.service'].sudo()
+            consecutive_errors = 0
+            for index, line in enumerate(lines):
+                result = service.send_text(line.phone, line.message)
+                sent = result.get('sent')
+                state = 'sent' if sent else 'skipped' if result.get('skipped') else 'error'
+                line.write({
+                    'state': state,
+                    'error_message': result.get('error') or False,
+                    'sent_at': fields.Datetime.now() if sent else False,
+                })
+                if state == 'error':
+                    consecutive_errors += 1
+                    if consecutive_errors >= error_threshold:
+                        break
+                else:
+                    consecutive_errors = 0
+                if sent and delay and index < len(lines) - 1:
+                    time.sleep(delay)
+            if not campaign.line_ids.filtered(lambda line: line.state not in ('sent', 'skipped')):
+                campaign.state = 'done'
         return True
 
 
