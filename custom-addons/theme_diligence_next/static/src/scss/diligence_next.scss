@@ -1,0 +1,372 @@
+// Staging-first visual system. It styles native Odoo snippets without replacing
+// their markup, so content, backgrounds and animations remain builder-editable.
+
+:root {
+    --dn-ink: #102f3a;
+    --dn-muted: #607784;
+    --dn-teal: #087c91;
+    --dn-teal-dark: #055e70;
+    --dn-gold: #cfaa61;
+    --dn-cream: #fbf7ed;
+    --dn-mist: #eef7f8;
+    --dn-line: rgba(16, 47, 58, .11);
+    --dn-shadow-sm: 0 14px 38px rgba(16, 47, 58, .08);
+    --dn-shadow-lg: 0 28px 75px rgba(16, 47, 58, .14);
+}
+
+body:not(.o_web_client) {
+    color: var(--dn-ink);
+}
+
+// The existing Cobalt header uses a compact container and rounded preview.
+// Make the public shell visibly modern and full-width while keeping the
+// navbar, menu items and Website Builder structure intact.
+body:not(.o_web_client) #wrapwrap > header#top {
+    position: relative;
+    z-index: 1030;
+    padding: 0 !important;
+    background: #fff !important;
+}
+
+body:not(.o_web_client) #wrapwrap > header#top > nav.navbar,
+body:not(.o_web_client) #wrapwrap > header#top > nav.navbar .container,
+body:not(.o_web_client) #wrapwrap > header#top > nav.navbar .o_container_small {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 82px;
+    margin: 0 !important;
+    padding-inline: clamp(1.25rem, 5vw, 5rem) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: #fff !important;
+    box-shadow: 0 1px 0 var(--dn-line), 0 10px 30px rgba(16, 47, 58, .04) !important;
+}
+
+body:not(.o_web_client) #wrapwrap > header#top > nav.navbar .nav-link {
+    position: relative;
+    padding: 1.75rem .9rem !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: var(--dn-ink) !important;
+    font-weight: 650;
+}
+
+body:not(.o_web_client) #wrapwrap > header#top > nav.navbar .nav-link::after {
+    position: absolute;
+    right: .9rem;
+    bottom: .85rem;
+    left: .9rem;
+    height: 2px;
+    content: "";
+    transform: scaleX(0);
+    transform-origin: center;
+    background: var(--dn-teal);
+    transition: transform .2s ease;
+}
+
+body:not(.o_web_client) #wrapwrap > header#top > nav.navbar .nav-link:hover::after,
+body:not(.o_web_client) #wrapwrap > header#top > nav.navbar .nav-link.active::after {
+    transform: scaleX(1);
+}
+
+body:not(.o_web_client) #wrapwrap > header#top .navbar-brand img {
+    max-height: 54px;
+}
+
+// Make the hero a real edge-to-edge section with a clear two-column layout.
+body:not(.o_web_client) #wrap > section.s_cover:first-child,
+body:not(.o_web_client) #wrap > section.academy-page-hero:first-child {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 720px;
+    min-height: calc(100vh - 82px);
+    margin: 0 !important;
+    border-radius: 0 !important;
+    background-position: center !important;
+}
+
+body:not(.o_web_client) #wrap > section.s_cover:first-child > .container,
+body:not(.o_web_client) #wrap > section.academy-page-hero:first-child > .container {
+    width: 100%;
+    max-width: 1320px;
+    min-height: inherit;
+    padding-inline: clamp(1.25rem, 5vw, 5rem);
+}
+
+body:not(.o_web_client) #wrap > section.s_cover:first-child .row,
+body:not(.o_web_client) #wrap > section.academy-page-hero:first-child .row {
+    align-items: center;
+    min-height: inherit;
+}
+
+body:not(.o_web_client) #wrap > section.s_cover:first-child :where(.academy-hero-photo, img) {
+    max-height: 500px;
+}
+
+body:not(.o_web_client) :where(#wrap, .oe_structure) > section {
+    isolation: isolate;
+}
+
+// Better spacing without overriding explicit Website Builder spacing classes.
+body:not(.o_web_client) :where(#wrap, .oe_structure) > section:not([class*="pt"]):not([class*="pb"]) {
+    padding-block: clamp(3.5rem, 7vw, 7rem);
+}
+
+body:not(.o_web_client) :where(.container, .container-fluid) > .row {
+    row-gap: clamp(1.5rem, 3vw, 3rem);
+}
+
+// Layout system for native Odoo blocks. These rules rearrange existing
+// builder columns; no page HTML is replaced and every block remains editable.
+body:not(.o_web_client) #wrap > section:not(:first-child) > .container,
+body:not(.o_web_client) #wrap > section:not(:first-child) > .container-fluid {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 4rem);
+}
+
+body:not(.o_web_client) #wrap > section.s_three_columns:not(:first-child) > .container > .row:not(.o_grid_mode),
+body:not(.o_web_client) #wrap > section.s_cards_grid > .container > .row,
+body:not(.o_web_client) #wrap > section.s_cards_soft > .container > .row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.25rem, 2.5vw, 2.25rem);
+}
+
+body:not(.o_web_client) #wrap > section.s_three_columns:not(:first-child) > .container > .row:not(.o_grid_mode) > [class*="col-"],
+body:not(.o_web_client) #wrap > section.s_cards_grid > .container > .row > [class*="col-"],
+body:not(.o_web_client) #wrap > section.s_cards_soft > .container > .row > [class*="col-"] {
+    width: auto;
+    max-width: none;
+    padding-inline: 0;
+}
+
+body:not(.o_web_client) #wrap > section.s_image_text:not(:first-child) > .container > .row,
+body:not(.o_web_client) #wrap > section.s_text_image:not(:first-child) > .container > .row,
+body:not(.o_web_client) #wrap > section.s_image_text_box:not(:first-child) > .container > .row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+    align-items: center;
+    gap: clamp(2rem, 6vw, 6rem);
+}
+
+body:not(.o_web_client) #wrap > section.s_text_image:not(:first-child) > .container > .row {
+    grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+}
+
+body:not(.o_web_client) #wrap > section.s_image_text:not(:first-child) > .container > .row > [class*="col-"],
+body:not(.o_web_client) #wrap > section.s_text_image:not(:first-child) > .container > .row > [class*="col-"],
+body:not(.o_web_client) #wrap > section.s_image_text_box:not(:first-child) > .container > .row > [class*="col-"] {
+    width: auto;
+    max-width: none;
+    padding-inline: 0;
+}
+
+body:not(.o_web_client) #wrap > section.s_image_text:not(:first-child) img,
+body:not(.o_web_client) #wrap > section.s_text_image:not(:first-child) img,
+body:not(.o_web_client) #wrap > section.s_image_text_box:not(:first-child) img {
+    width: 100%;
+    max-height: 560px;
+    object-fit: cover;
+    border-radius: 28px;
+    box-shadow: var(--dn-shadow-lg);
+}
+
+body:not(.o_web_client) #wrap > section.s_call_to_action > .container,
+body:not(.o_web_client) #wrap > section.s_newsletter_block > .container {
+    max-width: 1280px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #f0fafb, #fbf4e8);
+    box-shadow: var(--dn-shadow-sm);
+}
+
+body:not(.o_web_client) #wrap > section.s_call_to_action .row,
+body:not(.o_web_client) #wrap > section.s_newsletter_block .row {
+    align-items: center;
+}
+
+body:not(.o_web_client) #wrap > section.academy-testimonials .carousel-inner {
+    max-width: 920px;
+    margin-inline: auto;
+}
+
+body:not(.o_web_client) #wrap > section.academy-teachers .row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+body:not(.o_web_client) #wrap > section.academy-teachers .row > [class*="col-"] {
+    width: auto;
+    max-width: none;
+    padding-inline: 0;
+}
+
+body:not(.o_web_client) footer#bottom #footer > section > .container > .row,
+body:not(.o_web_client) #footer > section > .container > .row {
+    display: grid;
+    grid-template-columns: 1.15fr .85fr .85fr;
+    gap: 2rem;
+}
+
+body:not(.o_web_client) :where(h1, .h1, .display-1, .display-2, .display-3) {
+    max-width: 18ch;
+    line-height: 1.04;
+}
+
+body:not(.o_web_client) :where(h2, .h2, .display-4, .display-5) {
+    line-height: 1.12;
+}
+
+body:not(.o_web_client) :where(p, .lead) {
+    text-wrap: pretty;
+}
+
+// Neutralize forced alternating colors from the previous layer. Background is
+// now chosen in Website Builder or through the Diligence Surface option.
+body:not(.o_web_client) #wrap > section:nth-of-type(3n + 2):not(.dm_surface_soft):not(.dm_surface_warm):not(.dm_surface_gradient):not(.dm_surface_dark),
+body:not(.o_web_client) #wrap > section:nth-of-type(3n):not(.dm_surface_soft):not(.dm_surface_warm):not(.dm_surface_gradient):not(.dm_surface_dark),
+body:not(.o_web_client) #wrap > .oe_structure > section:nth-of-type(3n + 2):not(.dm_surface_soft):not(.dm_surface_warm):not(.dm_surface_gradient):not(.dm_surface_dark),
+body:not(.o_web_client) #wrap > .oe_structure > section:nth-of-type(3n):not(.dm_surface_soft):not(.dm_surface_warm):not(.dm_surface_gradient):not(.dm_surface_dark) {
+    background-color: transparent;
+}
+
+body:not(.o_web_client) .dm_surface_soft { background: var(--dn-mist) !important; }
+body:not(.o_web_client) .dm_surface_warm { background: var(--dn-cream) !important; }
+body:not(.o_web_client) .dm_surface_gradient {
+    background:
+        radial-gradient(circle at 86% 14%, rgba(207, 170, 97, .28), transparent 32%),
+        linear-gradient(135deg, #f3fbfc 0%, #fff 48%, #fbf4e7 100%) !important;
+}
+body:not(.o_web_client) .dm_surface_dark {
+    background: linear-gradient(135deg, #0d303d, #075f71) !important;
+    color: #fff;
+}
+body:not(.o_web_client) .dm_surface_dark :where(h1, h2, h3, h4, h5, h6, p, a) {
+    color: inherit !important;
+}
+
+body:not(.o_web_client) :where(.card, .s_card, .o_wslides_course_card, .oe_product_cart) {
+    border-color: var(--dn-line) !important;
+    box-shadow: var(--dn-shadow-sm) !important;
+}
+
+body:not(.o_web_client) .dm_hover_lift,
+body:not(.o_web_client) .dm_hover_zoom,
+body:not(.o_web_client) .dm_hover_glow {
+    transition: transform .28s ease, box-shadow .28s ease, filter .28s ease;
+}
+body:not(.o_web_client) .dm_hover_lift:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--dn-shadow-lg) !important;
+}
+body:not(.o_web_client) .dm_hover_zoom:hover { transform: scale(1.025); }
+body:not(.o_web_client) .dm_hover_glow:hover {
+    box-shadow: 0 24px 70px rgba(8, 124, 145, .24) !important;
+}
+
+body:not(.o_web_client) .dm_radius_none { border-radius: 0 !important; }
+body:not(.o_web_client) .dm_radius_soft { border-radius: 18px !important; overflow: hidden; }
+body:not(.o_web_client) .dm_radius_large { border-radius: 36px !important; overflow: hidden; }
+
+// Internal pages: modern page headers and cleaner content surfaces.
+body:not(.o_web_client) :where(.o_wslides_homepage_main, .o_wblog_post_page_cover, .o_wsale_products_main_row) {
+    border-radius: 0;
+}
+
+body:not(.o_web_client) :where(.table, .list-group, .accordion) {
+    --bs-border-color: var(--dn-line);
+}
+
+body:not(.o_web_client) .accordion-item {
+    margin-bottom: .75rem;
+    border: 1px solid var(--dn-line);
+    border-radius: 18px !important;
+    overflow: hidden;
+}
+
+body:not(.o_web_client) .accordion-button:not(.collapsed) {
+    color: var(--dn-teal-dark);
+    background: var(--dn-mist);
+}
+
+body:not(.o_web_client) :where(.pagination, .nav-pills) .page-link,
+body:not(.o_web_client) .nav-pills .nav-link {
+    border-radius: 999px;
+}
+
+body:not(.o_web_client) :where(.form-control, .form-select, textarea) {
+    transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+body:not(.o_web_client) :where(.form-control, .form-select, textarea):focus {
+    transform: translateY(-1px);
+}
+
+// Let native Odoo animation controls remain the source of truth. The editor's
+// own classes (o_animate, o_animate_on_scroll, o_animate_on_hover) are untouched.
+
+@media (max-width: 991.98px) {
+    body:not(.o_web_client) #wrapwrap > header#top > nav.navbar,
+    body:not(.o_web_client) #wrapwrap > header#top > nav.navbar .container,
+    body:not(.o_web_client) #wrapwrap > header#top > nav.navbar .o_container_small {
+        min-height: 68px;
+        padding-inline: 1rem !important;
+    }
+
+    body:not(.o_web_client) #wrapwrap > header#top > nav.navbar .nav-link {
+        padding: .85rem 1rem !important;
+    }
+
+    body:not(.o_web_client) #wrap > section.s_cover:first-child,
+    body:not(.o_web_client) #wrap > section.academy-page-hero:first-child {
+        min-height: auto;
+    }
+
+    body:not(.o_web_client) :where(#wrap, .oe_structure) > section:not([class*="pt"]):not([class*="pb"]) {
+        padding-block: 3.5rem;
+    }
+
+    body:not(.o_web_client) :where(h1, .h1, .display-1, .display-2, .display-3) {
+        font-size: clamp(2.25rem, 10vw, 3.5rem) !important;
+    }
+
+    body:not(.o_web_client) #wrap > section.s_three_columns:not(:first-child) > .container > .row:not(.o_grid_mode),
+    body:not(.o_web_client) #wrap > section.s_cards_grid > .container > .row,
+    body:not(.o_web_client) #wrap > section.s_cards_soft > .container > .row,
+    body:not(.o_web_client) #wrap > section.academy-teachers .row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    body:not(.o_web_client) #wrap > section.s_image_text:not(:first-child) > .container > .row,
+    body:not(.o_web_client) #wrap > section.s_text_image:not(:first-child) > .container > .row,
+    body:not(.o_web_client) #wrap > section.s_image_text_box:not(:first-child) > .container > .row {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    body:not(.o_web_client) footer#bottom #footer > section > .container > .row,
+    body:not(.o_web_client) #footer > section > .container > .row {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 575.98px) {
+    body:not(.o_web_client) #wrap > section.s_three_columns:not(:first-child) > .container > .row:not(.o_grid_mode),
+    body:not(.o_web_client) #wrap > section.s_cards_grid > .container > .row,
+    body:not(.o_web_client) #wrap > section.s_cards_soft > .container > .row,
+    body:not(.o_web_client) #wrap > section.academy-teachers .row,
+    body:not(.o_web_client) footer#bottom #footer > section > .container > .row,
+    body:not(.o_web_client) #footer > section > .container > .row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body:not(.o_web_client) .dm_hover_lift,
+    body:not(.o_web_client) .dm_hover_zoom,
+    body:not(.o_web_client) .dm_hover_glow {
+        transition: none;
+    }
+}

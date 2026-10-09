@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="theme_diligence_next.DiligenceStyleOption">
+        <BuilderRow label.translate="Diligence Surface">
+            <BuilderSelect>
+                <BuilderSelectItem classAction="''">Default</BuilderSelectItem>
+                <BuilderSelectItem classAction="'dm_surface_soft'">Soft</BuilderSelectItem>
+                <BuilderSelectItem classAction="'dm_surface_warm'">Warm</BuilderSelectItem>
+                <BuilderSelectItem classAction="'dm_surface_gradient'">Gradient</BuilderSelectItem>
+                <BuilderSelectItem classAction="'dm_surface_dark'">Dark</BuilderSelectItem>
+            </BuilderSelect>
+        </BuilderRow>
+        <BuilderRow label.translate="Card Hover">
+            <BuilderSelect>
+                <BuilderSelectItem classAction="''">None</BuilderSelectItem>
+                <BuilderSelectItem classAction="'dm_hover_lift'">Lift</BuilderSelectItem>
+                <BuilderSelectItem classAction="'dm_hover_zoom'">Zoom</BuilderSelectItem>
+                <BuilderSelectItem classAction="'dm_hover_glow'">Glow</BuilderSelectItem>
+            </BuilderSelect>
+        </BuilderRow>
+        <BuilderRow label.translate="Roundness">
+            <BuilderSelect>
+                <BuilderSelectItem classAction="''">Theme default</BuilderSelectItem>
+                <BuilderSelectItem classAction="'dm_radius_none'">Square</BuilderSelectItem>
+                <BuilderSelectItem classAction="'dm_radius_soft'">Soft</BuilderSelectItem>
+                <BuilderSelectItem classAction="'dm_radius_large'">Large</BuilderSelectItem>
+            </BuilderSelect>
+        </BuilderRow>
+    </t>
+</templates>
