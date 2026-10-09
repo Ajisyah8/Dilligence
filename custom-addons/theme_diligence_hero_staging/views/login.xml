@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="diligence_login_layout" inherit_id="web.login_layout" name="Diligence staging login layout">
+        <xpath expr="//div[contains(@class, 'container py-5')]" position="attributes">
+            <attribute name="class" add="diligence-login-container" separator=" "/>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'container py-5')]/div[1]" position="attributes">
+            <attribute name="class" add="diligence-login-card" separator=" "/>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'container py-5')]/div[1]" position="before">
+            <div class="diligence-login-panel">
+                <a href="/" class="diligence-login-brand">
+                    <img src="/web/binary/company_logo" alt="Diligence Academy"/>
+                </a>
+                <span class="diligence-login-eyebrow">DILIGENCE ACADEMY</span>
+                <h1>Learn with confidence.</h1>
+                <p>Access your courses, learning materials, and student account in one place.</p>
+                <div class="diligence-login-points">
+                    <span>English &amp; Mandarin programmes</span>
+                    <span>Structured learning materials</span>
+                    <span>Student access portal</span>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

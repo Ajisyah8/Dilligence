@@ -1,0 +1,528 @@
+// Staging-only presentation. The existing hero image/content remains native
+// Website Builder markup and can still be edited normally.
+
+// Keep the public page locked to the viewport width. This does not affect
+// intentional nested scrollers such as the course lesson sidebar.
+html,
+body:not(.o_web_client) {
+    max-width: 100%;
+    overflow-x: hidden !important;
+}
+
+body:not(.o_web_client) #wrapwrap {
+    max-width: 100%;
+    overflow-x: clip !important;
+}
+
+// All Courses: keep cards aligned even when course titles and descriptions
+// have different lengths.
+body.o_wslides_body .o_wslides_home_main {
+    width: calc(100% - 2rem);
+    max-width: 1280px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-top: clamp(2rem, 4vw, 4rem) !important;
+}
+
+body.o_wslides_body .o_wslides_home_main > .row {
+    align-items: stretch;
+}
+
+body.o_wslides_body .o_wslides_home_main > .row > .d-flex {
+    min-width: 0;
+    align-items: stretch;
+}
+
+body.o_wslides_body .o_wslides_course_card {
+    display: flex !important;
+    flex-direction: column;
+    min-height: 100%;
+    overflow: hidden;
+    border: 1px solid rgba(16, 42, 67, .1) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 14px 36px rgba(15, 45, 62, .08) !important;
+}
+
+body.o_wslides_body .o_wslides_course_card .o_wslides_background_image {
+    overflow: hidden;
+    background: #edf5f5;
+}
+
+body.o_wslides_body .o_wslides_course_card .o_wslides_background_image img {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+    object-position: center;
+    transition: transform .25s ease;
+}
+
+body.o_wslides_body .o_wslides_course_card:hover .o_wslides_background_image img {
+    transform: scale(1.03);
+}
+
+body.o_wslides_body .o_wslides_course_card .card-body {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    padding: 1.25rem !important;
+}
+
+body.o_wslides_body .o_wslides_course_card .card-title {
+    min-height: 2.8em;
+    margin-bottom: .65rem !important;
+    color: #102a43 !important;
+    font-size: 1.08rem;
+    line-height: 1.4;
+}
+
+body.o_wslides_body .o_wslides_course_card .card-text {
+    min-height: 4.4em;
+    color: #62748a;
+    line-height: 1.55;
+}
+
+body.o_wslides_body .o_wslides_course_card .card-text p {
+    margin-bottom: 0;
+}
+
+body.o_wslides_body .o_wslides_course_card .card-footer {
+    min-height: 3.25rem;
+    margin-top: auto;
+    padding: .85rem 1.25rem !important;
+    border-top: 1px solid rgba(16, 42, 67, .1) !important;
+    background: #fff !important;
+}
+
+// Logged-in gamification sidebar: keep the native profile, rank, badges and
+// leaderboard, but prevent narrow columns from producing oversized blocks.
+body.o_wslides_body .o_wslides_home_aside_loggedin.card {
+    width: 100%;
+    max-width: 320px;
+    margin-right: auto;
+    margin-left: auto;
+    padding: 1rem !important;
+    border: 1px solid rgba(16, 42, 67, .1) !important;
+    border-radius: 20px !important;
+    background: #fff !important;
+    box-shadow: 0 14px 36px rgba(15, 45, 62, .08) !important;
+}
+
+@media (min-width: 1200px) {
+    // Give the authenticated sidebar enough room for badge and rank labels.
+    body.o_wslides_body .o_wslides_wrap > .container > .row > .col-xl-9 {
+        width: 70% !important;
+        max-width: 70% !important;
+        flex: 0 0 70% !important;
+    }
+
+    body.o_wslides_body .o_wslides_wrap > .container > .row > .col-xl-3 {
+        width: 30% !important;
+        max-width: 30% !important;
+        flex: 0 0 30% !important;
+    }
+
+    body.o_wslides_body .o_wslides_home_aside_loggedin.card {
+        max-width: none;
+    }
+}
+
+body.o_wslides_body .o_wslides_home_aside_loggedin .row.g-0 {
+    margin: 0 !important;
+}
+
+body.o_wslides_body .o_wslides_home_aside_loggedin .o_wslides_home_aside {
+    padding-top: .9rem;
+    border-top: 1px solid rgba(16, 42, 67, .08);
+}
+
+body.o_wslides_body .o_wslides_home_aside_loggedin .o_wslides_home_aside:first-child {
+    padding-top: 0;
+    border-top: 0;
+}
+
+body.o_wslides_body .o_wslides_home_aside_loggedin .o_wprofile_progress_circle {
+    transform: scale(.74);
+    transform-origin: top center;
+    margin-bottom: -2.25rem;
+}
+
+body.o_wslides_body .o_wslides_home_aside_loggedin .o_wslides_home_aside h2,
+body.o_wslides_body .o_wslides_home_aside_loggedin .o_wslides_home_aside .h6 {
+    margin-bottom: .65rem !important;
+    font-size: .72rem;
+    letter-spacing: .05em;
+}
+
+body.o_wslides_body .o_wslides_home_aside_loggedin .o_wslides_home_aside .d-flex.flex-column.gap-3 {
+    gap: .45rem !important;
+}
+
+body.o_wslides_body .o_wslides_home_aside_loggedin .o_wslides_home_aside .d-flex.flex-column.gap-3 > .d-flex,
+body.o_wslides_body .o_wslides_home_aside_loggedin .o_wslides_home_aside > .d-flex:not(.justify-content-between) {
+    min-height: 0;
+    align-items: center !important;
+    padding: .55rem .5rem;
+    border-radius: .65rem;
+    background: #f7f9f8;
+}
+
+body.o_wslides_body .o_wslides_home_aside_loggedin .o_wslides_home_aside .lh-1 {
+    font-size: .78rem;
+    line-height: 1.2 !important;
+}
+
+body.o_wslides_body .o_wslides_home_aside_loggedin .o_wslides_home_aside small.text-muted {
+    font-size: .68rem;
+    line-height: 1.25;
+}
+
+body.o_wslides_body .o_wslides_home_aside_loggedin .o_wslides_home_aside p.text-muted {
+    margin: 0;
+    padding: .65rem;
+    font-size: .76rem;
+    text-align: center;
+}
+
+// Keep the profile name and XP value visually separated when the name wraps.
+body.o_wslides_body .o_wslides_home_aside_loggedin > .position-relative {
+    align-items: flex-start !important;
+}
+
+body.o_wslides_body .o_wslides_home_aside_loggedin > .position-relative > .d-flex > .lh-1 {
+    line-height: 1.15 !important;
+}
+
+body.o_wslides_body .o_wslides_home_aside_loggedin > .position-relative > .d-flex > .lh-1 > .text-muted {
+    display: block;
+    margin-top: .65rem !important;
+    line-height: 1.2 !important;
+    white-space: nowrap;
+}
+
+body.o_wslides_body .o_wslides_home_aside_loggedin > .position-relative > .d-flex > .lh-1 > h6 {
+    display: block;
+    margin-bottom: .1rem !important;
+    line-height: 1.15 !important;
+}
+
+// Odoo may render the profile wrapper with an extra intermediate element;
+// target the adjacent name/XP elements directly as a fallback.
+body.o_wslides_body .o_wslides_home_aside_loggedin .position-relative h6 + span.text-muted {
+    display: block !important;
+    margin-top: .8rem !important;
+    line-height: 1.2 !important;
+}
+
+@media (max-width: 575.98px) {
+    body.o_wslides_body .o_wslides_home_main {
+        width: calc(100% - 1.25rem);
+    }
+
+    body.o_wslides_body .o_wslides_course_card .o_wslides_background_image img {
+        height: 180px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    body.o_wslides_body .o_wslides_home_aside_loggedin.card {
+        position: static;
+        overflow: visible;
+    }
+}
+
+// Teacher portraits: use a consistent upper-body frame instead of circular
+// thumbnails that can crop faces or leave excessive empty space.
+body:not(.o_web_client) .academy-teachers .academy-teacher-photo {
+    width: 100% !important;
+    max-width: 260px !important;
+    height: 280px !important;
+    max-height: 280px !important;
+    margin: 0 auto 1.25rem !important;
+    border-radius: 24px !important;
+    object-fit: cover !important;
+    object-position: center 16% !important;
+}
+
+@media (max-width: 575.98px) {
+    body:not(.o_web_client) .academy-teachers .academy-teacher-photo {
+        max-width: 320px !important;
+        height: 300px !important;
+        max-height: 300px !important;
+    }
+}
+
+body:not(.o_web_client):not(.editor_enable) #wrap > section.s_cover:first-child > .container > .row {
+    align-items: center;
+    gap: clamp(2rem, 6vw, 6rem);
+}
+
+@media (min-width: 992px) {
+    body:not(.o_web_client):not(.editor_enable) #wrap > section.s_cover:first-child > .container > .row {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+    }
+
+    body:not(.o_web_client):not(.editor_enable) #wrap > section.s_cover:first-child > .container > .row > .col-lg-6 {
+        width: 50% !important;
+        max-width: 50% !important;
+        flex: 0 0 50% !important;
+    }
+
+}
+
+body:not(.o_web_client):not(.editor_enable) #wrap > section.s_cover:first-child .academy-hero-photo {
+    width: 78% !important;
+    height: 360px !important;
+    max-width: 340px !important;
+    max-height: 360px !important;
+    object-fit: cover !important;
+    object-position: 50% 12% !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+    border-radius: 24px !important;
+    filter: drop-shadow(0 20px 24px rgba(16, 47, 58, .12));
+}
+
+body:not(.o_web_client):not(.editor_enable) #wrap > section.s_cover:first-child > .container > .row > .col-lg-6:last-child > div {
+    position: relative;
+    z-index: 0;
+    width: 100%;
+    max-width: 520px;
+    margin: 1rem 0 1rem auto !important;
+    padding: clamp(1rem, 2.5vw, 1.5rem) !important;
+    border: 1px solid rgba(207, 170, 97, .55) !important;
+    border-radius: 34px !important;
+    background: rgba(255, 255, 255, .94) !important;
+    box-shadow: 0 24px 65px rgba(16, 47, 58, .14) !important;
+    isolation: isolate;
+}
+
+body:not(.o_web_client):not(.editor_enable) #wrap > section.s_cover:first-child > .container > .row > .col-lg-6:last-child > div::before {
+    position: absolute;
+    z-index: -1;
+    top: -18px;
+    right: -18px;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    content: "";
+    background: rgba(207, 170, 97, .25);
+}
+
+body:not(.o_web_client):not(.editor_enable) #wrap > section.s_cover:first-child > .container > .row > .col-lg-6:last-child > div::after {
+    position: absolute;
+    z-index: -1;
+    bottom: -22px;
+    left: -22px;
+    width: 86px;
+    height: 86px;
+    border: 12px solid rgba(8, 124, 145, .14);
+    border-radius: 50%;
+    content: "";
+}
+
+body:not(.o_web_client):not(.editor_enable) #wrap > section.s_cover:first-child .academy-hero-photo + h3 {
+    position: relative;
+    display: inline-block;
+    margin-top: .85rem !important;
+    padding: .45rem .9rem;
+    border-radius: 999px;
+    background: #eef7f8;
+    color: #075e70 !important;
+}
+
+body:not(.o_web_client):not(.editor_enable) #wrap > section.s_cover:first-child .academy-hero-photo + h3 + p {
+    display: block;
+    margin-top: .35rem;
+    font-size: .95rem;
+    letter-spacing: .04em;
+}
+
+// Keep Website Builder in control while the page is being edited. The
+// public-page composition above must not lock the image position or size.
+body.editor_enable #wrap > section.s_cover:first-child .academy-hero-photo {
+    width: auto !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    object-position: center center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+@media (max-width: 991.98px) {
+    body:not(.o_web_client):not(.editor_enable) #wrap > section.s_cover:first-child > .container > .row > .col-lg-6:last-child > div {
+        width: 100%;
+        margin-inline: auto !important;
+    }
+}
+
+// Profile page redesign. Keep the native Odoo profile content and edit
+// actions, but give the page the same Diligence visual language as the site.
+body.o_wprofile_body {
+    background: #f5f8f7 !important;
+    color: #102a43;
+}
+
+body.o_wprofile_body .o_wprofile_wrap {
+    overflow: hidden;
+}
+
+body.o_wprofile_body .o_wprofile_header {
+    background: linear-gradient(118deg, #0b6476 0%, #117e91 58%, #d2b16b 145%) !important;
+    box-shadow: 0 18px 42px rgba(16, 47, 58, .16);
+}
+
+body.o_wprofile_body .o_wprofile_header::before {
+    height: 4rem;
+    background: linear-gradient(90deg, rgba(5, 54, 65, .32), rgba(207, 170, 97, .16)) !important;
+}
+
+body.o_wprofile_body .o_wprofile_header .container {
+    position: relative;
+    z-index: 1;
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.25rem !important;
+}
+
+body.o_wprofile_body .o_wprofile_pict {
+    width: 170px;
+    height: 170px;
+    padding-top: 0;
+    border: 5px solid rgba(255, 255, 255, .92) !important;
+    border-radius: 50%;
+    background-color: #fff;
+    background-position: center 18%;
+    box-shadow: 0 14px 30px rgba(4, 43, 53, .2);
+}
+
+body.o_wprofile_body .o_card_people_name {
+    margin: .4rem 0 1rem !important;
+    color: #fff !important;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    letter-spacing: -.035em;
+}
+
+body.o_wprofile_body .o_wprofile_header .lead {
+    color: rgba(255, 255, 255, .9) !important;
+    font-size: 1rem;
+}
+
+body.o_wprofile_body .o_wprofile_editor.btn-primary {
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: #d2b16b !important;
+    color: #102a43 !important;
+    font-weight: 700;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, .12);
+}
+
+body.o_wprofile_body .o_wprofile_editor.btn-primary:hover {
+    background: #e3c581 !important;
+    transform: translateY(-1px);
+}
+
+body.o_wprofile_body .o_wprofile_nav_tabs {
+    position: relative;
+    z-index: 2;
+    margin-top: -4rem !important;
+    padding-left: 1rem;
+}
+
+body.o_wprofile_body .o_wprofile_nav_tabs .nav-link {
+    border: 0 !important;
+    border-radius: 999px 999px 0 0 !important;
+    padding: .85rem 1.4rem !important;
+    color: rgba(255, 255, 255, .84) !important;
+    background: transparent !important;
+    font-weight: 700;
+}
+
+body.o_wprofile_body .o_wprofile_nav_tabs .nav-link.active,
+body.o_wprofile_body .o_wprofile_nav_tabs .nav-link:hover {
+    color: #102a43 !important;
+    background: #fff !important;
+}
+
+body.o_wprofile_body .o_wprofile_wrap > .container {
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+}
+
+body.o_wprofile_body .o_wprofile_sidebar {
+    border: 0 !important;
+    border-radius: 22px !important;
+    background: #fff !important;
+    box-shadow: 0 14px 34px rgba(16, 47, 58, .09);
+}
+
+body.o_wprofile_body .o_wprofile_sidebar_top {
+    padding-bottom: .9rem;
+    border-bottom: 1px solid rgba(16, 42, 67, .1);
+}
+
+body.o_wprofile_body #o_wprofile_sidebar_table {
+    margin-top: 1rem;
+    border-color: rgba(16, 42, 67, .1);
+}
+
+body.o_wprofile_body #o_wprofile_sidebar_table th,
+body.o_wprofile_body #o_wprofile_sidebar_table td {
+    padding: .7rem .25rem;
+    color: #486581;
+}
+
+body.o_wprofile_body .o_wprofile_tabs_content {
+    min-height: 18rem;
+    padding: 1.5rem 1.75rem !important;
+    border-radius: 0 22px 22px 22px;
+    background: #fff !important;
+    box-shadow: 0 14px 34px rgba(16, 47, 58, .09);
+}
+
+body.o_wprofile_body .o_wprofile_tabs_content h5 {
+    margin-bottom: 1.25rem;
+    padding-bottom: .7rem !important;
+    border-color: rgba(16, 42, 67, .12) !important;
+    color: #0b6476;
+    font-weight: 700;
+}
+
+body.o_wprofile_body #profile_about_badge {
+    padding: 1rem;
+    border: 1px solid rgba(16, 42, 67, .08);
+    border-radius: 16px;
+    background: #f8fbfa;
+}
+
+body.o_wprofile_body .o_forum_profile_bio {
+    color: #486581;
+    line-height: 1.75;
+}
+
+@media (max-width: 767.98px) {
+    body.o_wprofile_body .o_wprofile_header .container {
+        padding-top: 1.5rem !important;
+    }
+
+    body.o_wprofile_body .o_wprofile_pict {
+        width: 132px;
+        height: 132px;
+    }
+
+    body.o_wprofile_body .o_card_people_name {
+        font-size: 2rem;
+    }
+
+    body.o_wprofile_body .o_wprofile_nav_tabs {
+        margin-top: -3rem !important;
+        padding-left: 0;
+    }
+
+    body.o_wprofile_body .o_wprofile_tabs_content {
+        border-radius: 0 0 18px 18px;
+        padding: 1rem !important;
+    }
+}

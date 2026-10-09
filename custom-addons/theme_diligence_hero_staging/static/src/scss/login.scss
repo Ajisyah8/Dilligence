@@ -1,0 +1,320 @@
+// Staging-only login presentation. The original Odoo form and authentication
+// fields remain untouched; only the surrounding layout is redesigned.
+
+body:has(.diligence-login-container) {
+    background:
+        radial-gradient(circle at 8% 12%, rgba(207, 170, 97, .22), transparent 30%),
+        linear-gradient(135deg, #edf8f9 0%, #fff 52%, #fbf4e8 100%) !important;
+}
+
+// Fallback for Odoo's /web/login route: the route may render the base login
+// template without the website-specific inherited view. This keeps the same
+// redesign while leaving the original authentication form untouched.
+body:has(.oe_login_form) .container.py-5 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 420px);
+    align-items: center;
+    gap: clamp(2rem, 6vw, 6rem);
+    width: 100%;
+    max-width: 980px;
+    min-height: 620px;
+    padding: clamp(2rem, 6vw, 5rem) 1.5rem !important;
+}
+
+body:has(.oe_login_form) .container.py-5::before {
+    display: block;
+    min-height: 430px;
+    padding: 9rem 2rem 2rem;
+    border-radius: 28px;
+    content: "DILIGENCE ACADEMY\A\A Learn with confidence.\A\A Access your courses, learning materials, and student account in one place.\A\A ✓ English & Mandarin programmes\A ✓ Structured learning materials\A ✓ Student access portal";
+    white-space: pre-line;
+    background-image: url('/web/binary/company_logo'), linear-gradient(145deg, #eaf8f9, #fff8eb);
+    background-repeat: no-repeat;
+    background-position: 2rem 2rem, center;
+    background-size: 150px auto, cover;
+    box-shadow: 0 20px 55px rgba(16, 47, 58, .08);
+    color: #102f3a;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.75;
+}
+
+body:has(.oe_login_form) .container.py-5 > .card {
+    grid-column: 2;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    border: 1px solid rgba(16, 47, 58, .1) !important;
+    border-radius: 28px !important;
+    background: rgba(255, 255, 255, .95) !important;
+    box-shadow: 0 25px 70px rgba(16, 47, 58, .14) !important;
+}
+
+// Odoo 19 website login structure. In the active database the login route
+// renders .oe_website_login_container directly (without the older .card
+// wrapper), so style that real container instead of relying on a template
+// that is not used by the route.
+.oe_website_login_container {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 420px);
+    grid-template-rows: auto;
+    align-items: center;
+    gap: clamp(2rem, 6vw, 6rem);
+    width: 100%;
+    max-width: 980px;
+    min-height: 520px;
+    margin: 0 auto !important;
+    padding: clamp(2rem, 6vw, 5rem) 1.5rem !important;
+}
+
+.oe_website_login_container::before {
+    grid-column: 1;
+    grid-row: 1;
+    display: block;
+    min-height: 430px;
+    padding: 9rem 2rem 2rem;
+    border-radius: 28px;
+    content: "DILIGENCE ACADEMY\A\A Learn with confidence.\A\A Access your courses, learning materials, and student account in one place.\A\A ✓ English & Mandarin programmes\A ✓ Structured learning materials\A ✓ Student access portal";
+    white-space: pre-line;
+    background-image: url('/web/binary/company_logo'), linear-gradient(145deg, #eaf8f9, #fff8eb);
+    background-repeat: no-repeat;
+    background-position: 2rem 2rem, center;
+    background-size: 150px auto, cover;
+    box-shadow: 0 20px 55px rgba(16, 47, 58, .08);
+    color: #102f3a;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.75;
+}
+
+.oe_website_login_container .oe_login_form {
+    grid-column: 2;
+    grid-row: 1;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: clamp(1.5rem, 4vw, 2.5rem) !important;
+    border: 1px solid rgba(16, 47, 58, .1) !important;
+    border-radius: 28px !important;
+    background: rgba(255, 255, 255, .95) !important;
+    box-shadow: 0 25px 70px rgba(16, 47, 58, .14) !important;
+}
+
+// The form starts hidden while the Odoo user-switch component initializes.
+// On the public login route it must remain visible to unauthenticated users.
+.oe_website_login_container .oe_login_form.d-none {
+    display: block !important;
+}
+
+// These are helper nodes used by the Odoo login route. They are not visual
+// login content and must not create an extra grid row between the panel and
+// the form.
+.oe_website_login_container > .oe_structure,
+.oe_website_login_container > owl-component {
+    display: none !important;
+}
+
+.diligence-login-visual {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid rgba(207, 170, 97, .45);
+    border-radius: 20px;
+    background: linear-gradient(135deg, #edf9fa, #fff8eb);
+}
+
+.diligence-login-visual img {
+    width: 76px;
+    max-height: 76px;
+    object-fit: contain;
+}
+
+.diligence-login-visual span,
+.diligence-login-visual strong,
+.diligence-login-visual p {
+    display: block;
+}
+
+.diligence-login-visual span {
+    margin-bottom: .25rem;
+    color: #087c91;
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .15em;
+}
+
+.diligence-login-visual strong {
+    color: #102f3a;
+    font-size: 1.15rem;
+}
+
+.diligence-login-visual p {
+    margin: .25rem 0 0;
+    color: #607784;
+    font-size: .85rem;
+}
+
+.diligence-login-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 420px);
+    align-items: stretch;
+    gap: clamp(2rem, 6vw, 6rem);
+    width: 100%;
+    max-width: 980px !important;
+    min-height: 620px;
+    padding: clamp(2rem, 6vw, 5rem) 1.5rem !important;
+}
+
+.diligence-login-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(1rem, 4vw, 3rem) 0;
+    color: #102f3a;
+}
+
+.diligence-login-brand {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    margin-bottom: 3rem;
+}
+
+.diligence-login-brand img {
+    max-width: 170px;
+    max-height: 75px;
+}
+
+.diligence-login-eyebrow {
+    margin-bottom: 1rem;
+    color: #087c91;
+    font-size: .78rem;
+    font-weight: 800;
+    letter-spacing: .2em;
+}
+
+.diligence-login-panel h1 {
+    max-width: 9ch;
+    margin-bottom: 1.25rem;
+    color: #102f3a;
+    font-size: clamp(2.5rem, 5vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -.05em;
+}
+
+.diligence-login-panel p {
+    max-width: 30rem;
+    color: #607784;
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+.diligence-login-points {
+    display: grid;
+    gap: .75rem;
+    margin-top: 2rem;
+    color: #075e70;
+    font-size: .95rem;
+    font-weight: 650;
+}
+
+.diligence-login-points span::before {
+    display: inline-grid;
+    width: 1.45rem;
+    height: 1.45rem;
+    margin-right: .65rem;
+    place-items: center;
+    border-radius: 50%;
+    content: "✓";
+    background: rgba(8, 124, 145, .12);
+    color: #087c91;
+    font-weight: 900;
+}
+
+.diligence-login-card {
+    align-self: center;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    border: 1px solid rgba(16, 47, 58, .1) !important;
+    border-radius: 28px !important;
+    background: rgba(255, 255, 255, .94) !important;
+    box-shadow: 0 25px 70px rgba(16, 47, 58, .14) !important;
+}
+
+.diligence-login-card .card-body {
+    padding: clamp(1.5rem, 4vw, 2.5rem) !important;
+}
+
+.diligence-login-card .form-control {
+    min-height: 50px;
+    border-radius: 12px;
+}
+
+.diligence-login-card .btn-primary {
+    min-height: 50px;
+    border: 0;
+    border-radius: 12px !important;
+    background: #087c91 !important;
+}
+
+@media (max-width: 767.98px) {
+    body:has(.oe_login_form) .container.py-5 {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        gap: 1rem;
+        padding-top: 2rem !important;
+    }
+
+    body:has(.oe_login_form) .container.py-5::before {
+        min-height: 280px;
+        padding: 7rem 1.5rem 1.5rem;
+        background-position: 1.5rem 1.5rem, center;
+        background-size: 125px auto, cover;
+    }
+
+    body:has(.oe_login_form) .container.py-5 > .card {
+        grid-column: 1;
+    }
+
+    .oe_website_login_container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        min-height: auto;
+        gap: 1rem;
+        padding-top: 2rem !important;
+    }
+
+    .oe_website_login_container::before {
+        min-height: 280px;
+        padding: 7rem 1.5rem 1.5rem;
+        background-position: 1.5rem 1.5rem, center;
+        background-size: 125px auto, cover;
+    }
+
+    .oe_website_login_container .oe_login_form {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .diligence-login-container {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        gap: 1rem;
+        padding-top: 2rem !important;
+    }
+
+    .diligence-login-panel {
+        padding: 0 0 1rem;
+    }
+
+    .diligence-login-brand {
+        margin-bottom: 2rem;
+    }
+
+    .diligence-login-panel h1 {
+        font-size: clamp(2.5rem, 13vw, 4rem);
+    }
+}
