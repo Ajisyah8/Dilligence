@@ -1,0 +1,324 @@
+// Diligence Academy visual layer on top of Odoo's official Cobalt theme.
+// Content remains native Website Builder markup and therefore stays editable.
+
+:root {
+    --dm-ink: #102a43;
+    --dm-muted: #62748a;
+    --dm-primary: #0d7187;
+    --dm-primary-dark: #07566a;
+    --dm-gold: #d1ad67;
+    --dm-surface: #ffffff;
+    --dm-soft: #f4f8f8;
+    --dm-warm: #fbf6eb;
+    --dm-border: rgba(16, 42, 67, .10);
+    --dm-shadow: 0 24px 70px rgba(15, 45, 62, .10);
+    --dm-shadow-sm: 0 12px 35px rgba(15, 45, 62, .08);
+    --dm-radius: 28px;
+}
+
+html { scroll-behavior: smooth; }
+
+body:not(.o_web_client) {
+    color: var(--dm-ink);
+    background: var(--dm-surface);
+    font-feature-settings: "kern" 1, "liga" 1;
+    -webkit-font-smoothing: antialiased;
+}
+
+body:not(.o_web_client) #wrapwrap {
+    overflow-x: clip;
+}
+
+body:not(.o_web_client) h1,
+body:not(.o_web_client) h2,
+body:not(.o_web_client) h3,
+body:not(.o_web_client) h4 {
+    color: var(--dm-ink);
+    letter-spacing: -.035em;
+    text-wrap: balance;
+}
+
+body:not(.o_web_client) p,
+body:not(.o_web_client) .text-muted {
+    color: var(--dm-muted) !important;
+}
+
+// Global header: floating, compact and consistent across every public page.
+body:not(.o_web_client) header#top {
+    position: relative;
+    z-index: 1030;
+    padding: 14px 22px 0;
+    background: transparent !important;
+}
+
+body:not(.o_web_client) header#top > .navbar,
+body:not(.o_web_client) header#top .navbar {
+    width: 100%;
+    max-width: 1380px;
+    min-height: 76px;
+    margin-inline: auto;
+    padding: 10px 18px !important;
+    border: 1px solid var(--dm-border);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, .92) !important;
+    box-shadow: 0 10px 40px rgba(16, 42, 67, .08);
+    backdrop-filter: blur(18px);
+}
+
+body:not(.o_web_client) header#top .navbar-brand img {
+    max-height: 52px;
+}
+
+body:not(.o_web_client) header#top .nav-link {
+    padding: .65rem 1rem !important;
+    border-radius: 999px;
+    color: var(--dm-ink) !important;
+    font-weight: 600;
+    transition: background-color .2s ease, color .2s ease;
+}
+
+body:not(.o_web_client) header#top .nav-link:hover,
+body:not(.o_web_client) header#top .nav-link.active {
+    color: var(--dm-primary) !important;
+    background: rgba(13, 113, 135, .09);
+}
+
+// A consistent page rhythm for native snippets and existing Diligence sections.
+body:not(.o_web_client) main > #wrap > section,
+body:not(.o_web_client) main > section {
+    position: relative;
+}
+
+body:not(.o_web_client) .container {
+    --gutter-x: clamp(1.25rem, 4vw, 4rem);
+}
+
+body:not(.o_web_client) section.pt80,
+body:not(.o_web_client) section.pt64,
+body:not(.o_web_client) section.pt96 {
+    padding-top: clamp(4.5rem, 8vw, 8rem) !important;
+}
+
+body:not(.o_web_client) section.pb80,
+body:not(.o_web_client) section.pb64,
+body:not(.o_web_client) section.pb96 {
+    padding-bottom: clamp(4.5rem, 8vw, 8rem) !important;
+}
+
+body:not(.o_web_client) .display-3 {
+    font-size: clamp(2.6rem, 5vw, 4.75rem) !important;
+    line-height: 1.02;
+}
+
+body:not(.o_web_client) .display-5 {
+    font-size: clamp(1.9rem, 3.3vw, 3.25rem) !important;
+    line-height: 1.1;
+}
+
+body:not(.o_web_client) .lead {
+    font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+    line-height: 1.75;
+}
+
+body:not(.o_web_client) .text-uppercase.fw-bold {
+    color: var(--dm-primary) !important;
+    font-size: .76rem;
+    letter-spacing: .18em;
+}
+
+// Hero sections remain fully controlled by the native Website Builder.
+// Do not impose width, shape, gradient, spacing, or image styling here.
+
+// Buttons and interactive controls.
+body:not(.o_web_client) .btn {
+    min-height: 48px;
+    padding: .75rem 1.35rem;
+    border-radius: 999px !important;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    box-shadow: none;
+    transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+
+body:not(.o_web_client) .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--dm-shadow-sm);
+}
+
+body:not(.o_web_client) .btn-primary {
+    border-color: var(--dm-primary) !important;
+    background: var(--dm-primary) !important;
+}
+
+body:not(.o_web_client) .btn-primary:hover {
+    border-color: var(--dm-primary-dark) !important;
+    background: var(--dm-primary-dark) !important;
+}
+
+// Cards used by programmes, products, blogs, teachers, testimonials and portal.
+body:not(.o_web_client) .card,
+body:not(.o_web_client) .s_card,
+body:not(.o_web_client) .o_wslides_course_card,
+body:not(.o_web_client) .oe_product_cart {
+    border: 1px solid var(--dm-border) !important;
+    border-radius: var(--dm-radius) !important;
+    background: rgba(255, 255, 255, .96);
+    box-shadow: var(--dm-shadow-sm) !important;
+    overflow: hidden;
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+body:not(.o_web_client) .card:hover,
+body:not(.o_web_client) .o_wslides_course_card:hover,
+body:not(.o_web_client) .oe_product_cart:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--dm-shadow) !important;
+}
+
+body:not(.o_web_client) .card-body {
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+body:not(.o_web_client) .card img,
+body:not(.o_web_client) .img-fluid,
+body:not(.o_web_client) figure img {
+    object-fit: cover;
+}
+
+// Alternating soft surfaces make long pages easier to scan.
+body:not(.o_web_client) #wrap > section:nth-of-type(3n + 2):not(.s_cover):not(.s_banner),
+body:not(.o_web_client) #wrap > .oe_structure > section:nth-of-type(3n + 2):not(.s_cover):not(.s_banner) {
+    background-color: var(--dm-soft);
+}
+
+body:not(.o_web_client) #wrap > section:nth-of-type(3n):not(.s_cover):not(.s_banner),
+body:not(.o_web_client) #wrap > .oe_structure > section:nth-of-type(3n):not(.s_cover):not(.s_banner) {
+    background-color: var(--dm-warm);
+}
+
+body:not(.o_web_client) .s_call_to_action > .container,
+body:not(.o_web_client) .s_newsletter_block > .container {
+    padding: clamp(2rem, 5vw, 5rem);
+    border: 1px solid var(--dm-border);
+    border-radius: clamp(24px, 4vw, 42px);
+    background: var(--dm-surface);
+    box-shadow: var(--dm-shadow-sm);
+}
+
+// Forms, authentication and checkout.
+body:not(.o_web_client) .form-control,
+body:not(.o_web_client) .form-select,
+body:not(.o_web_client) .input-group-text {
+    min-height: 50px;
+    border: 1px solid rgba(16, 42, 67, .16);
+    border-radius: 14px;
+    background-color: #fff;
+}
+
+body:not(.o_web_client) .form-control:focus,
+body:not(.o_web_client) .form-select:focus {
+    border-color: var(--dm-primary);
+    box-shadow: 0 0 0 .25rem rgba(13, 113, 135, .12);
+}
+
+body:not(.o_web_client) .oe_login_form,
+body:not(.o_web_client) .oe_signup_form,
+body:not(.o_web_client) .oe_reset_password_form {
+    max-width: 520px;
+    padding: clamp(1.5rem, 4vw, 3rem);
+    border: 1px solid var(--dm-border);
+    border-radius: var(--dm-radius);
+    background: #fff;
+    box-shadow: var(--dm-shadow);
+}
+
+// Shop, blog and course listing consistency.
+body:not(.o_web_client) .o_wsale_products_grid_table_wrapper,
+body:not(.o_web_client) .o_wblog_post_page_cover,
+body:not(.o_web_client) .o_wslides_homepage_main {
+    padding-top: 2rem;
+}
+
+body:not(.o_web_client) .o_wsale_product_grid_wrapper img,
+body:not(.o_web_client) .o_wblog_post_page_cover img,
+body:not(.o_web_client) .o_wslides_course_card img {
+    border-radius: 20px;
+}
+
+body:not(.o_web_client) .breadcrumb {
+    padding: .7rem 1rem;
+    border-radius: 999px;
+    background: var(--dm-soft);
+}
+
+// Existing Diligence-specific blocks receive the same design language.
+body:not(.o_web_client) .academy-teachers .card,
+body:not(.o_web_client) .academy-testimonials .card {
+    border: 0 !important;
+}
+
+body:not(.o_web_client) .academy-teacher-photo {
+    border-radius: 24px !important;
+}
+
+body:not(.o_web_client) .academy-floating-cta {
+    right: clamp(1rem, 3vw, 2.5rem) !important;
+    bottom: clamp(1rem, 3vw, 2rem) !important;
+    border: 1px solid rgba(255, 255, 255, .32) !important;
+    background: var(--dm-primary) !important;
+    color: #fff !important;
+    box-shadow: 0 18px 45px rgba(7, 86, 106, .28) !important;
+}
+
+// Footer is visually separated from page content and shared by all routes.
+body:not(.o_web_client) footer#bottom,
+body:not(.o_web_client) #footer {
+    margin: 30px 16px 16px;
+    border-radius: 36px;
+    overflow: hidden;
+    background: var(--dm-ink) !important;
+    color: rgba(255, 255, 255, .82) !important;
+}
+
+body:not(.o_web_client) footer#bottom h1,
+body:not(.o_web_client) footer#bottom h2,
+body:not(.o_web_client) footer#bottom h3,
+body:not(.o_web_client) footer#bottom h4,
+body:not(.o_web_client) footer#bottom h5,
+body:not(.o_web_client) footer#bottom a,
+body:not(.o_web_client) #footer h1,
+body:not(.o_web_client) #footer h2,
+body:not(.o_web_client) #footer h3,
+body:not(.o_web_client) #footer h4,
+body:not(.o_web_client) #footer h5,
+body:not(.o_web_client) #footer a {
+    color: #fff !important;
+}
+
+body:not(.o_web_client) footer#bottom p,
+body:not(.o_web_client) #footer p {
+    color: rgba(255, 255, 255, .68) !important;
+}
+
+@media (max-width: 991.98px) {
+    body:not(.o_web_client) header#top { padding: 8px 10px 0; }
+    body:not(.o_web_client) header#top > .navbar,
+    body:not(.o_web_client) header#top .navbar { border-radius: 17px; }
+    body:not(.o_web_client) .s_cover,
+    body:not(.o_web_client) .s_banner,
+    body:not(.o_web_client) .academy-page-hero {
+        width: calc(100% - 20px);
+        margin-top: 10px;
+        border-radius: 24px;
+    }
+    body:not(.o_web_client) .s_cover .row,
+    body:not(.o_web_client) .s_banner .row { min-height: auto; }
+    body:not(.o_web_client) footer#bottom,
+    body:not(.o_web_client) #footer { margin: 16px 8px 8px; border-radius: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    body:not(.o_web_client) .btn,
+    body:not(.o_web_client) .card { transition: none; }
+}

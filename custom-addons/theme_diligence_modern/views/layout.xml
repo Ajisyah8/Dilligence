@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Odoo's public navbar auto-hide script assumes every rendered header has
+        a `.top_menu`. Website-specific header transitions may briefly render a
+        header without one and make the native script call querySelector() on
+        null. Keep this last in the header: a real menu is found first, while
+        this inert fallback protects minimal and transitional layouts.
+    -->
+    <template id="diligence_header_top_menu_guard"
+              inherit_id="website.layout"
+              name="Diligence header top menu guard">
+        <xpath expr="//header[@id='top']" position="inside">
+            <ul class="top_menu d-none o_not_editable"
+                aria-hidden="true"
+                data-diligence-menu-guard="true"/>
+        </xpath>
+    </template>
+</odoo>
