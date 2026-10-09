@@ -47,4 +47,85 @@
         </xpath>
     </template>
 
+    <!-- Keep the second production domain visually identical to the reference
+         domain. SEO metadata remains domain-specific and is not touched here. -->
+    <template id="diligence_website2_visual_match" inherit_id="website.layout" priority="100">
+        <xpath expr="//body" position="inside">
+            <style id="diligence-website2-visual-match">
+                html[data-website-id="2"] {
+                    --o-color-1: #0AA2C0 !important;
+                    --primary: #0AA2C0 !important;
+                    --primary-rgb: 10, 162, 192 !important;
+                    --dark: #102F3A !important;
+                    --o-color-5: #102F3A !important;
+                }
+                html[data-website-id="2"] .text-primary {
+                    color: #0AA2C0 !important;
+                }
+                html[data-website-id="2"] a:not(.btn):not(.dropdown-item),
+                html[data-website-id="2"] .nav-link {
+                    color: #102F3A !important;
+                }
+                html[data-website-id="2"] #wrap > section.s_cover:first-child .academy-hero-photo {
+                    width: 78% !important;
+                    max-width: 340px !important;
+                    height: 360px !important;
+                    max-height: 360px !important;
+                    object-fit: cover !important;
+                    object-position: 50% 12% !important;
+                }
+                /* The builder stores the old photo dimensions inline. These
+                   rules also normalize the hero colors that were previously
+                   injected only on website 2. */
+                html[data-website-id="2"] #wrap > section.s_cover:first-child .text-uppercase {
+                    color: #0AA2C0 !important;
+                }
+                html[data-website-id="2"] #wrap > section.s_cover:first-child h1,
+                html[data-website-id="2"] #wrap > section.s_cover:first-child h2,
+                html[data-website-id="2"] #wrap > section.s_cover:first-child h3 {
+                    color: #102F3A !important;
+                }
+                html[data-website-id="2"] #wrap > section.s_cover:first-child .academy-hero-photo + h3 {
+                    color: #102F3A !important;
+                }
+            </style>
+            <script>
+                (function () {
+                    function syncHeroPhoto() {
+                        if (!document.body) return;
+                        var photos = document.querySelectorAll('#wrap > section.s_cover:first-child .academy-hero-photo');
+                        if (document.body.classList.contains('editor_enable')) {
+                            // Do not let the custom public layout turn the
+                            // image into a non-editable/hidden builder block.
+                            photos.forEach(function (photo) {
+                                photo.classList.remove('o_not_editable', 'css_non_editable_mode_hidden');
+                                photo.removeAttribute('contenteditable');
+                                photo.style.setProperty('display', 'block', 'important');
+                                photo.style.setProperty('visibility', 'visible', 'important');
+                                photo.style.setProperty('opacity', '1', 'important');
+                                var imageBlock = photo.closest('.s_image');
+                                if (imageBlock) imageBlock.classList.remove('o_not_editable', 'css_non_editable_mode_hidden');
+                            });
+                            return;
+                        }
+                        if (!document.documentElement.matches('html[data-website-id="2"]')) return;
+                        photos.forEach(function (photo) {
+                            photo.style.setProperty('width', '78%', 'important');
+                            photo.style.setProperty('max-width', '340px', 'important');
+                            photo.style.setProperty('height', '360px', 'important');
+                            photo.style.setProperty('max-height', '360px', 'important');
+                            photo.style.setProperty('object-fit', 'cover', 'important');
+                            photo.style.setProperty('object-position', '50% 12%', 'important');
+                        });
+                    }
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', syncHeroPhoto, {once: true});
+                    } else {
+                        syncHeroPhoto();
+                    }
+                }());
+            </script>
+        </xpath>
+    </template>
+
 </odoo>

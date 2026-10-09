@@ -84,6 +84,7 @@
         'web.assets_frontend_minimal': [
             'diligence_learning/static/src/js/diligence_lesson_navigation.js',
             'diligence_learning/static/src/js/diligence_seo_search_tracking.js',
+            'diligence_learning/static/src/js/diligence_active_menu.js',
         ],
         'web.assets_frontend': [
             'diligence_learning/static/lib/plyr/plyr.css',
@@ -101,6 +102,7 @@
             'diligence_learning/static/src/scss/payment_methods.scss',
             'diligence_learning/static/src/scss/website_global.scss',
             'diligence_learning/static/src/scss/academy_website.scss',
+            'diligence_learning/static/src/scss/profile_page.scss',
         ],
         'web.assets_frontend_lazy': [
             'diligence_learning/static/lib/plyr/plyr.css',

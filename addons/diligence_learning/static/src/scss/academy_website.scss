@@ -334,6 +334,16 @@ $academy-border: #dce5e8;
         display: none !important;
     }
 
+    // Keep the active menu typography, but do not render the theme's pill
+    // background. All header menu items must remain visually flat.
+    #top_menu > .nav-item > .nav-link.active,
+    #top_menu > .nav-item.active > .nav-link {
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        color: inherit;
+    }
+
     .btn_cta {
         border-color: $academy-gold;
         background: $academy-gold;
