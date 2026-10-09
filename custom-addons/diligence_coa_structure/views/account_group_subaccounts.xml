@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_account_group_form_subaccounts" model="ir.ui.view">
+        <field name="name">account.group.form.diligence.subaccounts</field>
+        <field name="model">account.group</field>
+        <field name="inherit_id" ref="account.view_account_group_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group" position="after">
+                <notebook>
+                    <page string="Sub-Accounts">
+                        <field name="diligence_account_ids" context="{'default_diligence_coa_group_id': id}">
+                            <list editable="bottom" create="1" delete="0">
+                                <field name="code" required="1"/>
+                                <field name="name" required="1"/>
+                                <field name="account_type" widget="account_type_selection" required="1"/>
+                                <field name="reconcile" widget="boolean_toggle"/>
+                                <field name="active" optional="hide" widget="boolean_toggle"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+            <xpath expr="//form/sheet" position="before">
+                <header>
+                    <button name="action_manage_subaccounts" type="object" string="Manage Sub-Accounts" class="oe_highlight"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_account_group_list_subaccounts" model="ir.ui.view">
+        <field name="name">account.group.list.diligence.subaccounts</field>
+        <field name="model">account.group</field>
+        <field name="inherit_id" ref="account.view_account_group_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <button name="action_manage_subaccounts" type="object" string="Manage Sub-Accounts" icon="fa-list"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_diligence_coa_groups" model="ir.actions.act_window">
+        <field name="name">COA Groups</field>
+        <field name="res_model">account.group</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('code_prefix_start', '=like', '_'), ('code_prefix_end', '=like', '_')]</field>
+    </record>
+
+    <menuitem id="menu_diligence_coa_groups" name="COA Groups / Sub-Accounts"
+              parent="account.account_account_menu" action="action_diligence_coa_groups"
+              sequence="2" groups="account.group_account_manager"/>
+</odoo>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_account_search_coa_groups" model="ir.ui.view">
+        <field name="name">account.account.search.coa.groups</field>
+        <field name="model">account.account</field>
+        <field name="inherit_id" ref="account.view_account_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='accounttype']/.." position="inside">
+                <filter string="COA Group" name="coa_group" context="{'group_by': 'diligence_coa_group_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="account.action_account_form" model="ir.actions.act_window">
+        <field name="context">{'search_default_coa_group': 1}</field>
+    </record>
+</odoo>

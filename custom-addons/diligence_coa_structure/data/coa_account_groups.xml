@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--
+            Top-level COA groups follow the first digit of account codes.
+            Accounts created later with a matching code are assigned to the
+            appropriate group automatically by account.account.group_id.
+        -->
+        <record id="coa_group_100_assets" model="account.group">
+            <field name="name">100 Assets</field>
+            <field name="code_prefix_start">1</field>
+            <field name="code_prefix_end">1</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="coa_group_200_liabilities" model="account.group">
+            <field name="name">200 Liabilities</field>
+            <field name="code_prefix_start">2</field>
+            <field name="code_prefix_end">2</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="coa_group_300_equity" model="account.group">
+            <field name="name">300 Stockholders' equity</field>
+            <field name="code_prefix_start">3</field>
+            <field name="code_prefix_end">3</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="coa_group_400_revenues" model="account.group">
+            <field name="name">400 Revenues</field>
+            <field name="code_prefix_start">4</field>
+            <field name="code_prefix_end">4</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="coa_group_500_costs_expenses" model="account.group">
+            <field name="name">500 Costs and expenses</field>
+            <field name="code_prefix_start">5</field>
+            <field name="code_prefix_end">5</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+    </data>
+</odoo>

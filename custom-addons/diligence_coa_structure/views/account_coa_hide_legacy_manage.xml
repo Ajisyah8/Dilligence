@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- The inline add action on each expanded COA group replaces this old list header button. -->
+    <record id="diligence_learning.view_diligence_account_list_subaccounts" model="ir.ui.view">
+        <field name="active" eval="False"/>
+    </record>
+</odoo>

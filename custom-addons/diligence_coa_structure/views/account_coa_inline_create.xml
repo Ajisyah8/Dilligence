@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_account_list_coa_inline_create" model="ir.ui.view">
+        <field name="name">account.account.list.coa.inline.create</field>
+        <field name="model">account.account</field>
+        <field name="inherit_id" ref="account.view_account_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <header>
+                    <button name="action_create_main_category" type="object"
+                            string="Add Main Category" class="btn-secondary"
+                            display="always" groups="account.group_account_manager"/>
+                </header>
+            </xpath>
+            <xpath expr="//list" position="inside">
+                <groupby name="diligence_coa_group_id">
+                    <button name="action_create_subaccount" type="object"
+                            string="Add Sub-Account" title="Add a sub-account to this COA group"
+                            icon="fa-plus"/>
+                </groupby>
+            </xpath>
+        </field>
+    </record>
+</odoo>
