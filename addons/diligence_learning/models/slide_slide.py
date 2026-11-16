@@ -12,6 +12,42 @@ from odoo.exceptions import ValidationError
 class SlideSlide(models.Model):
     _inherit = 'slide.slide'
 
+    def _action_add_record_after_section(self, is_category):
+        """Open a new section/lesson form directly after this section."""
+        self.ensure_one()
+        if not self.is_category:
+            raise ValidationError(_('You can only add course content after a section.'))
+
+        channel_slides = self.channel_id.slide_ids.sorted(
+            key=lambda slide: (slide.sequence, not slide.is_category)
+        )
+        selected_index = channel_slides.ids.index(self.id)
+
+        # Preserve the visible order while reserving an integer-safe sequence gap.
+        for index, slide in enumerate(channel_slides):
+            slide.sequence = (index + 1) * 10
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Add Section') if is_category else _('Add Course Content'),
+            'res_model': 'slide.slide',
+            'view_mode': 'form',
+            'views': [(self.env.ref('website_slides.view_slide_slide_form_wo_channel_id').id, 'form')],
+            'target': 'new',
+            'context': {
+                **self.env.context,
+                'default_channel_id': self.channel_id.id,
+                'default_is_category': is_category,
+                'default_sequence': (selected_index + 1) * 10 + 5,
+            },
+        }
+
+    def action_add_content_after_section(self):
+        return self._action_add_record_after_section(is_category=False)
+
+    def action_add_section_after_section(self):
+        return self._action_add_record_after_section(is_category=True)
+
     def _action_mark_completed(self):
         """Complete media lessons without triggering Odoo quiz validation.
 
@@ -91,6 +127,11 @@ class SlideSlide(models.Model):
                 lambda slide: slide.slide_category == 'quiz' and slide.diligence_external_quiz_url
             ).write({'is_published': True})
         return result
+
+    def _post_publication(self):
+        if self.env.context.get('diligence_silent_course_publish'):
+            return True
+        return super()._post_publication()
 
     video_source_type = fields.Selection(
         selection_add=[('external', 'External Video')],

@@ -9,6 +9,13 @@ a[href*="interview" i]:not(.academy-floating-cta) {
     display: none !important;
 }
 
+/* The invisible stretched link covers each What’s New card and intercepts
+   clicks in Odoo's edit/translate mode. Keep it clickable for visitors only. */
+body.editor_enable #wrap #programs a.stretched-link,
+body.editor_enable #wrap #programs a.stretched-link::after {
+    pointer-events: none !important;
+}
+
 .diligence-security-link {
     display: block !important;
     width: fit-content;
@@ -55,6 +62,13 @@ header .o_wsale_my_cart {
     color: #102f46 !important;
     transform: translateY(-2px);
     box-shadow: 0 .7rem 1.5rem rgba(16, 47, 70, .3) !important;
+}
+
+/* The interview CTA is for public marketing pages, not while a learner is
+   focused on an individual lesson or the fullscreen course player. */
+body:has(.o_wslides_lesson_main) .academy-floating-cta,
+body:has(.diligence-fullscreen-viewer) .academy-floating-cta {
+    display: none !important;
 }
 
 @media (max-width: 991.98px) {

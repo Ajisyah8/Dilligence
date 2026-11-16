@@ -12,6 +12,9 @@ services:
 
   evolution-api:
     image: evoapicloud/evolution-api:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.node-patch
     container_name: diligence-evolution-api
     restart: unless-stopped
     env_file:

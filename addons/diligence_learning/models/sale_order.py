@@ -1,7 +1,13 @@
 from datetime import timedelta
+import logging
+import secrets
+from urllib.parse import urlsplit
 
-from odoo import Command, _, fields, models
+from odoo import Command, _, api, fields, models
 from odoo.exceptions import ValidationError
+from odoo.tools import html_escape
+
+_logger = logging.getLogger(__name__)
 
 
 class SaleOrder(models.Model):
@@ -27,6 +33,40 @@ class SaleOrder(models.Model):
     diligence_next_coaching_date = fields.Datetime('Next Coaching / Q&A', copy=False)
     diligence_coaching_link = fields.Char('Coaching / Q&A Link', copy=False)
     diligence_coaching_note = fields.Text('Coach Progress Note', copy=False)
+    diligence_renewal_package_id = fields.Many2one('product.template', string='Renewal Package', copy=False, readonly=True, index=True)
+    diligence_access_expires_at = fields.Datetime(string='Package Access Expires At', copy=False, readonly=True, index=True)
+    diligence_renewal_status = fields.Selection([
+        ('not_due', 'Not Due'),
+        ('waiting', 'Waiting for Student'),
+        ('continue', 'Wants to Continue'),
+        ('not_continue', 'Will Not Continue'),
+        ('renewed', 'Renewed'),
+        ('expired', 'Expired - No Renewal'),
+    ], string='Renewal Decision', default='not_due', copy=False, readonly=True, index=True)
+    diligence_renewal_reason = fields.Selection([
+        ('completed_material', 'Completed the learning materials'),
+        ('no_time', 'No time to continue'),
+        ('not_interested', 'Not interested in continuing'),
+        ('other', 'Other'),
+    ], string='Reason for Not Continuing', copy=False, readonly=True)
+    diligence_renewal_reason_note = fields.Text(string='Other Renewal Reason', copy=False, readonly=True)
+    diligence_renewal_whatsapp_phone = fields.Char(
+        string='WhatsApp Number Confirmed for Opt-Out', copy=False, readonly=True,
+        help='Number supplied by the learner when confirming they will not renew; used for group removal and retries.',
+    )
+    diligence_renewal_token = fields.Char(copy=False, readonly=True, index=True)
+    diligence_renewal_reminder_sent_at = fields.Datetime(string='Renewal Reminder Sent At', copy=False, readonly=True)
+    diligence_renewal_email_sent_at = fields.Datetime(string='Renewal Email Sent At', copy=False, readonly=True)
+    diligence_renewal_whatsapp_sent_at = fields.Datetime(string='Renewal WhatsApp Sent At', copy=False, readonly=True)
+    diligence_renewal_response_at = fields.Datetime(string='Renewal Response At', copy=False, readonly=True)
+    diligence_renewed_by_order_id = fields.Many2one('sale.order', string='Renewed By Order', copy=False, readonly=True)
+    diligence_whatsapp_group_removal_state = fields.Selection([
+        ('not_required', 'Not Required'),
+        ('pending', 'Pending Group Removal'),
+        ('removed', 'Removed from WhatsApp Group'),
+        ('error', 'Group Removal Failed'),
+    ], string='WhatsApp Group Removal', default='not_required', copy=False, readonly=True, index=True)
+    diligence_whatsapp_group_removed_at = fields.Datetime(string='Removed from WhatsApp Group At', copy=False, readonly=True)
 
     def _verify_updated_quantity(self, order_line, product_id, new_qty, uom_id, **kwargs):
         quantity, warning = super()._verify_updated_quantity(
@@ -58,10 +98,29 @@ class SaleOrder(models.Model):
                 'The learning package “%(package)s” is coming soon and cannot be purchased yet.',
                 package=product.display_name,
             )
+        if (
+            new_qty > 0
+            and product
+            and product.product_tmpl_id._diligence_is_standalone_course_product()
+            and (
+                product.product_tmpl_id.diligence_sales_status in ('full', 'coming_soon')
+                or not product.product_tmpl_id.diligence_has_available_course
+            )
+        ):
+            current_quantity = order_line.product_uom_qty if order_line else 0
+            return current_quantity, _(
+                'The course “%(course)s” is not available for purchase yet.',
+                course=product.display_name,
+            )
         return quantity, warning
 
     def _diligence_package_lines(self):
         return self.order_line.filtered(lambda line: line.product_template_id._diligence_is_package())
+
+    def _diligence_course_access_products(self):
+        return self.order_line.mapped('product_template_id').filtered(
+            lambda product: product._diligence_is_course_access_product()
+        )
 
     def _diligence_referrer_for_code(self, code):
         """Return the active referrer for *code*, or an empty recordset.
@@ -124,11 +183,24 @@ class SaleOrder(models.Model):
     def _diligence_grant_package_access(self):
         community_group = self.env.ref('diligence_learning.group_diligence_community_member')
         for order in self:
-            package_lines = order._diligence_package_lines()
-            if not package_lines:
+            access_products = order._diligence_course_access_products()
+            if not access_products:
                 continue
-            package_products = package_lines.mapped('product_template_id')
-            courses = package_products.mapped('diligence_course_ids').filtered(
+            package_products = access_products.filtered(lambda product: product._diligence_is_package())
+            renewal_package = package_products[:1]
+            if renewal_package and renewal_package.diligence_access_duration_days and not order.diligence_access_expires_at:
+                base_date = order.date_order or fields.Datetime.now()
+                expires_at = base_date + timedelta(days=renewal_package.diligence_access_duration_days)
+                order.write({
+                    'diligence_renewal_package_id': renewal_package.id,
+                    'diligence_access_expires_at': expires_at,
+                    'diligence_renewal_status': 'not_due',
+                    'diligence_renewal_token': secrets.token_urlsafe(32),
+                })
+            courses = self.env['slide.channel'].browse()
+            for product in access_products:
+                courses |= product._diligence_course_access_course_ids()
+            courses = courses.filtered(
                 lambda course: course.diligence_availability != 'coming_soon'
             )
             courses.sudo()._action_add_members(order.partner_id)
@@ -138,17 +210,17 @@ class SaleOrder(models.Model):
                     order.partner_id._diligence_assign_segment_codes([
                         course.diligence_contact_segment_id.code,
                     ])
-            for package in package_products:
+            for access_product in access_products:
                 membership = self.env['slide.channel.partner'].search([
-                    ('channel_id', 'in', package.diligence_course_ids.ids),
+                    ('channel_id', 'in', access_product._diligence_course_access_course_ids().ids),
                     ('partner_id', '=', order.partner_id.id),
                 ])
                 expiration = False
-                if package.diligence_access_duration_days:
+                if access_product.diligence_access_duration_days:
                     base_date = order.date_order or fields.Datetime.now()
-                    expiration = base_date + timedelta(days=package.diligence_access_duration_days)
+                    expiration = base_date + timedelta(days=access_product.diligence_access_duration_days)
                 membership.write({
-                    'diligence_package_id': package.id,
+                    'diligence_package_id': access_product.id,
                     'diligence_access_expires_at': expiration,
                 })
 
@@ -185,9 +257,215 @@ class SaleOrder(models.Model):
             ) == 'True':
                 self.env['diligence.whatsapp.service'].queue_payment_confirmation(order)
 
+            if renewal_package:
+                order._diligence_mark_previous_package_orders_renewed(renewal_package)
+
+    def _diligence_mark_previous_package_orders_renewed(self, package):
+        self.ensure_one()
+        previous_orders = self.search([
+            ('id', '!=', self.id),
+            ('partner_id', '=', self.partner_id.id),
+            ('state', 'in', ('sale', 'done')),
+            ('diligence_renewal_package_id', '=', package.id),
+            ('diligence_renewal_status', '!=', 'renewed'),
+        ])
+        previous_orders.write({
+            'diligence_renewal_status': 'renewed',
+            'diligence_renewed_by_order_id': self.id,
+        })
+
+    @api.model
+    def _cron_send_package_renewal_reminders(self):
+        now = fields.Datetime.now()
+        reminder_days = 3
+        expires_before = now + timedelta(days=reminder_days)
+        legacy_orders = self.sudo().search([
+            ('state', 'in', ('sale', 'done')),
+            ('diligence_access_expires_at', '=', False),
+            ('order_line.product_template_id.diligence_access_duration_days', '>', 0),
+        ])
+        for order in legacy_orders.filtered(lambda item: item._diligence_has_valid_package_payment()):
+            package = order._diligence_package_lines()[:1].product_template_id
+            if not package:
+                continue
+            memberships = self.env['slide.channel.partner'].sudo().search([
+                ('partner_id', 'child_of', order.partner_id.commercial_partner_id.id),
+                ('channel_id', 'in', package._diligence_course_access_course_ids().ids),
+                ('diligence_package_id', '=', package.id),
+                ('diligence_access_expires_at', '!=', False),
+            ])
+            expires_at = max(memberships.mapped('diligence_access_expires_at'), default=False)
+            if expires_at:
+                order.write({
+                    'diligence_renewal_package_id': package.id,
+                    'diligence_access_expires_at': expires_at,
+                    'diligence_renewal_status': 'not_due',
+                    'diligence_renewal_token': secrets.token_urlsafe(32),
+                })
+        expired_orders = self.sudo().search([
+            ('state', 'in', ('sale', 'done')),
+            ('diligence_access_expires_at', '<', now),
+            ('diligence_renewal_status', 'in', ('not_due', 'waiting', 'continue')),
+        ])
+        expired_orders.write({'diligence_renewal_status': 'expired'})
+        orders = self.sudo().search([
+            ('state', 'in', ('sale', 'done')),
+            ('diligence_renewal_package_id', '!=', False),
+            ('diligence_access_expires_at', '>', now),
+            ('diligence_access_expires_at', '<=', expires_before),
+            '|',
+            ('diligence_renewal_reminder_sent_at', '=', False),
+            '|',
+            ('diligence_renewal_email_sent_at', '=', False),
+            ('diligence_renewal_whatsapp_sent_at', '=', False),
+            ('diligence_renewal_status', 'in', ('not_due', 'waiting')),
+        ])
+        for order in orders:
+            if not order._diligence_has_valid_package_payment():
+                continue
+            # Old reminders had one combined timestamp only. Do not resend those
+            # when the per-channel tracking fields are first introduced.
+            if (
+                order.diligence_renewal_reminder_sent_at
+                and not order.diligence_renewal_email_sent_at
+                and not order.diligence_renewal_whatsapp_sent_at
+            ):
+                continue
+            website = order.website_id or self.env['website'].get_current_website()
+            base_url = website.get_base_url() if website else self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+            renewal_url = '%s/diligence/package-renewal/%s' % (
+                base_url.rstrip('/'), order.diligence_renewal_token,
+            )
+            continue_url = '%s?intent=continue' % renewal_url
+            not_continue_url = '%s?intent=not_continue' % renewal_url
+            expiry_label = fields.Datetime.context_timestamp(order, order.diligence_access_expires_at).strftime('%d %B %Y')
+            message = (
+                'Halo %(name)s, masa akses paket %(package)s akan berakhir pada %(expiry)s.\n\n'
+                'Silakan pilih salah satu:\n'
+                '1. LANJUT — buka checkout untuk membeli paket yang sama: %(continue_url)s\n'
+                '2. TIDAK LANJUT — pilih alasan berhenti: %(not_continue_url)s\n\n'
+                'Akses belajar yang sudah dibayar tetap aktif sampai tanggal berakhir.'
+            ) % {
+                'name': order.partner_id.name or 'Siswa',
+                'package': order.diligence_renewal_package_id.name,
+                'expiry': expiry_label,
+                'continue_url': continue_url,
+                'not_continue_url': not_continue_url,
+            }
+            service = self.env['diligence.whatsapp.service'].sudo()
+            delivery = self.env['diligence.whatsapp.delivery'].sudo().search([
+                ('sale_order_id', '=', order.id),
+                ('kind', '=', 'renewal_reminder'),
+            ], limit=1)
+            if not delivery:
+                delivery = self.env['diligence.whatsapp.delivery'].sudo().create({
+                    'sale_order_id': order.id,
+                    'partner_id': order.partner_id.commercial_partner_id.id,
+                    'kind': 'renewal_reminder',
+                    'message': message,
+                })
+            elif delivery.state != 'sent':
+                delivery.write({'message': message})
+            if not order.diligence_renewal_whatsapp_sent_at:
+                delivery.action_send()
+            whatsapp_sent = delivery.state == 'sent'
+            email_sent = False
+            if order.partner_id.email and not order.diligence_renewal_email_sent_at:
+                try:
+                    sender_domain = urlsplit(website.domain).hostname if website and website.domain else False
+                    sender = (
+                        'Diligence Academy <admin@%s>' % sender_domain
+                        if sender_domain else
+                        self.env['ir.config_parameter'].sudo().get_param('mail.default.from') or False
+                    )
+                    mail = self.env['mail.mail'].sudo().create({
+                        'subject': _('Your learning package is nearing its end'),
+                        'email_to': order.partner_id.email,
+                        'email_from': sender,
+                        'body_html': (
+                            '<div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;color:#173642">'
+                            '<p>%s</p><p style="margin:24px 0">'
+                            '<a href="%s" style="display:inline-block;background:#0d6678;color:#fff;'
+                            'padding:12px 20px;border-radius:6px;text-decoration:none;margin-right:8px">'
+                            'Continue and go to checkout</a>'
+                            '<a href="%s" style="display:inline-block;background:#f2f4f5;color:#173642;'
+                            'padding:12px 20px;border-radius:6px;text-decoration:none">I will not continue</a>'
+                            '</p><p style="color:#667">If you choose not to continue, you can tell us why on the next page. '
+                            'Your current access remains available until its expiry date.</p></div>'
+                            % (
+                                html_escape(message.replace(renewal_url, '').strip()),
+                                html_escape(continue_url),
+                                html_escape(not_continue_url),
+                            )
+                        ),
+                    })
+                    mail.send(raise_exception=False)
+                    email_sent = mail.state == 'sent'
+                except Exception:
+                    _logger.exception('Failed to send package renewal email for order %s', order.name)
+            update = {}
+            if email_sent:
+                update['diligence_renewal_email_sent_at'] = now
+            if whatsapp_sent:
+                update['diligence_renewal_whatsapp_sent_at'] = now
+            if update:
+                update.update({
+                    'diligence_renewal_status': 'waiting',
+                    'diligence_renewal_reminder_sent_at': now,
+                })
+                order.write(update)
+
+        self._cron_remove_expired_nonrenewing_students_from_whatsapp()
+        return True
+
+    @api.model
+    def _cron_remove_expired_nonrenewing_students_from_whatsapp(self):
+        """Retry group removals that failed after a learner opted out."""
+        orders = self.sudo().search([
+            ('state', 'in', ('sale', 'done')),
+            ('diligence_renewal_status', '=', 'not_continue'),
+            ('diligence_whatsapp_group_removal_state', 'in', ('pending', 'error')),
+        ])
+        for order in orders:
+            order._diligence_remove_from_whatsapp_group()
+        return True
+
+    def _diligence_remove_from_whatsapp_group(self):
+        """Remove a paid learner as soon as they confirm they will not renew."""
+        now = fields.Datetime.now()
+        service = self.env['diligence.whatsapp.service'].sudo()
+        for order in self:
+            if (
+                order.state not in ('sale', 'done')
+                or not order.diligence_renewal_package_id
+                or not order.diligence_access_expires_at
+                or not order._diligence_has_valid_package_payment()
+            ):
+                order.write({'diligence_whatsapp_group_removal_state': 'not_required'})
+                continue
+            group_jid = order.diligence_renewal_package_id.diligence_whatsapp_group_jid
+            if not group_jid:
+                order.write({'diligence_whatsapp_group_removal_state': 'not_required'})
+                continue
+            phone = order.diligence_renewal_whatsapp_phone or order.partner_id.phone
+            if not phone:
+                order.write({'diligence_whatsapp_group_removal_state': 'not_required'})
+                continue
+            result = service.remove_group_participant(group_jid, phone)
+            if result.get('removed'):
+                order.write({
+                    'diligence_whatsapp_group_removal_state': 'removed',
+                    'diligence_whatsapp_group_removed_at': now,
+                })
+            else:
+                order.write({
+                    'diligence_whatsapp_group_removal_state': 'error',
+                })
+        return True
+
     def _diligence_has_valid_package_payment(self):
         self.ensure_one()
-        if not self._diligence_package_lines():
+        if not self._diligence_course_access_products():
             return True
         return any(
             transaction.state == 'done'

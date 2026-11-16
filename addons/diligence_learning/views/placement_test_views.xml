@@ -9,6 +9,13 @@
                 <page string="Placement Test" name="diligence_placement" invisible="not diligence_is_placement_test">
                     <group>
                         <field name="diligence_is_placement_test"/>
+                        <field name="diligence_placement_course_ids" context="{'default_survey_id': id}">
+                            <list editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="course_id" options="{'no_create': True}"/>
+                                <field name="min_score"/>
+                            </list>
+                        </field>
                         <field name="diligence_placement_level_ids">
                             <list editable="bottom">
                                 <field name="sequence" widget="handle"/>
@@ -29,6 +36,30 @@
             </xpath>
         </field>
     </record>
+    <record id="survey_question_form_diligence_placement" model="ir.ui.view">
+        <field name="name">survey.question.form.diligence.placement</field>
+        <field name="model">survey.question</field>
+        <field name="inherit_id" ref="survey.survey_question_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='question_type']" position="after">
+                <field name="diligence_placement_course_id"
+                       invisible="is_page or not survey_id.diligence_is_placement_test"
+                       options="{'no_create': True}"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="survey_survey_question_list_diligence_placement" model="ir.ui.view">
+        <field name="name">survey.survey.question.list.diligence.placement</field>
+        <field name="model">survey.survey</field>
+        <field name="inherit_id" ref="survey.survey_survey_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='question_and_page_ids']/list/field[@name='question_type']" position="after">
+                <field name="diligence_placement_course_id" optional="hide"
+                       column_invisible="not parent.diligence_is_placement_test"
+                       invisible="is_page" options="{'no_create': True}"/>
+            </xpath>
+        </field>
+    </record>
     <record id="survey_user_input_view_form_diligence_placement" model="ir.ui.view">
         <field name="name">survey.user.input.form.diligence.placement</field>
         <field name="model">survey.user_input</field>
@@ -37,6 +68,23 @@
             <xpath expr="//sheet//group" position="inside">
                 <field name="diligence_placement_level_id" readonly="1"/>
                 <field name="diligence_placement_review_state"/>
+            </xpath>
+            <xpath expr="//sheet//notebook" position="inside">
+                <page string="Placement Results" name="diligence_placement_results"
+                      invisible="not survey_id.diligence_is_placement_test">
+                    <field name="diligence_placement_course_result_ids" readonly="state != 'done'">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="course_id"/>
+                            <field name="score"/>
+                            <field name="passing_score"/>
+                            <field name="manually_graded_count"/>
+                            <field name="outcome"/>
+                            <field name="manual_decision"/>
+                            <field name="final_recommendation"/>
+                        </list>
+                    </field>
+                </page>
             </xpath>
         </field>
     </record>

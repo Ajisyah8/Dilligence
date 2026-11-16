@@ -1,4 +1,17 @@
 <odoo>
+    <template id="diligence_quiz_bulk_import_help"
+              inherit_id="website_slides.lesson_content_quiz_add_buttons"
+              name="Diligence quiz import format guidance">
+        <xpath expr="//div[hasclass('o_wslides_js_lesson_quiz_new_question')]/div[hasclass('small')]" position="replace">
+            <div class="small text-muted mt-2">
+                Excel supports single_choice, multiple_choice, true_false, short_answer, essay, and listening.
+                Short-answer keys go in Accepted Answers, separated with |. Essays are graded by a teacher.
+                For listening questions, attach the audio to each question after importing.
+                Matching, ordering, and speaking are not yet available for learner quizzes.
+            </div>
+        </xpath>
+    </template>
+
     <record id="diligence_quiz_attempt_tree" model="ir.ui.view">
         <field name="name">diligence.quiz.attempt.tree</field>
         <field name="model">diligence.quiz.attempt</field>

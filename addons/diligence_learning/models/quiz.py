@@ -1,5 +1,6 @@
 import re
 import unicodedata
+import io
 
 from odoo import api, fields, models, _, Command
 from odoo.exceptions import AccessError, ValidationError
@@ -39,6 +40,194 @@ class SlideQuestion(models.Model):
     feedback_after_submit = fields.Boolean('Show feedback after submit', default=True)
     grading_rubric = fields.Text('Teacher grading rubric')
 
+    def _diligence_display_question(self, slide, sequence=None):
+        """Avoid rendering a bare imported item number as if it were a prompt."""
+        self.ensure_one()
+        title = (self.question or '').strip()
+        title = re.sub(r'\s*=\s*$', '', title).strip()
+        if title and not re.fullmatch(r'(?:question\s*)?\d+[.)]?', title, flags=re.IGNORECASE):
+            return title
+        item_number = sequence or self.sequence or 1
+        if slide.slide_category == 'audio':
+            return _('Listen to the audio and enter your answer for item %(number)s.', number=item_number)
+        return _('Enter your answer for item %(number)s.', number=item_number)
+
+    @api.model
+    def _prepare_questions_from_xlsx(self, slide, file_content):
+        """Parse the standard Slides spreadsheet plus Diligence question types.
+
+        Older spreadsheets without a Question Type column keep the native
+        single-choice behavior. Short-answer and essay rows do not need
+        distractor columns; listening questions can be imported as either
+        choice or short-answer and have their audio attached after import.
+        """
+        try:
+            from openpyxl import load_workbook
+        except ImportError as exc:
+            raise ValidationError(_("The Python package 'openpyxl' is required to import quiz questions from Excel.")) from exc
+
+        try:
+            workbook = load_workbook(io.BytesIO(file_content), data_only=True, read_only=True)
+        except Exception as exc:
+            raise ValidationError(_('The uploaded file could not be read. Please upload a valid .xlsx file.')) from exc
+
+        rows = list(workbook.active.iter_rows(values_only=True))
+        if not rows:
+            raise ValidationError(_('The uploaded Excel file is empty.'))
+        headers = [self._normalize_import_header(cell) for cell in rows[0]]
+        if 'question' not in headers:
+            raise ValidationError(_('The Excel file must contain a Question column.'))
+
+        def column(*names):
+            for name in names:
+                normalized = self._normalize_import_header(name)
+                if normalized in headers:
+                    return headers.index(normalized)
+            return None
+
+        def cell(row, index):
+            return row[index] if index is not None and index < len(row) else None
+
+        question_index = column('question')
+        type_index = column('question type', 'type')
+        weight_index = column('weight', 'points')
+        required_index = column('required')
+        partial_index = column('allow partial score', 'partial credit')
+        listening_index = column('listening answer type', 'response format')
+        accepted_index = column('accepted answers', 'accepted answer', 'answer key')
+        correct_answer_index = column('correct answer')
+        rubric_index = column('grading rubric', 'rubric')
+        feedback_index = column('feedback after submit', 'show feedback')
+
+        answer_columns = {}
+        for index, header in enumerate(headers):
+            match = self._IMPORT_HEADER_REGEX.match(header or '')
+            if match:
+                answer_type, number = match.groups()
+                answer_columns.setdefault(int(number), {})[answer_type] = index
+
+        aliases = {
+            'single_choice': 'single_choice', 'single choice': 'single_choice', 'multiple_choice': 'multiple_choice',
+            'multiple choice': 'multiple_choice', 'true_false': 'true_false', 'true/false': 'true_false',
+            'true false': 'true_false', 'short_answer': 'short_answer', 'short answer': 'short_answer',
+            'essay': 'essay', 'listening': 'listening',
+        }
+        supported_types = {'single_choice', 'multiple_choice', 'true_false', 'short_answer', 'essay', 'listening'}
+        prepared = []
+
+        for row_index, row in enumerate(rows[1:], start=2):
+            if not any(value not in (None, '') for value in row):
+                continue
+            title = self._format_import_cell(cell(row, question_index))
+            if not title:
+                raise ValidationError(_('Row %(row)s is missing the question title.', row=row_index))
+
+            raw_type = self._format_import_cell(cell(row, type_index)).casefold() if type_index is not None else ''
+            question_type = aliases.get(raw_type.replace('-', '_'), aliases.get(raw_type, 'single_choice'))
+            if raw_type and question_type == 'single_choice' and raw_type not in aliases:
+                raise ValidationError(_(
+                    "Unsupported question type '%(type)s' in row %(row)s. Supported types: single_choice, multiple_choice, true_false, short_answer, essay, listening.",
+                    type=raw_type, row=row_index,
+                ))
+            if question_type not in supported_types:
+                raise ValidationError(_('Question type %(type)s is not supported for bulk import.', type=raw_type))
+
+            try:
+                weight = float(cell(row, weight_index) if cell(row, weight_index) not in (None, '') else 1.0)
+            except (TypeError, ValueError) as exc:
+                raise ValidationError(_('Row %(row)s has an invalid Weight.', row=row_index)) from exc
+            if weight <= 0:
+                raise ValidationError(_('Row %(row)s Weight must be greater than zero.', row=row_index))
+
+            required_raw = cell(row, required_index)
+            required = True if required_raw in (None, '') else self._parse_import_boolean(required_raw, row_index, 'Required')
+            partial = self._parse_import_boolean(cell(row, partial_index), row_index, 'Allow Partial Score')
+            feedback_raw = cell(row, feedback_index)
+            feedback = True if feedback_raw in (None, '') else self._parse_import_boolean(feedback_raw, row_index, 'Feedback After Submit')
+
+            answer_values = []
+            marked_correct_texts = []
+            for number in sorted(answer_columns):
+                mapping = answer_columns[number]
+                answer_text = self._format_import_cell(cell(row, mapping.get('answer')))
+                if not answer_text:
+                    continue
+                is_correct = self._parse_import_boolean(cell(row, mapping.get('correct')), row_index, f'Correct {number}')
+                answer_values.append({
+                    'sequence': len(answer_values) + 1,
+                    'text_value': answer_text,
+                    'is_correct': is_correct,
+                    'comment': self._format_import_cell(cell(row, mapping.get('comment'))),
+                })
+                if is_correct:
+                    marked_correct_texts.append(answer_text)
+
+            accepted_raw = self._format_import_cell(cell(row, accepted_index))
+            accepted_answers = [value.strip() for value in re.split(r'[|\n]+', accepted_raw) if value.strip()]
+            accepted_answers = accepted_answers or marked_correct_texts
+            values = {
+                'slide_id': slide.id,
+                'question': title,
+                'question_type': question_type,
+                'weight': weight,
+                'required': required,
+                'allow_partial_score': partial,
+                'feedback_after_submit': feedback,
+                'grading_rubric': self._format_import_cell(cell(row, rubric_index)),
+                'answer_ids': [],
+            }
+            configured_type = self.env['diligence.quiz.type'].search([('code', '=', question_type)], limit=1)
+            if configured_type:
+                values['question_type_id'] = configured_type.id
+
+            if question_type in ('single_choice', 'multiple_choice'):
+                if len(answer_values) < 2 or not any(a['is_correct'] for a in answer_values) or all(a['is_correct'] for a in answer_values):
+                    raise ValidationError(_(
+                        'Row %(row)s (%(type)s) needs at least two options, including one correct and one incorrect option.',
+                        row=row_index, type=question_type,
+                    ))
+                if question_type == 'single_choice' and len(marked_correct_texts) != 1:
+                    raise ValidationError(_('Row %(row)s single-choice question must have exactly one correct option.', row=row_index))
+                values['answer_ids'] = answer_values
+            elif question_type == 'true_false':
+                if not answer_values:
+                    raw_correct = self._format_import_cell(cell(row, correct_answer_index)).casefold()
+                    if raw_correct not in ('true', 'false', 'benar', 'salah'):
+                        raise ValidationError(_('Row %(row)s true/false needs Answer 1/2 options or Correct Answer set to True/False.', row=row_index))
+                    correct_text = 'True' if raw_correct in ('true', 'benar') else 'False'
+                    answer_values = [
+                        {'sequence': 1, 'text_value': 'True', 'is_correct': correct_text == 'True'},
+                        {'sequence': 2, 'text_value': 'False', 'is_correct': correct_text == 'False'},
+                    ]
+                if len(answer_values) != 2 or sum(a['is_correct'] for a in answer_values) != 1:
+                    raise ValidationError(_('Row %(row)s true/false question must have two options and exactly one correct answer.', row=row_index))
+                values['answer_ids'] = answer_values
+            elif question_type == 'short_answer':
+                if not accepted_answers:
+                    raise ValidationError(_('Row %(row)s short-answer question needs Accepted Answers (separate alternatives with |).', row=row_index))
+                values['short_answer_variants'] = '\n'.join(accepted_answers)
+            elif question_type == 'essay':
+                if not values['grading_rubric']:
+                    raise ValidationError(_('Row %(row)s essay question needs a Grading Rubric.', row=row_index))
+            else:  # listening
+                listening_raw = self._format_import_cell(cell(row, listening_index)).casefold() if listening_index is not None else ''
+                listening_type = {'choice': 'choice', 'short_answer': 'short_answer', 'short answer': 'short_answer'}.get(listening_raw, 'choice')
+                values['listening_answer_type'] = listening_type
+                if listening_type == 'choice':
+                    if len(answer_values) < 2 or not any(a['is_correct'] for a in answer_values) or all(a['is_correct'] for a in answer_values):
+                        raise ValidationError(_('Row %(row)s listening-choice needs at least one correct and one incorrect option.', row=row_index))
+                    values['answer_ids'] = answer_values
+                else:
+                    if not accepted_answers:
+                        raise ValidationError(_('Row %(row)s listening short-answer needs Accepted Answers.', row=row_index))
+                    values['short_answer_variants'] = '\n'.join(accepted_answers)
+
+            prepared.append(values)
+
+        if not prepared:
+            raise ValidationError(_('The Excel file does not contain any question rows to import.'))
+        return prepared
+
     @api.onchange('question_type_id')
     def _onchange_question_type_id(self):
         for question in self:
@@ -72,10 +261,13 @@ class SlideQuestion(models.Model):
             if question.max_audio_plays < 0:
                 raise ValidationError(_('Maximum audio plays cannot be negative.'))
 
-    @api.constrains('answer_ids', 'question_type')
+    @api.constrains('answer_ids', 'question_type', 'listening_answer_type')
     def _check_answers_integrity(self):
-        choice_questions = self.filtered(lambda question: question.question_type in (
-            'single_choice', 'multiple_choice', 'true_false', 'listening'))
+        choice_questions = self.filtered(lambda question: (
+            question.question_type in ('single_choice', 'multiple_choice', 'true_false')
+            or question.question_type == 'listening'
+            and question.listening_answer_type == 'choice'
+        ))
         if choice_questions:
             super(SlideQuestion, choice_questions)._check_answers_integrity()
 
@@ -105,6 +297,8 @@ class SlideQuestion(models.Model):
 
     def _diligence_short_answer_is_correct(self, value):
         accepted = [line for line in (self.short_answer_variants or '').splitlines() if line.strip()]
+        if not accepted:
+            accepted = self.answer_ids.filtered('is_correct').mapped('text_value')
         return self._diligence_normalize_answer(value) in {
             self._diligence_normalize_answer(answer) for answer in accepted
         }

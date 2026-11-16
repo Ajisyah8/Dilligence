@@ -22,6 +22,21 @@
                         <field name="diligence_coaching_link" widget="url"/>
                         <field name="diligence_coaching_note"/>
                     </group>
+                    <group string="Package Renewal" invisible="not diligence_renewal_package_id">
+                        <field name="diligence_renewal_package_id"/>
+                        <field name="diligence_access_expires_at"/>
+                        <field name="diligence_renewal_status" widget="badge"/>
+                        <field name="diligence_renewal_reason"/>
+                        <field name="diligence_renewal_reason_note" invisible="diligence_renewal_reason != 'other'"/>
+                        <field name="diligence_renewal_whatsapp_phone"/>
+                        <field name="diligence_renewal_reminder_sent_at"/>
+                        <field name="diligence_renewal_email_sent_at"/>
+                        <field name="diligence_renewal_whatsapp_sent_at"/>
+                        <field name="diligence_renewal_response_at"/>
+                        <field name="diligence_whatsapp_group_removal_state" widget="badge"/>
+                        <field name="diligence_whatsapp_group_removed_at"/>
+                        <field name="diligence_renewed_by_order_id"/>
+                    </group>
                 </page>
             </xpath>
         </field>

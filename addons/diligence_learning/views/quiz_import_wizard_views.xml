@@ -1,0 +1,42 @@
+<odoo>
+    <record id="diligence_quiz_import_wizard_view_form" model="ir.ui.view">
+        <field name="name">diligence.quiz.import.wizard.form</field>
+        <field name="model">diligence.quiz.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import Questions from Excel">
+                <field name="guide_only" invisible="1"/>
+                <group>
+                    <field name="slide_id"/>
+                    <field name="file_data" filename="file_name" options="{'accepted_file_extensions': '.xlsx'}"
+                           invisible="guide_only" required="not guide_only"/>
+                    <field name="file_name" invisible="1"/>
+                </group>
+                <div class="alert alert-info" role="alert" invisible="guide_only">
+                    Questions are added to the end of the selected course content. Existing questions are kept.
+                    Supported types: single choice, multiple choice, true/false, short answer, essay, and listening.
+                </div>
+                <div class="o_diligence_quiz_import_guide" invisible="not guide_only">
+                    <h4>Before you import</h4>
+                    <p>Download the Excel template, fill in one question per row, and keep the original column headers unchanged. Save the file as <strong>.xlsx</strong>. The importer reads the first worksheet; blank rows are ignored. Questions will be attached to the video, audio, document, or quiz slide currently open.</p>
+                    <h4>Question types and required fields</h4>
+                    <ul>
+                        <li><strong>single_choice</strong>: fill at least two answer options; mark exactly one <code>Correct</code> cell as <code>TRUE</code>, and the others as <code>FALSE</code>.</li>
+                        <li><strong>multiple_choice</strong>: fill at least two options; mark one or more correct options <code>TRUE</code> and at least one incorrect option <code>FALSE</code>.</li>
+                        <li><strong>true_false</strong>: use the options <code>True</code> and <code>False</code>; mark exactly one as correct.</li>
+                        <li><strong>short_answer</strong>: fill <code>Accepted Answers</code>. Separate acceptable alternatives with <code>|</code>, for example <code>xie xie|谢谢</code>.</li>
+                        <li><strong>essay</strong>: fill <code>Grading Rubric</code> with the points the teacher should assess.</li>
+                        <li><strong>listening</strong>: choose <code>choice</code> or <code>short_answer</code> in <code>Listening Answer Type</code> and fill the corresponding answer columns. Excel does not embed the audio file: open the imported question, set its type to Listening, upload an MP3/WAV/OGG/WebM/M4A file in Audio File, and save. The student audio player appears above the answer choices.</li>
+                    </ul>
+                    <h4>Other columns</h4>
+                    <p><code>Question</code> is required. <code>Question Type</code> uses one of the values above. <code>Weight</code> must be greater than zero (blank defaults to 1). <code>Required</code> and <code>Allow Partial Score</code> accept <code>TRUE</code> or <code>FALSE</code>. For choice questions, the template provides four answer slots; unused slots can stay blank. Answer feedback/comment cells are optional.</p>
+                    <p>Imported questions are appended after existing questions; importing does not replace or delete them. Export Questions downloads the current questions in the same editable format. Audio files are not embedded in Excel: upload the audio on each Listening question after import.</p>
+                </div>
+                <footer>
+                    <button name="action_download_template" type="object" string="Download Excel Template" class="btn-secondary"/>
+                    <button name="action_import" type="object" string="Import Questions" class="btn-primary" invisible="guide_only"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

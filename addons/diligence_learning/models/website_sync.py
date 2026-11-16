@@ -382,6 +382,46 @@ class DiligenceWebsiteMenuSync(models.Model):
 class DiligenceIrUiViewSync(models.Model):
     _inherit = 'ir.ui.view'
 
+    @api.model
+    def _diligence_fix_contact_translation_targets(self):
+        """Attach Contact page translation markers to each live page view."""
+        targets = (
+            (
+                'diligence_learning.diligence_contact_translation_en',
+                'https://diligenceenglish.com',
+            ),
+            (
+                'diligence_learning.diligence_contact_translation_id',
+                'https://diligencekursusbahasa.com',
+            ),
+        )
+        page_model = self.env['website.page']
+        for xmlid, domain in targets:
+            page = page_model.search([
+                ('url', '=', '/contactus'),
+                ('website_id.domain', '=', domain),
+            ], limit=1)
+            if not page or not page.view_id:
+                _logger.warning(
+                    'Diligence translation marker: no live Contact page for %s',
+                    domain,
+                )
+                continue
+            try:
+                marker_view = self.env.ref(xmlid)
+            except ValueError:
+                _logger.warning('Missing Contact translation view %s', xmlid)
+                continue
+            if marker_view.inherit_id != page.view_id:
+                marker_view.with_context({
+                    SYNC_CONTEXT: True,
+                    'no_cow': True,
+                }).write({
+                    'inherit_id': page.view_id.id,
+                    'website_id': page.website_id.id,
+                    'mode': 'extension',
+                })
+
     def _diligence_normalize_carousels(self, view):
         """Restore Bootstrap carousel navigation attributes after editing.
 

@@ -96,18 +96,14 @@ class PaymentTransaction(models.Model):
         return result
 
     def _diligence_has_exact_package_payment(self, order):
-        """Return whether a package order is paid for by the exact checkout total.
+        """Return whether a course-access order is paid for the exact total.
 
         Odoo allows a sale order with ``require_payment`` disabled to be
-        confirmed by any completed transaction. Package access is a paid
+        confirmed by any completed transaction. Course access is a paid
         entitlement in Diligence, so an under/over-payment must not confirm the
         order, create an invoice, or unlock a course.
         """
-        package_order = order.order_line.filtered(
-            lambda line: line.product_template_id.diligence_package_type_id
-            or line.product_template_id.diligence_package_type
-        )
-        if not package_order:
+        if not order._diligence_course_access_products():
             return True
         paid_amount = sum(
             transaction.amount
@@ -129,7 +125,7 @@ class PaymentTransaction(models.Model):
         )
 
     def _check_amount_and_confirm_order(self):
-        """Confirm only exactly paid Diligence package orders."""
+        """Confirm course-access orders only when paid for their exact total."""
         eligible = self.filtered(
             lambda transaction: (
                 len(transaction.sale_order_ids) != 1

@@ -110,7 +110,9 @@
                                 <div class="card-body d-flex flex-column">
                                     <h5 class="card-title" t-out="membership.channel_id.name"/>
                                     <p class="text-muted mb-2" t-if="membership.diligence_package_id">
-                                        <span t-translation="yes">Package:</span> <span t-out="membership.diligence_package_id.name"/>
+                                        <span t-if="membership.diligence_package_id._diligence_is_package()" t-translation="yes">Package:</span>
+                                        <span t-else="" t-translation="yes">Course purchase:</span>
+                                        <span t-out="membership.diligence_package_id.name"/>
                                     </p>
                                     <p class="small text-muted" t-if="membership.diligence_access_expires_at">
                                         <span t-translation="yes">Access until:</span> <span t-field="membership.diligence_access_expires_at"/>
@@ -119,7 +121,7 @@
                                        t-att-href="membership.channel_id.website_absolute_url">
                                         <span t-translation="yes">Open Course</span>
                                     </a>
-                                    <a t-if="membership.diligence_package_id.diligence_whatsapp_group_link"
+                                    <a t-if="membership.diligence_package_id._diligence_is_package() and membership.diligence_package_id.diligence_whatsapp_group_link"
                                        class="btn btn-sm btn-outline-success mt-2"
                                        t-att-href="membership.diligence_package_id.diligence_whatsapp_group_link"
                                        target="_blank" rel="noopener" t-translation="yes">

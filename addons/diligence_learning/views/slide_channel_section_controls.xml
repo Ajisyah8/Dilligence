@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="slide_channel_form_section_controls" model="ir.ui.view">
+        <field name="name">slide.channel.form.section.controls</field>
+        <field name="model">slide.channel</field>
+        <field name="inherit_id" ref="website_slides.view_slide_channel_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='slide_ids']/list/field[@name='is_category']" position="after">
+                <button name="action_add_content_after_section"
+                        type="object"
+                        string="Add Content"
+                        icon="fa-plus"
+                        invisible="not is_category"
+                        groups="website_slides.group_website_slides_officer"/>
+                <button name="action_add_section_after_section"
+                        type="object"
+                        string="Add Section"
+                        icon="fa-folder-o"
+                        invisible="not is_category"
+                        groups="website_slides.group_website_slides_officer"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -7,4 +7,68 @@
     <record id="diligence_homepage_testimony_text_override" model="ir.ui.view">
         <field name="active" eval="False"/>
     </record>
+
+    <!-- Website Builder pages are stored as HTML in ir.ui.view. Explicitly
+         enable QWeb translation for all static text inside each page body. -->
+    <record id="diligence_homepage_whats_new_translation_en" model="ir.ui.view">
+        <field name="name">Diligence Homepage What’s New Translations (Shared homepage)</field>
+        <field name="type">qweb</field>
+        <field name="inherit_id" search="[('key', '=', 'diligence_learning.homepage_editable'), ('website_id', '=', False)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='wrap']" position="attributes">
+                <attribute name="t-translation">on</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="diligence_homepage_whats_new_translation_id" model="ir.ui.view">
+        <field name="name">Diligence Homepage What’s New Translations (Indonesian site)</field>
+        <field name="type">qweb</field>
+        <field name="inherit_id" search="[('key', '=', 'diligence_learning.homepage_editable.website2'), ('website_id', '=', 2)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='wrap']" position="attributes">
+                <attribute name="t-translation">on</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="diligence_about_translation_en" model="ir.ui.view">
+        <field name="name">Diligence About Page Translations (Shared page)</field>
+        <field name="type">qweb</field>
+        <field name="inherit_id" search="[('key', '=', 'website.about-us'), ('website_id', '=', False)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='wrap']" position="attributes">
+                <attribute name="t-translation">on</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="diligence_about_translation_id" model="ir.ui.view">
+        <field name="name">Diligence About Page Translations (Website 2)</field>
+        <field name="type">qweb</field>
+        <field name="inherit_id" search="[('key', '=', 'website.about-us_b45269'), ('website_id', '=', 2)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='wrap']" position="attributes">
+                <attribute name="t-translation">on</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="diligence_contact_translation_en" model="ir.ui.view">
+        <field name="name">Diligence Contact Page Translations (Shared page)</field>
+        <field name="type">qweb</field>
+        <field name="inherit_id" search="[('key', '=', 'website.contactus'), ('website_id', '=', False)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='wrap']" position="attributes">
+                <attribute name="t-translation">on</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="diligence_contact_translation_id" model="ir.ui.view">
+        <field name="name">Diligence Contact Page Translations (Website 2)</field>
+        <field name="type">qweb</field>
+        <field name="inherit_id" search="[('key', '=', 'website.contactus_58c439'), ('website_id', '=', 2)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='wrap']" position="attributes">
+                <attribute name="t-translation">on</attribute>
+            </xpath>
+        </field>
+    </record>
+    <function model="ir.ui.view" name="_diligence_fix_contact_translation_targets"/>
 </odoo>

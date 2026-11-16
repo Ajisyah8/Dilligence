@@ -1,0 +1,41 @@
+<odoo>
+    <record id="diligence_contact_import_wizard_view_form" model="ir.ui.view">
+        <field name="name">diligence.contact.import.wizard.form</field>
+        <field name="model">diligence.contact.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import Contacts from Excel">
+                <group>
+                    <field name="file_data" filename="file_name"
+                           options="{'accepted_file_extensions': '.xlsx'}" required="1"/>
+                    <field name="file_name" invisible="1"/>
+                    <field name="duplicate_policy"/>
+                </group>
+                <div class="alert alert-info" role="note">
+                    Download the template, fill one contact per row in the Contacts sheet, then upload the completed .xlsx file.
+                    The whole file is validated before any contact is created or updated.
+                </div>
+                <div class="text-muted mb-3">
+                    Email or WhatsApp number identifies an existing contact. Update mode changes only non-empty cells;
+                    Skip mode leaves matching contacts unchanged. Newsletter consent is imported only when explicitly provided.
+                </div>
+                <footer>
+                    <button name="action_download_template" type="object" string="Download Excel Template" class="btn-secondary"/>
+                    <button name="action_import" type="object" string="Import Contacts" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_diligence_contact_import_wizard" model="ir.actions.act_window">
+        <field name="name">Import Contacts from Excel</field>
+        <field name="res_model">diligence.contact.import.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="menu_diligence_contact_import"
+              name="Import Contacts from Excel"
+              parent="contacts.menu_contacts"
+              action="action_diligence_contact_import_wizard"
+              sequence="74"
+              groups="base.group_user"/>
+</odoo>

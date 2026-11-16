@@ -1,14 +1,78 @@
 import base64
+import io
+import mimetypes
 import werkzeug
+from werkzeug.utils import secure_filename
 
 from odoo import http, fields, _
 from odoo.exceptions import AccessError, ValidationError
 from odoo.tools import html_escape
 from odoo.addons.website_slides.controllers.main import WebsiteSlides
-from odoo.http import request
+from odoo.http import request, content_disposition
 
 
 class DiligenceWebsiteSlides(WebsiteSlides):
+    @http.route('/slides/slide/<int:slide_id>/quiz/export', type='http', auth='user', methods=['GET'], website=True)
+    def slide_quiz_export(self, slide_id, **kwargs):
+        slide = request.env['slide.slide'].browse(slide_id).exists()
+        if not slide:
+            raise werkzeug.exceptions.NotFound()
+        slide._check_quiz_spreadsheet_access()
+        content = slide._build_quiz_questions_xlsx()
+        filename = secure_filename('%s_quiz_questions.xlsx' % (slide.name or 'course_content'))
+        return request.make_response(
+            content,
+            headers=[
+                ('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
+                ('Content-Disposition', content_disposition(filename)),
+            ],
+        )
+
+    @http.route()
+    def slide_quiz_import_template(self):
+        """Provide an Excel template covering the active Diligence question types."""
+        import xlsxwriter
+
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        worksheet = workbook.add_worksheet('Quiz Import')
+        headers = [
+            'Question', 'Question Type', 'Weight', 'Required', 'Allow Partial Score',
+            'Listening Answer Type', 'Accepted Answers', 'Grading Rubric',
+            'Answer 1', 'Correct 1', 'Comment 1', 'Answer 2', 'Correct 2', 'Comment 2',
+            'Answer 3', 'Correct 3', 'Comment 3', 'Answer 4', 'Correct 4', 'Comment 4',
+            'Feedback After Submit',
+        ]
+        examples = [
+            ['Choose the correct translation.', 'single_choice', 1, 'TRUE', 'FALSE', '', '', '', '你好', 'TRUE', 'Correct.', '再见', 'FALSE', '', '', '', '', '', '', '', 'TRUE'],
+            ['Select all correct answers.', 'multiple_choice', 2, 'TRUE', 'TRUE', '', '', '', 'A', 'TRUE', '', 'B', 'TRUE', '', 'C', 'FALSE', '', '', '', '', 'TRUE'],
+            ['Mandarin has four main tones.', 'true_false', 1, 'TRUE', 'FALSE', '', '', '', 'True', 'TRUE', '', 'False', 'FALSE', '', '', '', '', '', '', '', 'TRUE'],
+            ['Translate “thank you”.', 'short_answer', 1, 'TRUE', 'FALSE', '', 'xie xie|谢谢', '', '', '', '', '', '', '', '', '', '', '', '', '', 'TRUE'],
+            ['Describe how you would use this expression.', 'essay', 3, 'TRUE', 'FALSE', '', '', 'Manually assess accuracy, clarity, and appropriate context.', '', '', '', '', '', '', '', '', '', '', '', '', 'TRUE'],
+            ['Listen and choose the word you hear.', 'listening', 1, 'TRUE', 'FALSE', 'choice', '', '', '你好', 'TRUE', '', '您好', 'FALSE', '', '', '', '', '', '', '', 'TRUE'],
+            ['Listen and type the word you hear.', 'listening', 1, 'TRUE', 'FALSE', 'short_answer', '你好|ni hao', '', '', '', '', '', '', '', '', '', '', '', '', '', 'TRUE'],
+        ]
+        header_style = workbook.add_format({'bold': True, 'bg_color': '#D9EAF7', 'border': 1, 'text_wrap': True})
+        text_style = workbook.add_format({'text_wrap': True, 'valign': 'top'})
+        for column, header in enumerate(headers):
+            worksheet.write(0, column, header, header_style)
+            worksheet.set_column(column, column, 20)
+        worksheet.set_column(0, 0, 42)
+        worksheet.set_column(6, 7, 42)
+        for row_number, example in enumerate(examples, start=1):
+            for column, value in enumerate(example):
+                worksheet.write(row_number, column, value, text_style)
+        worksheet.freeze_panes(1, 0)
+        worksheet.autofilter(0, 0, len(examples), len(headers) - 1)
+        workbook.close()
+        return request.make_response(
+            output.getvalue(),
+            headers=[
+                ('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
+                ('Content-Disposition', content_disposition('diligence_quiz_import_template.xlsx')),
+            ],
+        )
+
     @http.route()
     def channel(self, channel=False, channel_id=False, **kwargs):
         """Open an accessible course directly in the lesson reader.
@@ -314,9 +378,13 @@ class DiligenceWebsiteSlides(WebsiteSlides):
             ('slide_id', '=', slide_id), ('partner_id', '=', request.env.user.partner_id.id),
         ]).write({'completed': False})
         slide_question = request.env['slide.question'].create(new_question_values)
+        question_data = next(
+            (item for item in self._get_slide_quiz_data(slide)['slide_questions'] if item['id'] == slide_question.id),
+            False,
+        )
         return request.env['ir.qweb']._render('website_slides.lesson_content_quiz_question', {
             'slide': slide,
-            'question': slide_question,
+            'question': question_data,
         })
     def _get_slide_quiz_data(self, slide):
         values = super()._get_slide_quiz_data(slide)
@@ -327,6 +395,7 @@ class DiligenceWebsiteSlides(WebsiteSlides):
                 continue
             item.update({
                 'sequence': question.sequence,
+                'display_question': question._diligence_display_question(slide, question.sequence),
                 'question_type': question.question_type,
                 'required': question.required,
                 'weight': question.weight,
@@ -449,6 +518,7 @@ class DiligenceWebsiteSlides(WebsiteSlides):
                 'selected_answers': selected.mapped('text_value') or ([text_answer] if text_answer else []),
                 'answer_key': (
                     [line for line in (question.short_answer_variants or '').splitlines() if line.strip()]
+                    or question.answer_ids.filtered('is_correct').mapped('text_value')
                     if question.question_type == 'short_answer' or (
                         question.question_type == 'listening'
                         and question.listening_answer_type == 'short_answer'
@@ -487,9 +557,13 @@ class DiligenceWebsiteSlides(WebsiteSlides):
         slide = request.env['slide.slide'].browse(question_sudo.slide_id.id).exists()
         if not slide.channel_id.is_member and not slide.is_preview:
             raise werkzeug.exceptions.Forbidden()
+        content_type = mimetypes.guess_type(question_sudo.audio_filename or '')[0]
+        if not content_type or not content_type.startswith('audio/'):
+            content_type = 'audio/mpeg'
+        filename = secure_filename(question_sudo.audio_filename or '') or 'question-audio'
         return request.make_response(
             base64.b64decode(question_sudo.audio_file),
-            headers=[('Content-Type', 'audio/mpeg'), ('Content-Disposition', 'inline; filename="%s"' % (question_sudo.audio_filename or 'question-audio'))],
+            headers=[('Content-Type', content_type), ('Content-Disposition', 'inline; filename="%s"' % filename)],
         )
 
     @http.route()
@@ -501,19 +575,25 @@ class DiligenceWebsiteSlides(WebsiteSlides):
         ):
             raise werkzeug.exceptions.Forbidden('This course is coming soon.')
 
+        membership = request.env['slide.channel.partner'].sudo().search([
+            ('channel_id', '=', slide.channel_id.id),
+            ('partner_id', '=', request.env.user.partner_id.commercial_partner_id.id),
+            ('member_status', 'in', ('joined', 'ongoing', 'completed')),
+        ], limit=1)
+        if (
+            membership
+            and not membership._diligence_access_is_valid()
+            and not request.env.user._is_admin()
+            and not slide.channel_id.can_publish
+        ):
+            raise werkzeug.exceptions.Forbidden('This course access has expired.')
+
         # Keep Odoo's standard completion behaviour for every other course.
         if slide.channel_id.id not in (7, 8, 9):
             return super().slide_view(slide, **kwargs)
 
         if not slide.channel_id.can_access_from_current_website() or not slide.active:
             raise werkzeug.exceptions.NotFound()
-        membership = request.env['slide.channel.partner'].sudo().search([
-            ('channel_id', '=', slide.channel_id.id),
-            ('partner_id', '=', request.env.user.partner_id.commercial_partner_id.id),
-            ('member_status', 'in', ('joined', 'ongoing', 'completed')),
-        ], limit=1)
-        if membership and not membership._diligence_access_is_valid():
-            raise werkzeug.exceptions.Forbidden('This course access has expired.')
         if slide.is_category:
             return request.redirect(slide.channel_id.website_absolute_url)
 

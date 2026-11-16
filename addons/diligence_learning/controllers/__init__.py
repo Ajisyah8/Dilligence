@@ -5,7 +5,10 @@ from . import student_portal
 from . import slides
 from . import auth_signup
 from . import website_sale
+from . import package_checkout
+from . import package_renewal
 from . import whatsapp_webhook
 from . import newsletter
 from . import referral_export
 from . import seo_search
+from . import contact_import

@@ -30,10 +30,36 @@ class SlideChannel(models.Model):
         return courses
 
     def write(self, vals):
+        courses_being_published = (
+            self.filtered(lambda course: not course.website_published)
+            if vals.get('website_published') else self.browse()
+        )
+        courses_becoming_available = (
+            self.filtered(lambda course: course.website_published and course.diligence_availability == 'coming_soon')
+            if vals.get('diligence_availability') == 'available' else self.browse()
+        )
         result = super().write(vals)
+        courses_to_release = (courses_being_published | courses_becoming_available).filtered(
+            lambda course: course.website_published and course.diligence_availability != 'coming_soon'
+        )
+        lessons_to_release = courses_to_release.mapped('slide_ids').filtered(
+            lambda slide: slide.active and not slide.is_category and not slide.is_published
+        )
+        if lessons_to_release:
+            lessons_to_release.with_context(diligence_silent_course_publish=True).write({
+                'is_published': True,
+                'website_published': True,
+            })
         if 'name' in vals:
             self._diligence_ensure_contact_segment()
         return result
+
+    def open_website_url(self):
+        """Open the course overview instead of redirecting to its first lesson."""
+        self.ensure_one()
+        return self.env['website'].get_client_action(
+            f'{self.website_url}?overview=1'
+        )
 
     def _diligence_ensure_contact_segment(self):
         Segment = self.env['diligence.contact.segment'].sudo()
@@ -59,6 +85,38 @@ class SlideChannel(models.Model):
                     'diligence_contact_segment_id': segment.id,
                 })
         return self
+
+    def _diligence_has_package_product(self):
+        self.ensure_one()
+        return bool(self.env['product.template'].sudo().search([
+            ('diligence_course_ids', 'in', self.id),
+            '|',
+            ('diligence_package_type_id', '!=', False),
+            ('diligence_package_type', '!=', False),
+        ], limit=1))
+
+    def _diligence_standalone_product(self):
+        self.ensure_one()
+        Product = self.env['product.template'].sudo()
+        ProductProduct = self.env['product.product'].sudo()
+        if self._diligence_has_package_product():
+            return ProductProduct.browse()
+
+        variants = self.product_id
+        linked_templates = Product.search([
+            ('diligence_course_ids', 'in', self.id),
+            ('diligence_package_type_id', '=', False),
+            ('diligence_package_type', '=', False),
+        ])
+        variants |= linked_templates.mapped('product_variant_id')
+        return variants.filtered(
+            lambda variant: (
+                variant.active
+                and variant.sale_ok
+                and variant.website_published
+                and variant.product_tmpl_id._diligence_is_standalone_course_product()
+            )
+        )[:1]
 
     def _diligence_sync_active_member_segments(self):
         for course in self:

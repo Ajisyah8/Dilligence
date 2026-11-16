@@ -734,27 +734,23 @@ body,
         object-fit: contain;
     }
 
-    .diligence-fullscreen-viewer .o_wslides_fs_sidebar,
-    .diligence-fullscreen-viewer .o_wslides_fs_sidebar.o_wslides_fs_sidebar_hidden {
-        display: flex !important;
-        width: 25rem;
-        min-width: 20rem;
-        height: calc(100vh - 3.5rem);
-        border-right: 1px solid rgba(18, 56, 79, .14);
-        background: #fff;
-        color: #12384f !important;
+    /* Fullscreen is a focused lesson view: hide the course outline and its
+       toggle so the lesson itself can use the full player width. */
+    .diligence-fullscreen-viewer .o_wslides_fs_sidebar {
+        display: none !important;
+        width: 0 !important;
+        min-width: 0 !important;
+        flex: 0 0 0 !important;
     }
 
-    /* The native fullscreen toggle collapses the sidebar by setting both
-       width: 0 and a translated content panel.  Fullscreen Diligence uses
-       the reference-style persistent course outline instead. */
-    .diligence-fullscreen-viewer .o_wslides_fs_sidebar.o_wslides_fs_sidebar_hidden {
-        width: 25rem !important;
-        min-width: 25rem !important;
+    .diligence-fullscreen-viewer .o_wslides_fs_toggle_sidebar {
+        display: none !important;
     }
 
-    .diligence-fullscreen-viewer .o_wslides_fs_sidebar.o_wslides_fs_sidebar_hidden .o_wslides_fs_sidebar_content {
-        transform: none !important;
+    .diligence-fullscreen-viewer .o_wslides_fs_content {
+        width: 100%;
+        min-width: 0;
+        flex: 1 1 100%;
     }
 
     .diligence-fullscreen-viewer .o_wslides_fs_sidebar .text-white,
@@ -2165,6 +2161,27 @@ body.o_wslides_body:has(.diligence-course-hero) main {
     font-size: .95rem;
     font-weight: 700;
     box-shadow: 0 .6rem 1.5rem rgba(22, 47, 59, .16);
+}
+
+.diligence-course-hero .diligence-course-buy-button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 3.25rem;
+    padding: .9rem 1.35rem;
+    border: 1px solid #162f3b;
+    border-radius: .35rem;
+    background: transparent;
+    color: #162f3b !important;
+    font-size: .95rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color .18s ease, color .18s ease;
+}
+
+.diligence-course-hero .diligence-course-buy-button:hover,
+.diligence-course-hero .diligence-course-buy-button:focus {
+    background: #162f3b;
+    color: #fff !important;
 }
 
 .diligence-course-hero .diligence-start-button:hover,

@@ -49,10 +49,10 @@
               inherit_id="website_sale.cta_wrapper"
               name="Diligence Full Slot Purchase Button">
         <xpath expr="//a[@id='add_to_cart']" position="attributes">
-            <attribute name="t-if">not ((product.diligence_package_type_id or product.diligence_package_type) and (product.diligence_sales_status in ('full', 'coming_soon') or not product.diligence_has_available_course))</attribute>
+            <attribute name="t-if">not ((product.diligence_package_type_id or product.diligence_package_type or product._diligence_is_standalone_course_product()) and (product.diligence_sales_status in ('full', 'coming_soon') or not product.diligence_has_available_course))</attribute>
         </xpath>
         <xpath expr="//a[@id='add_to_cart']" position="after">
-            <button t-if="(product.diligence_package_type_id or product.diligence_package_type) and (product.diligence_sales_status in ('full', 'coming_soon') or not product.diligence_has_available_course)"
+            <button t-if="(product.diligence_package_type_id or product.diligence_package_type or product._diligence_is_standalone_course_product()) and (product.diligence_sales_status in ('full', 'coming_soon') or not product.diligence_has_available_course)"
                     type="button" class="btn btn-secondary flex-grow-1" disabled="disabled">
                 <i class="fa fa-clock-o me-2"/><t t-if="product.diligence_sales_status != 'full'"> Coming Soon</t><t t-else=""> Full Slot</t>
             </button>

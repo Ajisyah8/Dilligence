@@ -1,0 +1,247 @@
+# Translation of Diligence Learning Packages.
+# Study in China and Cambridge information pages.
+msgid ""
+msgstr ""
+"Project-Id-Version: diligence_learning\n"
+"Language: zh_CN\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Langkah kecil hari ini, masa depan yang lebih luas."
+msgstr "今天迈出一小步，明天拥有更广阔的未来。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Lihat bagaimana persiapan bahasa, pendampingan aplikasi, dan dukungan akademik membantu siswa menyiapkan perjalanan studi ke China."
+msgstr "了解语言准备、申请指导和学业支持如何帮助学生规划赴华留学之路。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Perjalanan siswa"
+msgstr "学生留学之旅"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Cerita nyata akan membantu calon siswa melihat prosesnya dengan lebih jelas."
+msgstr "真实经历帮助未来的学生更清晰地了解整个过程。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Persiapan bahasa"
+msgstr "语言准备"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Bangun fondasi Mandarin secara bertahap untuk kebutuhan akademik dan kehidupan sehari-hari."
+msgstr "循序渐进地打好普通话基础，满足学业和日常生活需求。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Pendampingan terarah"
+msgstr "专业指导"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Pahami pilihan program, dokumen, dan tahapan persiapan dengan panduan yang terstruktur."
+msgstr "通过系统指导了解课程选择、申请材料和准备步骤。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Dukungan akademik"
+msgstr "学业支持"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Dapatkan pendampingan belajar dan persiapan studi ke China secara terarah."
+msgstr "获得有计划的学习辅导，为赴华留学做好准备。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "01 / Persiapan"
+msgstr "01 / 准备"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Mulai dari tujuan belajar yang jelas."
+msgstr "从明确的学习目标开始。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Susun target bahasa dan akademik sesuai rencana studi siswa."
+msgstr "根据学生的留学计划设定语言和学业目标。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "02 / Pendampingan"
+msgstr "02 / 指导"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Dapatkan arahan di setiap tahap."
+msgstr "在每个阶段获得指导。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Review progres dan siapkan dokumen dengan lebih percaya diri."
+msgstr "检查学习进度，更有信心地准备申请材料。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "03 / Perjalanan"
+msgstr "03 / 留学之旅"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Bangun langkah berikutnya."
+msgstr "迈出下一步。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Cerita siswa dapat diperbarui melalui Website Builder."
+msgstr "学生故事可通过网站编辑器更新。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_exact_testimonials
+msgid "Testimoni siswa"
+msgstr "学生评价"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_exact_testimonials
+msgid "Apa kata siswa tentang Diligence Academy?"
+msgstr "学生如何评价 Diligence Academy？"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_exact_testimonials
+msgid "Pengalaman nyata siswa kami."
+msgstr "来自我们学生的真实体验。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Siap merencanakan studi ke China?"
+msgstr "准备好规划赴华留学了吗？"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Hubungi tim Diligence Academy untuk mendiskusikan tujuan belajar Anda."
+msgstr "联系 Diligence Academy 团队，讨论您的学习目标。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_success_stories_modern_design
+msgid "Konsultasi dengan tim"
+msgstr "联系顾问团队"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Persiapkan sertifikasi Cambridge dengan arah yang jelas."
+msgstr "明确规划，备考剑桥英语认证。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Temukan informasi ujian dan dukungan persiapan yang membantu Anda melangkah lebih siap."
+msgstr "查看考试信息和备考支持，让您更有准备地迈向目标。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Tanya jadwal"
+msgstr "咨询考试时间"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Exam pathway"
+msgstr "考试规划"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Pantau periode pendaftaran dan jadwal ujian dari satu halaman."
+msgstr "在一个页面查看报名时间和考试安排。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Preparation support"
+msgstr "备考支持"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Susun persiapan belajar sesuai target sertifikasi Anda."
+msgstr "根据您的认证目标制定学习计划。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Official information"
+msgstr "官方信息"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Jadwal final mengikuti informasi resmi penyelenggara ujian."
+msgstr "最终时间以考试主办方的官方信息为准。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Schedule overview"
+msgstr "考试安排概览"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Informasi jadwal ujian"
+msgstr "考试时间信息"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Segera hadir"
+msgstr "即将公布"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Program"
+msgstr "项目"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Periode pendaftaran"
+msgstr "报名时间"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Jadwal ujian"
+msgstr "考试日期"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Status"
+msgstr "状态"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Cambridge English Certification"
+msgstr "剑桥英语认证"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Hubungi tim akademik"
+msgstr "联系学术团队"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Akan diumumkan sesuai kalender ujian"
+msgstr "将根据考试日历公布"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Jadwal resmi dapat berubah mengikuti penyelenggara ujian. Halaman ini akan diperbarui ketika tanggal sudah dikonfirmasi."
+msgstr "官方考试安排可能会有变动。日期确认后，我们将在此页面更新。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Ingin mempersiapkan diri untuk ujian?"
+msgstr "想为考试做好准备吗？"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Konsultasikan target sertifikasi dan program persiapan yang sesuai."
+msgstr "咨询您的认证目标和合适的备考课程。"
+
+#. module: diligence_learning
+#: model_terms:ir.ui.view,arch_db:diligence_learning.diligence_cambridge_modern_design
+msgid "Hubungi Diligence Academy"
+msgstr "联系 Diligence Academy"

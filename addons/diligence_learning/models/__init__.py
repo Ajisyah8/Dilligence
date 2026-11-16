@@ -12,6 +12,7 @@ from . import website_menu
 from . import website
 from . import website_sync
 from . import quiz
+from . import quiz_import
 from . import mandarin_content
 from . import learning_activity
 from . import newsletter
@@ -28,3 +29,4 @@ from . import seo
 from . import survey_invite
 from . import placement_test
 from . import bulk_upload
+from . import contact_import

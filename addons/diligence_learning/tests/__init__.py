@@ -6,4 +6,10 @@ from . import test_outstanding_payment_account
 from . import test_seo
 from . import test_referral
 from . import test_contact_segments
+from . import test_contact_import
 from . import test_video_player
+from . import test_quiz_import
+from . import test_placement_test
+from . import test_course_publish
+from . import test_standalone_course_product
+from . import test_package_renewal

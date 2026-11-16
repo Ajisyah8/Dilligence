@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-inherit="slide.slide.quiz" t-inherit-mode="extension">
+        <xpath expr="//span[@t-out='question.question']" position="attributes">
+            <attribute name="t-out">question.display_question || question.question</attribute>
+        </xpath>
         <xpath expr="//div[hasclass('o_wslides_fs_quiz_container')]/div[1]" position="before">
             <div class="diligence-fs-lesson-title d-flex align-items-center gap-3 px-3 px-md-4 pt-3">
                 <span class="diligence-fs-lesson-title-icon">

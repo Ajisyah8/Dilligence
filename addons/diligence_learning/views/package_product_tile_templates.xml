@@ -10,12 +10,14 @@
                     <small t-out="product.list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                 </del>
                 <span class="mb-0 fw-bold" t-out="package_early_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                <small t-if="product._diligence_price_period_label()" class="text-muted ms-1" t-out="product._diligence_price_period_label()"/>
             </div>
             <div t-else="" class="product_price" aria-label="Price information">
                 <span class="mb-0 fw-bold" aria-label="Sale price"
                       t-if="template_price_vals['price_reduce'] or not website.prevent_zero_price_sale"
                       t-out="template_price_vals['price_reduce']"
                       t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                <small t-if="(product.diligence_package_type_id or product.diligence_package_type) and product._diligence_price_period_label()" class="text-muted ms-1" t-out="product._diligence_price_period_label()"/>
                 <t t-if="'base_price' in template_price_vals and (template_price_vals['base_price'] &gt; template_price_vals['price_reduce']) and (template_price_vals['price_reduce'] or not website.prevent_zero_price_sale)" name="product_base_price">
                     <del aria-label="Original price" class="text-muted me-1 mb-0" style="white-space: nowrap;">
                         <small t-esc="template_price_vals['base_price']" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>

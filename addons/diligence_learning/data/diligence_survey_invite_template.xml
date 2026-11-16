@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Keep survey invitations source-controlled: avoid unresolved merge-tag
+         placeholders and malformed preview text in manually edited messages. -->
+    <data noupdate="0">
+        <record id="survey.mail_template_user_input_invite" model="mail.template">
+            <field name="subject">Invitation: {{ object.survey_id.display_name }}</field>
+            <field name="email_from">{{ ('Diligence Academy &lt;admin@diligenceenglish.com&gt;' if 'english' in (object.survey_id.diligence_placement_course_ids[:1].course_id.name or '').lower() else 'Diligence Academy &lt;admin@diligencekursusbahasa.com&gt;') if object.survey_id.diligence_is_placement_test and object.survey_id.diligence_placement_course_ids else 'Diligence Academy &lt;diligence.digital.course.oth@gmail.com&gt;' }}</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:#263238;">
+                    <p>Hello <t t-out="object.partner_id.name or 'there'"/>,</p>
+                    <t t-if="object.survey_id.diligence_is_placement_test">
+                        <p>
+                            You are invited to complete the
+                            <strong t-out="object.survey_id.display_name or 'placement test'"/>.
+                            Your answers will help us understand your current level and recommend
+                            suitable learning materials. Please complete it independently; the
+                            result is a learning recommendation, not a pass-or-fail exam.
+                        </p>
+                    </t>
+                    <t t-else="">
+                        <p>
+                            You are invited to complete
+                            <strong t-out="object.survey_id.display_name or 'our survey'"/>.
+                            Your response would be appreciated.
+                        </p>
+                    </t>
+                    <p style="margin:20px 0;">
+                        <a t-att-href="object.get_start_url()"
+                           style="display:inline-block;padding:12px 20px;background:#106b7c;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:bold;">
+                            <t t-if="object.survey_id.diligence_is_placement_test">Start Placement Test</t>
+                            <t t-else="">Start Survey</t>
+                        </a>
+                    </p>
+                    <t t-if="object.deadline">
+                        <p>Please complete it by <strong t-out="format_date(object.deadline)"/>.</p>
+                    </t>
+                    <p>Thank you,<br/><strong>Diligence Academy</strong></p>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

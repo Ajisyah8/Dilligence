@@ -14,14 +14,14 @@ def _student_courses_values(partner):
         ('partner_id', 'child_of', partner.id),
         ('state', 'in', ('sale', 'done')),
     ]).filtered(lambda order: order._diligence_has_valid_package_payment())
-    paid_package_ids = paid_orders.mapped('order_line.product_template_id').filtered(
-        lambda product: product._diligence_is_package()
-    ).ids
+    paid_course_products = paid_orders.mapped('order_line.product_template_id').filtered(
+        lambda product: product._diligence_is_course_access_product()
+    )
     memberships = request.env['slide.channel.partner'].sudo().search([
         ('partner_id', 'child_of', partner.id),
         ('active', '=', True),
         ('member_status', '!=', 'invited'),
-        ('diligence_package_id', 'in', paid_package_ids or [0]),
+        ('diligence_package_id', 'in', paid_course_products.ids or [0]),
     ])
     memberships = memberships.filtered(lambda membership: membership._diligence_access_is_valid())
 

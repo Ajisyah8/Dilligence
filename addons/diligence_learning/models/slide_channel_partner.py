@@ -5,7 +5,7 @@ from odoo.exceptions import UserError
 class SlideChannelPartner(models.Model):
     _inherit = 'slide.channel.partner'
 
-    diligence_package_id = fields.Many2one('product.template', 'Access Package', copy=False)
+    diligence_package_id = fields.Many2one('product.template', 'Access Product', copy=False)
     diligence_access_expires_at = fields.Datetime('Access Expires At', copy=False)
     diligence_level = fields.Selection([
         ('beginner', 'Beginner'),

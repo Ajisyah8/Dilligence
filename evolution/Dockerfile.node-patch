@@ -1,0 +1,4 @@
+FROM node:24.22.1-alpine3.23 AS node-runtime
+
+FROM evoapicloud/evolution-api@sha256:966625532d9076a2381e973a271307d107e6f070450de3abeeea8bd18be07252
+COPY --from=node-runtime /usr/local/bin/node /usr/local/bin/node

@@ -62,6 +62,35 @@ class DiligenceWhatsAppService(models.AbstractModel):
         return {'sent': True, 'status_code': response.status_code}
 
     @api.model
+    def remove_group_participant(self, group_jid, number):
+        """Remove one learner from a configured WhatsApp group via Evolution."""
+        if not self.is_configured():
+            return {'removed': False, 'skipped': True}
+        normalized = self.normalize_number(number)
+        if not normalized or not group_jid or not group_jid.endswith('@g.us'):
+            return {'removed': False, 'skipped': True}
+        endpoint = '%s/group/updateParticipant/%s' % (
+            self._parameter('diligence.whatsapp.api_url').rstrip('/'),
+            self._parameter('diligence.whatsapp.instance'),
+        )
+        try:
+            response = requests.post(
+                endpoint,
+                params={'groupJid': group_jid},
+                json={'action': 'remove', 'participants': [normalized]},
+                headers={'Content-Type': 'application/json', 'apikey': self._parameter('diligence.whatsapp.api_key')},
+                timeout=20,
+            )
+            response.raise_for_status()
+            payload = response.json()
+        except (requests.RequestException, ValueError) as error:
+            _logger.warning('Evolution API WhatsApp group removal failed: %s', error.__class__.__name__)
+            return {'removed': False, 'error': 'request_failed'}
+        updates = payload.get('updateParticipants') or []
+        successful = bool(updates) and all(str(item.get('status')) == '200' for item in updates)
+        return {'removed': successful, 'status_code': response.status_code}
+
+    @api.model
     def render_message(self, template, partner=None, **values):
         """Render a configured message without leaking configuration values."""
         values = dict(values, name=partner.name if partner else '')
@@ -120,6 +149,7 @@ class DiligenceWhatsAppDelivery(models.Model):
     sale_order_id = fields.Many2one('sale.order', index=True, ondelete='set null')
     kind = fields.Selection([
         ('payment_confirmation', 'Payment Confirmation'),
+        ('renewal_reminder', 'Package Renewal Reminder'),
         ('survey', 'Bulk Survey'),
         ('test', 'Test'),
     ], required=True, index=True)

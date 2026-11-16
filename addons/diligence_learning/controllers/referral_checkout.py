@@ -14,5 +14,8 @@ class DiligenceReferralCheckoutController(http.Controller):
             if referrer:
                 order.sudo().write({'diligence_referral_code': code})
                 request.session['diligence_referral_code'] = code
-                return request.redirect('/shop/payment?referral_status=valid')
-        return request.redirect('/shop/payment?referral_status=invalid')
+                return request.redirect('/shop/cart?referral_status=valid')
+        if order:
+            order.sudo().write({'diligence_referral_code': False})
+        request.session.pop('diligence_referral_code', None)
+        return request.redirect('/shop/cart?referral_status=invalid')

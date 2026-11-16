@@ -7,17 +7,17 @@
             <xpath expr="//notebook" position="inside">
                 <page string="Diligence Package Settings" invisible="not sale_ok">
                     <div class="alert alert-info" role="alert">
-                        <strong>Petunjuk pengisian paket</strong>
-                        <div>Isi tab ini hanya untuk produk yang memang merupakan paket belajar Diligence. Setelah order dibayar, pengaturan akses di bawah ini menentukan course dan fasilitas yang diterima siswa.</div>
+                        <strong>Petunjuk paket dan course satuan</strong>
+                        <div>Untuk paket, pilih Jenis Paket dan seluruh course yang disertakan. Untuk menjual course satuan, kosongkan Jenis Paket dan pilih course yang dijual. Akses diberikan setelah pembayaran dikonfirmasi.</div>
                     </div>
-                    <group string="1. Identitas dan Harga Paket" col="2">
+                    <group string="1. Jenis Produk dan Harga" col="2">
                         <field name="diligence_package_type_id" string="Jenis Paket" options="{'no_quick_create': False, 'no_create_edit': False}" help="Pilih jenis paket atau buat jenis baru langsung dari daftar ini."/>
                         <field name="diligence_package_type" invisible="True"/>
-                        <field name="diligence_sales_status" string="Status Ketersediaan" invisible="not (diligence_package_type_id or diligence_package_type)" help="Pilih Coming Soon atau Full Slot agar paket tetap tampil, tetapi tidak dapat dibeli."/>
+                        <field name="diligence_sales_status" string="Status Ketersediaan" invisible="not (diligence_package_type_id or diligence_package_type or diligence_course_ids)" help="Pilih Coming Soon atau Full Slot agar produk tetap tampil, tetapi tidak dapat dibeli."/>
                         <field name="diligence_has_coming_soon_course" invisible="1"/>
                         <field name="diligence_has_available_course" invisible="1"/>
                         <field name="list_price" string="Harga Normal" help="Harga normal paket sebelum potongan Early Bird. Contoh: 169000."/>
-                        <field name="diligence_access_duration_days" string="Masa Akses (Hari)" help="Berapa hari siswa dapat mengakses paket setelah pembayaran dikonfirmasi. Kosong atau 0 berarti tanpa batas waktu."/>
+                        <field name="diligence_access_duration_days" string="Masa Akses (Hari)" help="Durasi di bawah 365 hari ditampilkan dalam hari. Durasi 365 hari atau lebih ditampilkan sebagai tahun, bulan, dan sisa hari. Tagihan tidak diperpanjang otomatis; siswa perlu membeli kembali."/>
                     </group>
                     <group string="COA dan Accounting" col="2" groups="account.group_account_invoice,account.group_account_manager">
                         <div class="text-muted" colspan="2">Pilih akun COA yang digunakan ketika produk paket ini masuk ke invoice. Jika dikosongkan, Odoo menggunakan akun pendapatan dan biaya dari kategori produk.</div>
@@ -33,13 +33,14 @@
                         <field name="diligence_early_bird_end_date" string="Berakhir Pada" readonly="1" help="Tanggal akhir dihitung otomatis dari tanggal mulai dan durasi promo."/>
                     </group>
                     <group string="3. Course yang Didapat Siswa">
-                        <field name="diligence_course_ids" string="Course Termasuk dalam Paket" widget="many2many_tags" help="Pilih semua course yang otomatis boleh diakses siswa setelah pembayaran paket ini dikonfirmasi."/>
-                        <div class="text-muted" colspan="2">Course Coming Soon tetap tampil di paket, tetapi belum diberikan sampai course tersebut dirilis. Jika semua course masih Coming Soon, paket belum dapat dibeli.</div>
+                        <field name="diligence_course_ids" string="Course yang Didapat" widget="many2many_tags" help="Paket: pilih semua course yang disertakan. Produk tanpa jenis paket: pilih course yang dibeli satuan. Akses diberikan setelah pembayaran terkonfirmasi."/>
+                        <div class="text-muted" colspan="2">Course Coming Soon tetap dapat dicantumkan, tetapi akses baru diberikan setelah course dirilis. Produk course satuan tidak memerlukan jenis paket; biarkan Jenis Paket kosong dan pilih course yang dijual.</div>
                     </group>
                     <group string="4. Fasilitas dan Dukungan" col="2">
                         <group string="Akses Komunitas">
                             <field name="diligence_forum_access" string="Forum Diskusi" help="Centang untuk mengizinkan siswa mengikuti forum komunitas."/>
                             <field name="diligence_whatsapp_group_link" string="Link WhatsApp Group" widget="url" help="Link tampil di Student Corner setelah pembayaran paket ini valid. Tidak bergantung pada akses Forum Diskusi."/>
+                            <field name="diligence_whatsapp_group_jid" string="ID Grup WhatsApp (JID)" placeholder="1203...@g.us" help="Isi JID grup yang dikelola paket ini. Bot Evolution harus tersambung dan menjadi admin. Siswa yang memilih Tidak Lanjut baru dikeluarkan setelah masa akses berakhir."/>
                             <field name="diligence_consultation" string="Konsultasi/Coaching" help="Centang jika paket mencakup pengecekan progres atau arahan belajar dari coach."/>
                         </group>
                         <group string="Fasilitas Pengajar">

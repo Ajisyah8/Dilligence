@@ -39,7 +39,7 @@
                     <t t-elif="package.diligence_package_type_id.website_badge" t-out="package.diligence_package_type_id.website_badge"/>
                     <t t-else="">TEACHER GUIDANCE</t>
                 </span>
-                <h3 class="h4 mb-3"><a class="text-decoration-none text-reset" t-att-href="product.website_url" t-out="product.display_name"/></h3>
+                <h3 class="h4 mb-3" t-out="product.display_name"/>
                 <p class="mb-3" t-if="package_description">
                     <t t-out="package_description.splitlines()[0]"/>
                 </p>
@@ -49,6 +49,7 @@
                         <strong class="fs-3" t-out="early_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                     </t>
                     <strong t-else="" class="fs-3" t-out="package.list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                    <small t-if="package._diligence_price_period_label()" class="text-muted ms-1" t-out="package._diligence_price_period_label()"/>
                 </div>
                 <div t-if="package.diligence_has_coming_soon_course" class="alert alert-light border small my-4">
                     <i class="fa fa-clock-o me-1 text-warning"/> Benefit paket akan tersedia setelah course dirilis.
@@ -58,14 +59,16 @@
                         <li t-if="benefit.strip()" class="mb-3"><i class="fa fa-check text-primary me-2"/><span t-out="benefit.lstrip('?• ').strip()"/></li>
                     </t>
                 </ul>
-                <a t-if="package.diligence_sales_status not in ('full', 'coming_soon') and package.diligence_has_available_course" class="btn btn-outline-primary rounded-pill w-100 mt-auto" t-att-href="product.website_url">View Package</a>
-                <div t-else="" class="mt-auto">
-                    <a class="btn btn-outline-secondary rounded-pill w-100 mb-2" t-att-href="product.website_url">View Details</a>
-                    <button type="button" class="btn btn-secondary rounded-pill w-100" disabled="disabled">
-                        <t t-if="package.diligence_sales_status == 'full'">Full Slot</t>
-                        <t t-else="">Coming Soon</t>
-                    </button>
-                </div>
+                <form t-if="package.diligence_sales_status == 'available' and package.diligence_has_available_course"
+                      action="/diligence/package/buy" method="post" class="mt-auto">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <input type="hidden" name="product_id" t-att-value="product.id"/>
+                    <button type="submit" class="btn btn-primary rounded-pill w-100">Buy Now</button>
+                </form>
+                <button t-else="" type="button" class="btn btn-secondary rounded-pill w-100 mt-auto" disabled="disabled">
+                    <t t-if="package.diligence_sales_status == 'full'">Full Slot</t>
+                    <t t-else="">Coming Soon</t>
+                </button>
             </article>
         </t>
     </template>

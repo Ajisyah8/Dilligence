@@ -1,0 +1,62 @@
+<odoo>
+    <record id="diligence_package_renewal_search" model="ir.ui.view">
+        <field name="name">sale.order.diligence.renewal.search</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <search string="Package Renewals">
+                <field name="name" string="Order"/>
+                <field name="partner_id" string="Student"/>
+                <field name="diligence_renewal_package_id" string="Package"/>
+                <filter name="waiting" string="Waiting for Student" domain="[('diligence_renewal_status', '=', 'waiting')]"/>
+                <filter name="continue" string="Wants to Continue" domain="[('diligence_renewal_status', '=', 'continue')]"/>
+                <filter name="not_continue" string="Will Not Continue" domain="[('diligence_renewal_status', '=', 'not_continue')]"/>
+                <filter name="group_removal_pending" string="Awaiting WhatsApp Group Removal" domain="[('diligence_whatsapp_group_removal_state', 'in', ('pending', 'error'))]"/>
+                <filter name="renewed" string="Renewed" domain="[('diligence_renewal_status', '=', 'renewed')]"/>
+                <filter name="expired" string="Expired" domain="[('diligence_renewal_status', '=', 'expired')]"/>
+                <group>
+                    <filter name="group_renewal_status" string="Decision" context="{'group_by': 'diligence_renewal_status'}"/>
+                    <filter name="group_renewal_package" string="Package" context="{'group_by': 'diligence_renewal_package_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="diligence_package_renewal_list" model="ir.ui.view">
+        <field name="name">sale.order.diligence.renewal.list</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <list string="Package Renewals" default_order="diligence_access_expires_at asc">
+                <field name="name" string="Order"/>
+                <field name="partner_id" string="Student"/>
+                <field name="diligence_renewal_package_id" string="Package"/>
+                <field name="diligence_access_expires_at" string="Access Ends"/>
+                <field name="diligence_renewal_status" widget="badge"/>
+                <field name="diligence_renewal_reason"/>
+                <field name="diligence_renewal_reason_note" optional="hide"/>
+                <field name="diligence_renewal_reminder_sent_at"/>
+                <field name="diligence_renewal_email_sent_at" optional="hide"/>
+                <field name="diligence_renewal_whatsapp_sent_at" optional="hide"/>
+                <field name="diligence_renewal_response_at"/>
+                <field name="diligence_whatsapp_group_removal_state" widget="badge"/>
+                <field name="diligence_renewed_by_order_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_diligence_package_renewals" model="ir.actions.act_window">
+        <field name="name">Package Renewals</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('diligence_package_renewal_list')})]"/>
+        <field name="search_view_id" ref="diligence_package_renewal_search"/>
+        <field name="domain">[('diligence_renewal_package_id', '!=', False)]</field>
+        <field name="context">{'search_default_group_renewal_status': 1}</field>
+    </record>
+
+    <menuitem id="menu_diligence_package_renewals"
+              name="Package Renewals"
+              parent="sale.menu_sale_report"
+              action="action_diligence_package_renewals"
+              sequence="15"
+              groups="sales_team.group_sale_manager"/>
+</odoo>

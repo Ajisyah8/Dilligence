@@ -2,7 +2,7 @@ from markupsafe import Markup, escape
 
 from datetime import timedelta
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
 
@@ -72,6 +72,10 @@ class ProductTemplate(models.Model):
         'WhatsApp Group Link', copy=False,
         help='Private group link shown only to students with a valid paid order for this package.',
     )
+    diligence_whatsapp_group_jid = fields.Char(
+        'WhatsApp Group ID (JID)', copy=False,
+        help='Evolution API group ID, for example 1203...@g.us. If set, paid students who submit a not-continuing decision and reason are removed immediately. The connected WhatsApp account must be a group admin.',
+    )
     diligence_whatsapp_payment_message = fields.Text(
         'WhatsApp Payment Message', copy=False,
         help='Optional payment confirmation for this package. Use %(order)s for the order number. The WhatsApp group link is added automatically when configured on the package.',
@@ -88,6 +92,7 @@ class ProductTemplate(models.Model):
     )
     diligence_benefit_text = fields.Text(
         'Package Benefits',
+        translate=True,
         help='One benefit per line. This content is used on the website and quotation automatically.',
     )
     diligence_benefit_html = fields.Html(
@@ -95,13 +100,42 @@ class ProductTemplate(models.Model):
     )
     diligence_access_duration_days = fields.Integer(
         'Access Duration (Days)',
-        help='Leave empty/zero for unlimited access. Expiry automation is not enabled in Phase 1.',
+        help='Controls course access after payment and the price period shown on the website. Durations below 365 days display in days; longer durations display as years, months, and remaining days. This does not enable automatic recurring charges.',
     )
 
-    @api.depends('diligence_course_ids', 'diligence_course_ids.diligence_availability')
+    def _diligence_access_duration_label(self):
+        """Format short durations as days and longer ones as years/months/days."""
+        self.ensure_one()
+        days = self.diligence_access_duration_days or 0
+        if days <= 0:
+            return False
+        if days < 365:
+            return _('%(count)s day', count=days) if days == 1 else _('%(count)s days', count=days)
+
+        years, remaining_days = divmod(days, 365)
+        months, remaining_days = divmod(remaining_days, 30)
+        parts = []
+        if years:
+            parts.append(_('%(count)s year', count=years) if years == 1 else _('%(count)s years', count=years))
+        if months:
+            parts.append(_('%(count)s month', count=months) if months == 1 else _('%(count)s months', count=months))
+        if remaining_days or not parts:
+            parts.append(_('%(count)s day', count=remaining_days) if remaining_days == 1 else _('%(count)s days', count=remaining_days))
+        return ' '.join(parts)
+
+    def _diligence_price_period_label(self):
+        """Describe the configured access period beside the website price."""
+        duration = self._diligence_access_duration_label()
+        return '/ ' + duration if duration else False
+
+    @api.depends(
+        'diligence_course_ids', 'diligence_course_ids.diligence_availability',
+        'product_variant_ids.service_tracking', 'product_variant_ids.channel_ids',
+        'product_variant_ids.channel_ids.diligence_availability',
+    )
     def _compute_diligence_course_availability(self):
         for product in self:
-            courses = product.diligence_course_ids
+            courses = product._diligence_course_access_course_ids()
             product.diligence_has_coming_soon_course = any(
                 course.diligence_availability == 'coming_soon' for course in courses
             )
@@ -193,6 +227,28 @@ class ProductTemplate(models.Model):
     def _diligence_is_package(self):
         self.ensure_one()
         return bool((self.diligence_package_type_id or self.diligence_package_type) and self.diligence_course_ids)
+
+    def _diligence_is_standalone_course_product(self):
+        """Whether this sellable product grants course access without a tier package."""
+        self.ensure_one()
+        return bool(
+            (self.diligence_course_ids or self.product_variant_ids.filtered(
+                lambda variant: variant.service_tracking == 'course' and variant.channel_ids
+            ))
+            and not self.diligence_package_type_id
+            and not self.diligence_package_type
+        )
+
+    def _diligence_course_access_course_ids(self):
+        self.ensure_one()
+        native_course_variants = self.product_variant_ids.filtered(
+            lambda variant: variant.service_tracking == 'course'
+        )
+        return self.diligence_course_ids | native_course_variants.mapped('channel_ids')
+
+    def _diligence_is_course_access_product(self):
+        self.ensure_one()
+        return self._diligence_is_package() or self._diligence_is_standalone_course_product()
 
     def _diligence_package_type_code(self):
         self.ensure_one()
