@@ -249,7 +249,7 @@
         </xpath>
         <xpath expr="//div[hasclass('o_wslides_slide_fs_header')]/div[2]" position="inside">
             <t t-set="fullscreen_slide_completed" t-value="channel_progress[slide.id].get('completed')"/>
-            <a t-if="slide.channel_id.channel_type == 'training' and (slide.channel_id.is_member or slide.channel_id.can_publish or request.env.user._is_admin())"
+            <a t-if="slide.channel_id.channel_type == 'training' and slide.slide_category != 'quiz' and not slide.question_ids and (slide.channel_id.is_member or slide.channel_id.can_publish or request.env.user._is_admin())"
                t-attf-class="diligence-fullscreen-mark-completed d-flex align-items-center px-3 #{'is-completed' if fullscreen_slide_completed else ''}"
                role="button"
                t-att-data-slide-id="slide.id"
@@ -497,12 +497,11 @@
     <template id="diligence_lesson_explanation_and_completion" inherit_id="website_slides.slide_content_detailed">
         <!-- Training courses do not receive Odoo's documentation-only Mark Done button. -->
         <xpath expr="//div[@role='group']/a[last()]" position="before">
-            <a t-if="slide.channel_id.channel_type == 'training' and (slide.channel_id.is_member or slide.channel_id.can_publish)"
-               t-attf-class="diligence-mark-completed btn border text-white me-2 #{'btn-success disabled' if slide_completed else 'btn-primary'}"
+            <a t-if="slide.channel_id.channel_type == 'training' and slide.slide_category != 'quiz' and not slide.question_ids and (slide.channel_id.is_member or slide.channel_id.can_publish)"
+               t-attf-class="diligence-mark-completed btn border text-white me-2 #{'btn-success' if slide_completed else 'btn-primary'}"
                role="button"
-               t-att-aria-disabled="'true' if slide_completed else None"
-               t-att-href="False if slide_completed else '/diligence/slides/slide/%s/set_completed?next_slide_id=%s' % (slide.id, next_slide.id if next_slide else '')">
-                <i class="fa fa-check-circle me-2"/><t t-if="slide_completed">Completed</t><t t-else="">Mark as Completed</t>
+               t-att-href="('/diligence/slides/slide/%s/set_uncompleted' % slide.id) if slide_completed else ('/diligence/slides/slide/%s/set_completed?next_slide_id=%s' % (slide.id, next_slide.id if next_slide else ''))">
+                <i t-attf-class="fa #{'fa-check-circle' if slide_completed else 'fa-circle-o'} me-2"/><t t-if="slide_completed">Mark as Incomplete</t><t t-else="">Mark as Completed</t>
             </a>
         </xpath>
         <!-- Keep the explanation visible below the player instead of hiding it behind About. -->

@@ -12,3 +12,5 @@ from . import newsletter
 from . import referral_export
 from . import seo_search
 from . import contact_import
+from . import event_registration_import
+from . import event_ticket_qr

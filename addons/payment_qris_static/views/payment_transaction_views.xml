@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//form/header" position="inside">
                 <button name="action_diligence_verify_qris" type="object" string="Verify QRIS Payment"
-                        class="oe_highlight"
+                        class="oe_highlight diligence-payment-approval-button"
                         invisible="state != 'pending'"/>
                 <button name="action_diligence_reject_qris_payment" type="object" string="Reject QRIS Payment"
                         invisible="state != 'pending'"/>

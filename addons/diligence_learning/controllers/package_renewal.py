@@ -20,16 +20,23 @@ class DiligencePackageRenewalController(http.Controller):
     )
     def package_renewal_choice(self, token, **kwargs):
         order = self._get_order(token)
-        intent = kwargs.get('intent') if kwargs.get('intent') in ('continue', 'not_continue') else False
+        intent = kwargs.get('intent') if kwargs.get('intent') in ('continue', 'not_continue', 'change_package') else False
+        packages = request.env['product.template'].sudo().search([
+            ('sale_ok', '=', True), ('is_published', '=', True),
+            ('diligence_sales_status', '=', 'available'),
+            '|', ('diligence_package_type_id', '!=', False), ('diligence_package_type', '!=', False),
+        ]).filtered(lambda package: package.diligence_has_available_course
+                    and package.product_variant_id._is_add_to_cart_allowed())
         return request.render('diligence_learning.package_renewal_choice', {
             'order': order,
-            'whatsapp_phone': order.diligence_renewal_whatsapp_phone or order.partner_id.phone or '',
+            'whatsapp_phone': order.partner_id.phone or '',
             'expired': bool(
                 order.diligence_access_expires_at
                 and order.diligence_access_expires_at < fields.Datetime.now()
             ),
             'saved_choice': kwargs.get('saved_choice'),
             'intent': intent,
+            'packages': packages,
         })
 
     @http.route(
@@ -37,9 +44,29 @@ class DiligencePackageRenewalController(http.Controller):
         type='http', auth='public', website=True, methods=['POST'], sitemap=False,
     )
     def package_renewal_respond(self, token=None, choice=None, **post):
-        if choice not in ('continue', 'not_continue'):
+        if choice not in ('continue', 'not_continue', 'change_package'):
             raise NotFound()
         order = self._get_order(token)
+
+        # Serialize decisions for this order so two nearly simultaneous POSTs
+        # cannot race and overwrite a completed opt-out after group removal.
+        request.env.cr.execute(
+            'SELECT id FROM sale_order WHERE id = %s FOR UPDATE',
+            [order.id],
+        )
+        order.invalidate_recordset([
+            'diligence_renewal_status',
+            'diligence_access_expires_at',
+            'diligence_whatsapp_group_removal_state',
+        ])
+
+        # Opt-out is final once submitted: the learner may already have been
+        # removed from their WhatsApp group, so a stale Continue link must not
+        # reverse the recorded decision or put the package back in checkout.
+        if order.diligence_renewal_status == 'not_continue':
+            return request.redirect(
+                '/diligence/package-renewal/%s?saved_choice=not_continue' % token
+            )
         if (
             not order.diligence_access_expires_at
             or order.diligence_access_expires_at < fields.Datetime.now()
@@ -51,8 +78,10 @@ class DiligencePackageRenewalController(http.Controller):
             reason = post.get('reason')
             allowed_reasons = {'completed_material', 'no_time', 'not_interested', 'other'}
             reason_note = (post.get('reason_note') or '').strip()
-            whatsapp_phone = (post.get('whatsapp_phone') or '').strip()
-            normalized_phone = request.env['diligence.whatsapp.service'].sudo().normalize_number(whatsapp_phone)
+            # Use the account phone, never a user-editable value from this form.
+            normalized_phone = request.env['diligence.whatsapp.service'].sudo().normalize_number(
+                order.partner_id.phone
+            )
             if (
                 reason not in allowed_reasons
                 or (reason == 'other' and not reason_note)
@@ -75,6 +104,13 @@ class DiligencePackageRenewalController(http.Controller):
             )
 
         package = order.diligence_renewal_package_id
+        if choice == 'change_package':
+            try:
+                package = request.env['product.template'].sudo().browse(int(post.get('package_id'))).exists()
+            except (TypeError, ValueError):
+                package = request.env['product.template']
+            if not package or not package._diligence_is_package():
+                return request.redirect('/diligence/package-renewal/%s?intent=change_package&saved_choice=unavailable' % token)
         product = package.product_variant_id
         if (
             not product or not product.active or not product.sale_ok
@@ -95,6 +131,10 @@ class DiligencePackageRenewalController(http.Controller):
             'diligence_whatsapp_group_removal_state': 'not_required',
         })
         cart = request.cart or request.website._create_cart()
-        if not cart.order_line.filtered(lambda line: line.product_id == product and not line.display_type):
-            cart.sudo()._cart_add(product.id, 1)
+        if (
+            choice == 'change_package'
+            and cart.partner_id == order.partner_id
+        ):
+            cart.sudo().write({'diligence_package_switch_from_order_id': order.id})
+        cart.sudo()._cart_add(product.id, 1)
         return request.redirect('/shop/cart')

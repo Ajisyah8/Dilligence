@@ -190,6 +190,14 @@ class DiligenceWebsiteSlides(WebsiteSlides):
         values = self._get_slide_detail(slide)
         if slide.question_ids:
             values.update(self._get_slide_quiz_data(slide))
+            partner = request.env.user.partner_id.commercial_partner_id
+            attempt_count = request.env['diligence.quiz.attempt'].sudo().search_count([
+                ('slide_id', '=', slide.id), ('partner_id', '=', partner.id),
+            ])
+            values['diligence_quiz_attempts_remaining'] = (
+                max(0, slide.quiz_max_attempts - attempt_count)
+                if slide.quiz_max_attempts else -1
+            )
         values['channel_progress'] = self._get_channel_progress(slide.channel_id, include_quiz=True)
         values['category_data'] = self._prepare_collapsed_categories(values['category_data'], slide, False)
         values.update({

@@ -94,6 +94,94 @@ body:has(.diligence-fullscreen-viewer) .academy-floating-cta {
     position: relative;
 }
 
+/* Give the homepage stories carousel a more considered, editorial feel while
+   leaving all slide markup and text in Website Builder-editable HTML. */
+.academy-testimonials:has(#diligence-testimonials-carousel) {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 9% 12%, rgba(201, 171, 110, .13), transparent 22rem),
+        linear-gradient(145deg, #fbfaf7 0%, #f4f7f6 100%);
+}
+
+#diligence-testimonials-carousel .carousel-inner {
+    padding: 1rem 5.5rem 4.5rem;
+}
+
+#diligence-testimonials-carousel .carousel-item .card {
+    position: relative;
+    min-height: 18rem;
+    overflow: hidden;
+    border: 1px solid rgba(16, 47, 70, .08) !important;
+    border-radius: 1.5rem !important;
+    background: rgba(255, 255, 255, .96);
+    box-shadow: 0 1.25rem 3.5rem rgba(16, 47, 70, .10);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+#diligence-testimonials-carousel .carousel-item .card::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: .35rem;
+    height: 100%;
+    background: linear-gradient(180deg, #c9ab6e, #0f6b7a);
+    content: "";
+}
+
+#diligence-testimonials-carousel .carousel-item .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(1.75rem, 5vw, 3.25rem) !important;
+}
+
+#diligence-testimonials-carousel .carousel-item .card-body > div:first-child {
+    color: #bd9145 !important;
+    font-size: 1.05rem;
+    letter-spacing: .22em;
+}
+
+#diligence-testimonials-carousel .carousel-item .card-body > p:first-of-type {
+    color: #244253;
+    font-size: clamp(1.05rem, 1.5vw, 1.28rem);
+    line-height: 1.8;
+}
+
+#diligence-testimonials-carousel .carousel-item .card-body > p.fw-bold {
+    margin-top: .25rem;
+    color: #102f46;
+    font-size: 1.05rem;
+}
+
+#diligence-testimonials-carousel .carousel-item .card-body > small {
+    color: #71808a !important;
+    letter-spacing: .04em;
+}
+
+#diligence-testimonials-carousel .carousel-indicators {
+    bottom: .5rem;
+    gap: .35rem;
+    margin-bottom: 0;
+}
+
+#diligence-testimonials-carousel .carousel-indicators [data-bs-target] {
+    width: .55rem;
+    height: .55rem;
+    margin: 0 .2rem;
+    border: 0;
+    border-radius: 50%;
+    background-color: #9cabb0;
+    opacity: .65;
+}
+
+#diligence-testimonials-carousel .carousel-indicators .active {
+    width: 1.7rem;
+    border-radius: 1rem;
+    background-color: #0f6b7a;
+    opacity: 1;
+}
+
 #diligence-testimonials-carousel .carousel-control-prev,
 #diligence-testimonials-carousel .carousel-control-next {
     top: 50%;
@@ -103,9 +191,17 @@ body:has(.diligence-fullscreen-viewer) .academy-floating-cta {
     z-index: 2;
     opacity: 1;
     border: 0;
-    border-radius: 0;
-    background: transparent !important;
+    border-radius: 50%;
+    background: #fff !important;
+    box-shadow: 0 .35rem 1rem rgba(16, 47, 70, .14);
     transform: translateY(-50%);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+#diligence-testimonials-carousel .carousel-control-prev:hover,
+#diligence-testimonials-carousel .carousel-control-next:hover {
+    box-shadow: 0 .55rem 1.25rem rgba(16, 47, 70, .2);
+    transform: translateY(-50%) scale(1.06);
 }
 
 #diligence-testimonials-carousel .carousel-control-prev {
@@ -155,6 +251,14 @@ body:has(.diligence-fullscreen-viewer) .academy-floating-cta {
 }
 
 @media (max-width: 767.98px) {
+    #diligence-testimonials-carousel .carousel-inner {
+        padding: .5rem .75rem 4.25rem;
+    }
+
+    #diligence-testimonials-carousel .carousel-item .card {
+        min-height: 0;
+    }
+
     #diligence-testimonials-carousel .carousel-control-prev,
     #diligence-success-stories-carousel .carousel-control-prev {
         left: .5rem;
@@ -164,4 +268,68 @@ body:has(.diligence-fullscreen-viewer) .academy-floating-cta {
     #diligence-success-stories-carousel .carousel-control-next {
         right: .5rem;
     }
+}
+
+.diligence-coaching-calendar-panel {
+    padding: 1rem;
+    border: 1px solid #dce5e8;
+    border-radius: 1rem;
+    background: #fff;
+}
+
+.diligence-coaching-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: .35rem;
+    text-align: center;
+}
+
+.diligence-coaching-weekday {
+    padding: .35rem 0;
+    color: #667984;
+    font-size: .75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.diligence-coaching-day {
+    position: relative;
+    min-height: 2.5rem;
+    border: 1px solid transparent;
+    border-radius: .7rem;
+    background: transparent;
+    color: #173b4e;
+}
+
+.diligence-coaching-day:disabled {
+    color: #c0c9cc;
+    cursor: default;
+}
+
+.diligence-coaching-day.has-slots {
+    border-color: #d8e9ed;
+    background: #f2fafb;
+    font-weight: 700;
+}
+
+.diligence-coaching-day.has-slots:hover,
+.diligence-coaching-day[aria-pressed="true"] {
+    border-color: #0d7185;
+    background: #0d7185;
+    color: #fff;
+}
+
+.diligence-coaching-day-marker {
+    position: absolute;
+    bottom: .25rem;
+    left: 50%;
+    width: .3rem;
+    height: .3rem;
+    border-radius: 50%;
+    background: currentColor;
+    transform: translateX(-50%);
+}
+
+.diligence-coaching-slot {
+    background: #fff;
 }

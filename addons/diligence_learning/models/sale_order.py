@@ -60,6 +60,10 @@ class SaleOrder(models.Model):
     diligence_renewal_whatsapp_sent_at = fields.Datetime(string='Renewal WhatsApp Sent At', copy=False, readonly=True)
     diligence_renewal_response_at = fields.Datetime(string='Renewal Response At', copy=False, readonly=True)
     diligence_renewed_by_order_id = fields.Many2one('sale.order', string='Renewed By Order', copy=False, readonly=True)
+    diligence_package_switch_from_order_id = fields.Many2one(
+        'sale.order', string='Package Switched From', copy=False, readonly=True, index=True,
+        help='Previous paid package whose WhatsApp group access is reconciled after this package is activated.',
+    )
     diligence_whatsapp_group_removal_state = fields.Selection([
         ('not_required', 'Not Required'),
         ('pending', 'Pending Group Removal'),
@@ -200,9 +204,9 @@ class SaleOrder(models.Model):
             courses = self.env['slide.channel'].browse()
             for product in access_products:
                 courses |= product._diligence_course_access_course_ids()
-            courses = courses.filtered(
-                lambda course: course.diligence_availability != 'coming_soon'
-            )
+            # Grant membership for every course bundled with the paid product,
+            # including courses marked Coming Soon. Their lessons remain hidden
+            # until release, but the learner should not need to buy them again.
             courses.sudo()._action_add_members(order.partner_id)
             for course in courses:
                 course._diligence_ensure_contact_segment()
@@ -257,8 +261,71 @@ class SaleOrder(models.Model):
             ) == 'True':
                 self.env['diligence.whatsapp.service'].queue_payment_confirmation(order)
 
+            order._diligence_reconcile_package_switch_groups(package_products)
+
             if renewal_package:
                 order._diligence_mark_previous_package_orders_renewed(renewal_package)
+
+    def _diligence_reconcile_package_switch_groups(self, new_packages):
+        """Move WhatsApp group access only after the replacement package is activated."""
+        service = self.env['diligence.whatsapp.service'].sudo()
+        now = fields.Datetime.now()
+        for order in self:
+            previous = order.diligence_package_switch_from_order_id
+            if (
+                not previous or not new_packages
+                or previous.partner_id != order.partner_id
+            ):
+                continue
+            phone = service.normalize_number(order.partner_id.phone)
+            if not phone:
+                _logger.warning('Cannot reconcile package WhatsApp groups for order %s: account phone is missing/invalid', order.name)
+                continue
+
+            previous_package = previous.diligence_renewal_package_id
+            old_group = previous_package.diligence_whatsapp_group_jid if previous_package else False
+            new_groups = set(new_packages.mapped('diligence_whatsapp_group_jid')) - {False, ''}
+
+            # A transition between group-bearing packages joins the new tier's
+            # group but deliberately retains the old group. The learner leaves
+            # package groups only when switching to a package with no group.
+            for group_jid in new_groups:
+                if group_jid != old_group:
+                    service.add_group_participant(group_jid, phone)
+
+            previous.write({
+                'diligence_renewal_status': 'renewed',
+                'diligence_renewed_by_order_id': order.id,
+            })
+            if not new_groups:
+                # Starter Pack has no group entitlement. Remove every group
+                # retained through earlier Community/Coaching switches, unless
+                # another currently active package still grants that same group.
+                package_orders = self.search([
+                    ('partner_id', '=', order.partner_id.id),
+                    ('state', 'in', ('sale', 'done')),
+                    ('diligence_access_expires_at', '>', now),
+                    ('diligence_renewal_package_id.diligence_whatsapp_group_jid', '!=', False),
+                ])
+                entitled_orders = package_orders.filtered(
+                    lambda candidate: candidate.diligence_renewal_status
+                    not in ('not_continue', 'renewed', 'expired')
+                )
+                entitled_groups = set(
+                    entitled_orders.mapped('diligence_renewal_package_id.diligence_whatsapp_group_jid')
+                )
+                groups_to_remove = set(
+                    package_orders.mapped('diligence_renewal_package_id.diligence_whatsapp_group_jid')
+                ) - {False, ''} - entitled_groups
+                for group_jid in groups_to_remove:
+                    result = service.remove_group_participant(group_jid, phone)
+                    related_orders = package_orders.filtered(
+                        lambda candidate: candidate.diligence_renewal_package_id.diligence_whatsapp_group_jid == group_jid
+                    )
+                    related_orders.write({
+                        'diligence_whatsapp_group_removal_state': 'removed' if result.get('removed') else 'error',
+                        'diligence_whatsapp_group_removed_at': now if result.get('removed') else False,
+                    })
 
     def _diligence_mark_previous_package_orders_renewed(self, package):
         self.ensure_one()
@@ -338,18 +405,21 @@ class SaleOrder(models.Model):
             )
             continue_url = '%s?intent=continue' % renewal_url
             not_continue_url = '%s?intent=not_continue' % renewal_url
+            change_package_url = '%s?intent=change_package' % renewal_url
             expiry_label = fields.Datetime.context_timestamp(order, order.diligence_access_expires_at).strftime('%d %B %Y')
             message = (
                 'Halo %(name)s, masa akses paket %(package)s akan berakhir pada %(expiry)s.\n\n'
                 'Silakan pilih salah satu:\n'
                 '1. LANJUT — buka checkout untuk membeli paket yang sama: %(continue_url)s\n'
-                '2. TIDAK LANJUT — pilih alasan berhenti: %(not_continue_url)s\n\n'
+                '2. GANTI PAKET — pilih paket lain dan bayar harga penuh paket tersebut: %(change_package_url)s\n'
+                '3. TIDAK LANJUT — pilih alasan berhenti: %(not_continue_url)s\n\n'
                 'Akses belajar yang sudah dibayar tetap aktif sampai tanggal berakhir.'
             ) % {
                 'name': order.partner_id.name or 'Siswa',
                 'package': order.diligence_renewal_package_id.name,
                 'expiry': expiry_label,
                 'continue_url': continue_url,
+                'change_package_url': change_package_url,
                 'not_continue_url': not_continue_url,
             }
             service = self.env['diligence.whatsapp.service'].sudo()
@@ -389,12 +459,15 @@ class SaleOrder(models.Model):
                             'padding:12px 20px;border-radius:6px;text-decoration:none;margin-right:8px">'
                             'Continue and go to checkout</a>'
                             '<a href="%s" style="display:inline-block;background:#f2f4f5;color:#173642;'
+                            'padding:12px 20px;border-radius:6px;text-decoration:none;margin-right:8px">Change package</a>'
+                            '<a href="%s" style="display:inline-block;background:#f2f4f5;color:#173642;'
                             'padding:12px 20px;border-radius:6px;text-decoration:none">I will not continue</a>'
                             '</p><p style="color:#667">If you choose not to continue, you can tell us why on the next page. '
                             'Your current access remains available until its expiry date.</p></div>'
                             % (
                                 html_escape(message.replace(renewal_url, '').strip()),
                                 html_escape(continue_url),
+                                html_escape(change_package_url),
                                 html_escape(not_continue_url),
                             )
                         ),
@@ -428,6 +501,15 @@ class SaleOrder(models.Model):
         ])
         for order in orders:
             order._diligence_remove_from_whatsapp_group()
+        switched_orders = self.sudo().search([
+            ('state', 'in', ('sale', 'done')),
+            ('diligence_package_switch_from_order_id.diligence_whatsapp_group_removal_state', 'in', ('pending', 'error')),
+        ])
+        for order in switched_orders:
+            packages = order._diligence_course_access_products().filtered(
+                lambda product: product._diligence_is_package()
+            )
+            order._diligence_reconcile_package_switch_groups(packages)
         return True
 
     def _diligence_remove_from_whatsapp_group(self):
@@ -443,24 +525,53 @@ class SaleOrder(models.Model):
             ):
                 order.write({'diligence_whatsapp_group_removal_state': 'not_required'})
                 continue
-            group_jid = order.diligence_renewal_package_id.diligence_whatsapp_group_jid
-            if not group_jid:
-                order.write({'diligence_whatsapp_group_removal_state': 'not_required'})
-                continue
-            phone = order.diligence_renewal_whatsapp_phone or order.partner_id.phone
+            # Never trust a phone number posted from the public renewal form.
+            # Group actions must target the number on the learner's account.
+            phone = order.partner_id.phone
             if not phone:
                 order.write({'diligence_whatsapp_group_removal_state': 'not_required'})
                 continue
-            result = service.remove_group_participant(group_jid, phone)
-            if result.get('removed'):
-                order.write({
-                    'diligence_whatsapp_group_removal_state': 'removed',
-                    'diligence_whatsapp_group_removed_at': now,
-                })
-            else:
-                order.write({
-                    'diligence_whatsapp_group_removal_state': 'error',
-                })
+            package_orders = self.search([
+                ('partner_id', '=', order.partner_id.id),
+                ('state', 'in', ('sale', 'done')),
+                ('diligence_access_expires_at', '>', now),
+                ('diligence_renewal_package_id.diligence_whatsapp_group_jid', '!=', False),
+            ])
+            active_orders = package_orders.filtered(
+                lambda candidate: candidate.diligence_renewal_status
+                not in ('not_continue', 'renewed', 'expired')
+            )
+            active_groups = set(
+                active_orders.mapped('diligence_renewal_package_id.diligence_whatsapp_group_jid')
+            )
+            all_groups = set(
+                package_orders.mapped('diligence_renewal_package_id.diligence_whatsapp_group_jid')
+            ) - {False, ''}
+            groups_to_remove = all_groups - active_groups
+            if not groups_to_remove:
+                order.write({'diligence_whatsapp_group_removal_state': 'not_required'})
+                continue
+            results = [
+                (group_jid, service.remove_group_participant(group_jid, phone))
+                for group_jid in groups_to_remove
+            ]
+            failed = False
+            for group_jid, result in results:
+                related_orders = package_orders.filtered(
+                    lambda candidate: candidate.diligence_renewal_package_id.diligence_whatsapp_group_jid == group_jid
+                )
+                if result.get('removed'):
+                    related_orders.write({
+                        'diligence_whatsapp_group_removal_state': 'removed',
+                        'diligence_whatsapp_group_removed_at': now,
+                    })
+                else:
+                    related_orders.write({'diligence_whatsapp_group_removal_state': 'error'})
+                    failed = True
+            order.write({
+                'diligence_whatsapp_group_removal_state': 'error' if failed else 'removed',
+                'diligence_whatsapp_group_removed_at': False if failed else now,
+            })
         return True
 
     def _diligence_has_valid_package_payment(self):

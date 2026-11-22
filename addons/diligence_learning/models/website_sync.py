@@ -10,6 +10,7 @@ import logging
 from lxml import etree
 
 from odoo import api, models
+from odoo.tools.translate import xml_translate
 
 
 _logger = logging.getLogger(__name__)
@@ -64,6 +65,95 @@ def _safe_values(record, vals, excluded=()):
     }
 
 
+def _run_website_sync_without_blocking_save(record, description, callback):
+    """Keep optional cross-site mirroring from rolling back the edited record.
+
+    Website Builder writes the source view first. A malformed/legacy paired
+    view must not turn that successful source write into a validation error;
+    isolate the mirror in a savepoint and log failures for later repair.
+    """
+    try:
+        with record.env.cr.savepoint():
+            callback()
+    except Exception:
+        _logger.exception(
+            'Diligence website sync failed for %s; kept the original website save',
+            description,
+        )
+
+
+def _xml_translation_terms(arch):
+    """Return translatable XML terms in the order Odoo's QWeb translator uses."""
+    terms = []
+    xml_translate(lambda term: terms.append(term) or term, arch or '')
+    return terms
+
+
+def _sync_view_translations(source_view, target_view, rewrite=None):
+    """Copy a view's localized XML without collapsing translations to one locale.
+
+    ``arch_db`` is XML-translated. Writing a full architecture once per
+    ``lang`` context is not a safe way to copy it: the target's base language
+    may differ from the source website's, and Odoo can treat the whole write
+    as a base-value change. Use Odoo's translation update API with the target
+    website's base locale as the source term language instead.
+    """
+    source_view.ensure_one()
+    target_view.ensure_one()
+    target_lang = (
+        target_view.website_id.default_lang_id.code
+        if target_view.website_id and target_view.website_id.default_lang_id
+        else source_view.website_id.default_lang_id.code
+        if source_view.website_id and source_view.website_id.default_lang_id
+        else 'en_US'
+    )
+    target_arch = target_view.with_context(lang=target_lang).arch_db or ''
+    target_terms = _xml_translation_terms(target_arch)
+    if not target_terms:
+        return False
+
+    language_codes = set(
+        code for code, _name in source_view.env['res.lang'].get_installed()
+    ) | {target_lang}
+    translations = {}
+    for language_code in language_codes:
+        source_arch = source_view.with_context(lang=language_code).arch_db or ''
+        if rewrite:
+            source_arch = rewrite(source_arch)
+        source_terms = _xml_translation_terms(source_arch)
+        if len(source_terms) != len(target_terms):
+            # The Cambridge schedule has two website-specific sibling views
+            # with the same key and parent, but one was edited into a shorter
+            # layout. It is a single shared page, so reconcile its target
+            # structure from the saved source before applying locale strings.
+            if (
+                source_view.key == 'diligence_learning.diligence_cambridge_modern_design'
+                and target_view.key == source_view.key
+                and source_view.inherit_id == target_view.inherit_id
+            ):
+                source_base_arch = source_view.with_context(lang=target_lang).arch_db or ''
+                target_view.with_context({
+                    SYNC_CONTEXT: True,
+                    'no_cow': True,
+                    'lang': target_lang,
+                }).write({'arch_db': source_base_arch})
+                target_view.invalidate_recordset(['arch_db'])
+                return _sync_view_translations(source_view, target_view, rewrite=rewrite)
+            _logger.warning(
+                'Skip translated view sync %s -> %s for %s: XML term count differs (%s != %s)',
+                source_view.id, target_view.id, language_code,
+                len(source_terms), len(target_terms),
+            )
+            return False
+        translations[language_code] = dict(zip(target_terms, source_terms))
+
+    target_view.with_context({SYNC_CONTEXT: True, 'no_cow': True}).update_field_translations(
+        'arch_db', translations, source_lang=target_lang,
+    )
+    target_view.invalidate_recordset(['arch_db'])
+    return True
+
+
 class DiligenceWebsiteSync(models.AbstractModel):
     _name = 'diligence.website.sync'
     _description = 'Diligence Website Synchronisation Helpers'
@@ -104,6 +194,29 @@ class DiligenceWebsiteSync(models.AbstractModel):
             )[:1] or candidates[:1]
         if exact:
             return exact
+
+        # If a menu's destination was edited on one website, its URL no
+        # longer matches the counterpart. Prefer a unique same-name sibling
+        # under the paired parent before falling back to the old URL or page;
+        # otherwise e.g. an "Event" menu can be paired with "Contact Us"
+        # solely because it used to point at /contactus.
+        same_name = menu.search([
+            ('website_id', '=', other_website.id),
+            ('name', '=', menu.name),
+        ], order='id')
+        if same_name:
+            paired_parent = (
+                self._pair_menu(menu.parent_id)
+                if menu.parent_id and menu.parent_id != menu.website_id.menu_id
+                else other_root
+            )
+            sibling_match = same_name.filtered(
+                lambda candidate: candidate.parent_id == paired_parent
+            )
+            if sibling_match:
+                return sibling_match[:1]
+            if len(same_name) == 1:
+                return same_name[:1]
 
         # Website Builder commonly changes the label while keeping the
         # destination page. Pair by the paired page before falling back to
@@ -285,10 +398,43 @@ class DiligenceWebsiteSync(models.AbstractModel):
             pair.with_context({SYNC_CONTEXT: True, 'no_cow': True}).write(values)
         # Website Builder usually edits the page's view. Keep the paired view
         # in lockstep while preserving the paired view's SEO columns.
-        if 'view_id' in vals and page.view_id and pair.view_id:
-            pair.view_id.with_context({SYNC_CONTEXT: True, 'no_cow': True}).write({
-                'arch_db': page.view_id.arch_db,
-            })
+        # The two homepages intentionally have different default languages.
+        # Keep their editable HTML and QWeb translations independent.
+        if 'view_id' in vals and page.url != '/' and page.view_id and pair.view_id:
+            _sync_view_translations(page.view_id, pair.view_id)
+
+    @api.model
+    def sync_created_page(self, page):
+        """Create the matching CMS page on the other Diligence website.
+
+        Existing routes (notably Odoo controller routes and the homepage) are
+        never duplicated or replaced. Generated Website Builder COW routes
+        are also ignored; the public page is synchronized by the builder-save
+        hook instead.
+        """
+        if not self._enabled() or not page.website_id:
+            return page.browse()
+        if page.website_id.id not in WEBSITE_IDS or not page.url or page.url.startswith('/-'):
+            return page.browse()
+
+        existing = self._pair_page(page)
+        if existing:
+            return existing
+
+        other_website = _other_website(page)
+        if not other_website:
+            return page.browse()
+        peer = page.with_context({
+            SYNC_CONTEXT: True,
+            'no_cow': True,
+            'website_id': other_website.id,
+        }).copy({
+            'website_id': other_website.id,
+            'is_published': page.is_published,
+        })
+        if page.view_id and peer.view_id:
+            _sync_view_translations(page.view_id, peer.view_id)
+        return peer
 
     @api.model
     def sync_menu(self, menu, vals):
@@ -300,8 +446,15 @@ class DiligenceWebsiteSync(models.AbstractModel):
         values = _safe_values(
             pair,
             vals,
-            excluded={'website_id', 'parent_id', 'page_id', 'url'},
+            # ``website.menu.name`` is translated. A regular write copies only
+            # the active language's value as the target's base value and can
+            # erase the other site's Indonesian/Chinese labels.
+            excluded={'website_id', 'parent_id', 'page_id', 'name'},
         )
+        # Mirror route links only for menus that are not bound to CMS pages.
+        # Page URLs are intentionally website-specific to protect SEO routes.
+        if 'url' in vals and not menu.page_id and not pair.page_id:
+            values['url'] = vals['url']
         if 'parent_id' in vals and menu.parent_id:
             parent = self._pair_menu(menu.parent_id)
             if parent:
@@ -312,10 +465,82 @@ class DiligenceWebsiteSync(models.AbstractModel):
                 values['page_id'] = page.id
         if values:
             pair.with_context({SYNC_CONTEXT: True, 'no_cow': True}).write(values)
+        if 'name' in vals:
+            target_lang = (
+                pair.website_id.default_lang_id.code
+                if pair.website_id.default_lang_id else 'en_US'
+            )
+            languages = {
+                code for code, _name in menu.env['res.lang'].get_installed()
+            } | {target_lang}
+            translations = {
+                language_code: menu.with_context(lang=language_code).name
+                for language_code in languages
+            }
+            pair.with_context({SYNC_CONTEXT: True, 'no_cow': True}).update_field_translations(
+                'name', translations, source_lang=target_lang,
+            )
+
+    @api.model
+    def sync_created_menu(self, menu):
+        """Create a paired menu while preserving each website's menu tree."""
+        if not self._enabled() or not menu.website_id:
+            return menu.browse()
+        if menu.website_id.id not in WEBSITE_IDS or menu == menu.website_id.menu_id:
+            return menu.browse()
+
+        other_website = _other_website(menu)
+        if not other_website:
+            return menu.browse()
+        other_parent = (
+            other_website.menu_id
+            if not menu.parent_id or menu.parent_id == menu.website_id.menu_id
+            else self._pair_menu(menu.parent_id)
+        )
+        if not other_parent:
+            other_parent = other_website.menu_id
+        other_page = self._pair_page(menu.page_id) if menu.page_id else menu.page_id
+
+        # If a peer route/menu already exists, leave it untouched rather than
+        # creating a duplicate or stealing a route from a different feature.
+        menu_model = self.env['website.menu']
+        if other_page:
+            candidates = menu_model.search([
+                ('website_id', '=', other_website.id),
+                ('page_id', '=', other_page.id),
+            ], limit=1)
+            if candidates:
+                return candidates
+        candidates = menu_model.search([
+            ('website_id', '=', other_website.id),
+            ('parent_id', '=', other_parent.id),
+            ('url', '=', menu.url),
+        ])
+        if len(candidates) == 1:
+            return candidates
+        if not candidates and menu.url == '#':
+            candidates = menu_model.search([
+                ('website_id', '=', other_website.id),
+                ('parent_id', '=', other_parent.id),
+                ('name', '=', menu.name),
+            ])
+            if len(candidates) == 1:
+                return candidates
+
+        return menu.with_context({SYNC_CONTEXT: True, 'no_cow': True}).copy({
+            'website_id': other_website.id,
+            'parent_id': other_parent.id,
+            'page_id': other_page.id if other_page else False,
+        })
 
     @api.model
     def sync_view(self, view, vals):
         if not self._enabled():
+            return
+        # Homepage copy is localized per domain (English vs Indonesian).
+        # Mirroring the full QWeb arch here replaces one site's language with
+        # the other site's base-language content during a deploy or edit.
+        if self._is_diligence_homepage_view(view):
             return
         # Old Website Builder COW records are retained for recovery only.
         # They share names with the live header templates, so name-based
@@ -346,17 +571,48 @@ class DiligenceWebsiteSync(models.AbstractModel):
         if not pairs:
             return
         for pair in pairs:
+            sync_arch = 'arch_db' in vals
+            view_vals = dict(vals)
+            view_vals.pop('arch_db', None)
             values = _safe_values(
                 pair,
-                vals,
+                view_vals,
                 excluded={'website_id', 'key', 'inherit_id', 'xml_id'},
             )
             if values:
                 pair.with_context({SYNC_CONTEXT: True, 'no_cow': True}).write(values)
+            if sync_arch:
+                _sync_view_translations(view, pair)
+
+    @api.model
+    def _is_diligence_homepage_view(self, view):
+        if not view:
+            return False
+        pages = self.env['website.page'].search([
+            ('view_id', '=', view.id),
+            ('url', '=', '/'),
+            ('website_id', 'in', WEBSITE_IDS),
+        ])
+        if pages:
+            return True
+        homepage_keys = {
+            'diligence_learning.homepage_editable',
+            'diligence_learning.homepage_editable.website2',
+        }
+        return bool(view.key in homepage_keys and view.website_id.id in WEBSITE_IDS)
 
 
 class DiligenceWebsitePageSync(models.Model):
     _inherit = 'website.page'
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        pages = super().create(vals_list)
+        if not self.env.context.get(SYNC_CONTEXT):
+            sync = self.env['diligence.website.sync']
+            for page in pages:
+                sync.sync_created_page(page)
+        return pages
 
     def write(self, vals):
         result = super().write(vals)
@@ -369,6 +625,15 @@ class DiligenceWebsitePageSync(models.Model):
 
 class DiligenceWebsiteMenuSync(models.Model):
     _inherit = 'website.menu'
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        menus = super().create(vals_list)
+        if not self.env.context.get(SYNC_CONTEXT):
+            sync = self.env['diligence.website.sync']
+            for menu in menus:
+                sync.sync_created_menu(menu)
+        return menus
 
     def write(self, vals):
         result = super().write(vals)
@@ -577,19 +842,19 @@ class DiligenceIrUiViewSync(models.Model):
         # view, while its public homepage can still point to a global view.
         # Without updating the source website's own live view, an English
         # edit appears only on the Kursus Bahasa website.
-        for target_website_id in (website.id, other_id):
+        homepage_save = bool(keys & {
+            'diligence_learning.homepage_editable',
+            'diligence_learning.homepage_editable.website2',
+        })
+        target_website_ids = (website.id,) if homepage_save else (website.id, other_id)
+        for target_website_id in target_website_ids:
             for url in set(urls):
                 target_page = page_model.search([
                     ('website_id', '=', target_website_id),
                     ('url', '=', url),
                 ], order='is_published desc, id', limit=1)
                 if target_page and target_page.view_id != source_view:
-                    target_page.view_id.with_context({
-                        SYNC_CONTEXT: True,
-                        'no_cow': True,
-                    }).write({
-                        'arch_db': source_view.arch_db,
-                    })
+                    _sync_view_translations(source_view, target_page.view_id)
                     _logger.info(
                         'Diligence website sync: source view %s (website %s) '
                         'to live view %s (website %s, url %s)',
@@ -605,15 +870,13 @@ class DiligenceIrUiViewSync(models.Model):
                 normalized_keys.add(key[:-len('.website2')])
             else:
                 normalized_keys.add(key + '.website2')
-        generated_targets = self.search([
+        generated_targets = self.browse() if homepage_save else self.search([
             ('website_id', '=', other_id),
             ('key', 'in', list(normalized_keys)),
             ('id', '!=', source_view.id),
         ])
         for target in generated_targets:
-            target.with_context({SYNC_CONTEXT: True, 'no_cow': True}).write({
-                'arch_db': source_view.arch_db,
-            })
+            _sync_view_translations(source_view, target)
 
         # Header/footer components inherit website.layout directly and have
         # no website.page URL.  Their custom keys differ between both sites,
@@ -633,14 +896,16 @@ class DiligenceIrUiViewSync(models.Model):
                 ('active', '=', True),
             ], order='website_id desc, write_date desc, id desc', limit=1)
             if target_component:
-                arch = source_view.arch_db.replace(
-                    f'/web/image/website/{website.id}/',
-                    f'/web/image/website/{other_id}/',
+                def rewrite_component_images(arch):
+                    return arch.replace(
+                        f'/web/image/website/{website.id}/',
+                        f'/web/image/website/{other_id}/',
+                    )
+
+                _sync_view_translations(
+                    source_view, target_component,
+                    rewrite=rewrite_component_images,
                 )
-                target_component.with_context({
-                    SYNC_CONTEXT: True,
-                    'no_cow': True,
-                }).write({'arch_db': arch})
                 _logger.info(
                     'Diligence website sync: global component %s '
                     '(website %s) to %s (website %s)',
@@ -659,15 +924,36 @@ class DiligenceIrUiViewSync(models.Model):
             website = self.env['website'].get_current_website()
         original_view = self
         original_key = self.key
-        result = super().save(value, xpath=xpath)
+        try:
+            result = super().save(value, xpath=xpath)
+        except Exception:
+            # Odoo's RPC validation message hides the parsing traceback from
+            # normal logs. Record only payload types/size (never page content)
+            # so malformed Website Builder saves can be diagnosed safely.
+            _logger.exception(
+                'Diligence Website Builder save failed before cross-site sync: '
+                'view=%s key=%s website=%s value_type=%s value_length=%s xpath_type=%s',
+                original_view.id,
+                original_key,
+                original_view.website_id.id or False,
+                type(value).__name__,
+                len(value) if isinstance(value, (str, bytes)) else False,
+                type(xpath).__name__,
+            )
+            raise
 
         if website and website.id in WEBSITE_IDS:
-            source_view = self._diligence_builder_source_view(
-                website, original_key,
-            )
-            self._diligence_normalize_carousels(source_view)
-            self._diligence_sync_builder_save(
-                website, original_view, source_view,
+            def sync_builder_save():
+                source_view = self._diligence_builder_source_view(
+                    website, original_key,
+                )
+                self._diligence_normalize_carousels(source_view)
+                self._diligence_sync_builder_save(
+                    website, original_view, source_view,
+                )
+
+            _run_website_sync_without_blocking_save(
+                self, f'Website Builder view {original_view.id}', sync_builder_save,
             )
         return result
 
@@ -676,8 +962,13 @@ class DiligenceIrUiViewSync(models.Model):
         if not self.env.context.get(SYNC_CONTEXT):
             sync = self.env['diligence.website.sync']
             for view in self:
-                self._diligence_normalize_carousels(view)
-                sync.sync_view(view, vals)
+                def sync_view(view=view):
+                    self._diligence_normalize_carousels(view)
+                    sync.sync_view(view, vals)
+
+                _run_website_sync_without_blocking_save(
+                    view, f'view {view.id}', sync_view,
+                )
         return result
 
 

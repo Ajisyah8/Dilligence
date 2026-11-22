@@ -51,7 +51,13 @@ class DiligenceWhatsAppService(models.AbstractModel):
         try:
             response = requests.post(
                 endpoint,
-                json={'number': normalized, 'text': message or ''},
+                json={
+                    'number': normalized,
+                    'text': message or '',
+                    # Evolution does not generate a link card when omitted.
+                    # Enable it only for messages that actually contain URLs.
+                    'linkPreview': bool(re.search(r'https?://\S+', message or '', re.IGNORECASE)),
+                },
                 headers={'Content-Type': 'application/json', 'apikey': self._parameter('diligence.whatsapp.api_key')},
                 timeout=15,
             )
@@ -89,6 +95,35 @@ class DiligenceWhatsAppService(models.AbstractModel):
         updates = payload.get('updateParticipants') or []
         successful = bool(updates) and all(str(item.get('status')) == '200' for item in updates)
         return {'removed': successful, 'status_code': response.status_code}
+
+    @api.model
+    def add_group_participant(self, group_jid, number):
+        """Add one verified learner to a package WhatsApp group via Evolution."""
+        if not self.is_configured():
+            return {'added': False, 'skipped': True}
+        normalized = self.normalize_number(number)
+        if not normalized or not group_jid or not group_jid.endswith('@g.us'):
+            return {'added': False, 'skipped': True}
+        endpoint = '%s/group/updateParticipant/%s' % (
+            self._parameter('diligence.whatsapp.api_url').rstrip('/'),
+            self._parameter('diligence.whatsapp.instance'),
+        )
+        try:
+            response = requests.post(
+                endpoint,
+                params={'groupJid': group_jid},
+                json={'action': 'add', 'participants': [normalized]},
+                headers={'Content-Type': 'application/json', 'apikey': self._parameter('diligence.whatsapp.api_key')},
+                timeout=20,
+            )
+            response.raise_for_status()
+            payload = response.json()
+        except (requests.RequestException, ValueError) as error:
+            _logger.warning('Evolution API WhatsApp group addition failed: %s', error.__class__.__name__)
+            return {'added': False, 'error': 'request_failed'}
+        updates = payload.get('updateParticipants') or []
+        successful = bool(updates) and all(str(item.get('status')) in ('200', '201') for item in updates)
+        return {'added': successful, 'status_code': response.status_code}
 
     @api.model
     def render_message(self, template, partner=None, **values):

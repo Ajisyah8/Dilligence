@@ -41,13 +41,23 @@ class SlideQuestion(models.Model):
     grading_rubric = fields.Text('Teacher grading rubric')
 
     def _diligence_display_question(self, slide, sequence=None):
-        """Avoid rendering a bare imported item number as if it were a prompt."""
+        """Display imported worksheet prompt text exactly as authored."""
         self.ensure_one()
         title = (self.question or '').strip()
-        title = re.sub(r'\s*=\s*$', '', title).strip()
-        if title and not re.fullmatch(r'(?:question\s*)?\d+[.)]?', title, flags=re.IGNORECASE):
+        # Imported worksheet prompts such as "1 =" and "Ini adalah apa? ="
+        # are intentionally displayed exactly as authored in Excel.
+        if title:
             return title
         item_number = sequence or self.sequence or 1
+        language = (self.env.context.get('lang') or 'en_US').split('_', 1)[0]
+        if language == 'id':
+            if slide.slide_category == 'audio':
+                return 'Dengarkan audio, lalu masukkan jawaban untuk nomor %s.' % item_number
+            return 'Masukkan jawaban untuk nomor %s.' % item_number
+        if language == 'zh':
+            if slide.slide_category == 'audio':
+                return '请听音频并填写第 %s 题的答案。' % item_number
+            return '请填写第 %s 题的答案。' % item_number
         if slide.slide_category == 'audio':
             return _('Listen to the audio and enter your answer for item %(number)s.', number=item_number)
         return _('Enter your answer for item %(number)s.', number=item_number)

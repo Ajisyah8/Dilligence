@@ -34,13 +34,24 @@ class DiligenceSession(models.Model):
     start_datetime = fields.Datetime('Start', required=True)
     end_datetime = fields.Datetime('End', required=True)
     timezone = fields.Char(default='Asia/Jakarta')
+    # Keep coach_id for existing sessions that reference an internal user.
+    # New coaching slots select the teacher from Contacts instead.
     coach_id = fields.Many2one('res.users', string='Coach')
+    coach_partner_id = fields.Many2one(
+        'res.partner', string='Coach (Teacher Contact)',
+        domain=[('diligence_contact_segment_ids.code', '=', 'teacher')],
+        ondelete='set null',
+    )
     meeting_url = fields.Char('Zoom / Meeting URL')
     zoom_meeting_id = fields.Char('Zoom Meeting ID', copy=False, readonly=True)
     zoom_password = fields.Char('Zoom Password', copy=False, readonly=True)
     zoom_start_url = fields.Char('Zoom Host Start URL', copy=False, readonly=True)
     zoom_created = fields.Boolean('Created in Zoom', copy=False, readonly=True)
-    capacity = fields.Integer('Capacity', default=8)
+    capacity = fields.Integer(
+        'Capacity', default=8,
+        help='Maximum number of participants who may be booked into this time slot. Students may reserve multiple seats in one booking.',
+    )
+    student_booking_open = fields.Boolean('Allow Student Booking', default=False)
     attendee_ids = fields.One2many('diligence.session.attendee', 'session_id', string='Attendees')
     attendee_count = fields.Integer('Registered', compute='_compute_seats')
     seats_available = fields.Integer('Seats Available', compute='_compute_seats')
@@ -52,11 +63,45 @@ class DiligenceSession(models.Model):
     ], default='draft', required=True)
     notes = fields.Text('Notes')
 
+    @api.constrains('coach_partner_id')
+    def _check_coach_is_teacher(self):
+        for session in self.filtered('coach_partner_id'):
+            coach = session.coach_partner_id.sudo()
+            segments = coach.diligence_contact_segment_ids | coach.diligence_contact_segment_id
+            if 'teacher' not in segments.mapped('code'):
+                raise ValidationError(_('The coach must be a Contact tagged with the Teacher segment.'))
+
     @api.depends('attendee_ids.state', 'capacity')
     def _compute_seats(self):
         for session in self:
             session.attendee_count = len(session.attendee_ids.filtered(lambda attendee: attendee.state != 'cancelled'))
             session.seats_available = max(session.capacity - session.attendee_count, 0) if session.capacity else 0
+
+    @api.model
+    def get_student_bookable_slots(self, partner, packages, now=None):
+        partner = partner.commercial_partner_id
+        package_ids = packages.ids
+        if not package_ids:
+            return self.browse()
+
+        attendee_domain = [
+            '&', '|', ('partner_id', '=', partner.id), ('booking_partner_id', '=', partner.id),
+            ('state', '!=', 'cancelled'),
+        ]
+        booked_slot_ids = set(
+            self.env['diligence.session.attendee'].sudo()
+            .search(attendee_domain).mapped('session_id').ids
+        )
+        slots = self.sudo().search([
+            ('package_id', 'in', package_ids),
+            ('student_booking_open', '=', True),
+            ('state', '=', 'scheduled'),
+            ('session_type', '=', 'one_on_one'),
+            ('start_datetime', '>', now or fields.Datetime.now()),
+        ], order='start_datetime asc')
+        return slots.filtered(
+            lambda slot: slot.seats_available > 0 and slot.id not in booked_slot_ids
+        )
 
     @api.constrains('start_datetime', 'end_datetime', 'capacity')
     def _check_schedule(self):
@@ -74,6 +119,28 @@ class DiligenceSession(models.Model):
 
     def action_mark_done(self):
         self.write({'state': 'done'})
+
+    def action_duplicate_slot(self):
+        self.ensure_one()
+        duplicate = self.copy({
+            'name': _('%s (copy)', self.name),
+            'state': 'draft',
+            'student_booking_open': False,
+            'attendee_ids': [],
+            'meeting_url': False,
+            'zoom_meeting_id': False,
+            'zoom_password': False,
+            'zoom_start_url': False,
+            'zoom_created': False,
+        })
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Duplicate Coaching Slot'),
+            'res_model': self._name,
+            'res_id': duplicate.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
 
     def action_create_zoom_meeting(self):
         for session in self:
@@ -149,7 +216,10 @@ class DiligenceSessionAttendee(models.Model):
     _order = 'session_id, partner_id'
 
     session_id = fields.Many2one('diligence.session', required=True, ondelete='cascade')
-    partner_id = fields.Many2one('res.partner', required=True, ondelete='cascade')
+    partner_id = fields.Many2one('res.partner', ondelete='cascade', string='Student Account')
+    booking_partner_id = fields.Many2one('res.partner', ondelete='cascade', index=True, string='Booked By')
+    participant_name = fields.Char('Participant Name')
+    student_code = fields.Char('Student Code')
     sale_order_id = fields.Many2one('sale.order', ondelete='set null')
     state = fields.Selection([
         ('registered', 'Registered'),
@@ -174,3 +244,17 @@ class DiligenceSessionAttendee(models.Model):
         'UNIQUE(session_id, partner_id)',
         'A learner can only be registered once per session.',
     )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        # Serialize seat allocation per slot. The controller also locks before
+        # creating, while this protects admin/import callers using this model.
+        session_ids = sorted({vals.get('session_id') for vals in vals_list if vals.get('session_id')})
+        for session_id in session_ids:
+            self.env.cr.execute('SELECT id FROM diligence_session WHERE id = %s FOR UPDATE', [session_id])
+        for vals in vals_list:
+            if vals.get('partner_id') and not vals.get('booking_partner_id'):
+                vals['booking_partner_id'] = vals['partner_id']
+            if vals.get('partner_id') and not vals.get('participant_name'):
+                vals['participant_name'] = self.env['res.partner'].browse(vals['partner_id']).name
+        return super().create(vals_list)

@@ -1,6 +1,6 @@
 {
     'name': 'Diligence Learning Packages',
-    'version': '1.0.48',
+    'version': '1.0.70',
     'summary': 'Learning packages, bundle access, community, coaching, and referrals',
     'category': 'Website/eLearning',
     'author': 'Project ADS',
@@ -20,6 +20,7 @@
         'project',
         'mass_mailing',
         'website_mass_mailing',
+        'event',
         'survey',
         'base_setup',
     ],
@@ -67,6 +68,9 @@
         'views/homepage_reference_content.xml',
         'views/homepage_builder_persistence.xml',
         'views/session_views.xml',
+        'views/event_registration_views.xml',
+        'views/event_registration_import_views.xml',
+        'views/event_ticket_templates.xml',
         'views/certificate_report.xml',
         'views/reporting_views.xml',
         'views/management_dashboard_views.xml',
@@ -90,6 +94,7 @@
         'assets': {
         'web.assets_backend': [
             'diligence_learning/static/src/js/slide_category_section_actions.js',
+            'diligence_learning/static/src/scss/payment_loading.scss',
         ],
         'web.assets_frontend_minimal': [
             'diligence_learning/static/src/js/diligence_lesson_navigation.js',
@@ -103,6 +108,7 @@
             'diligence_learning/static/src/js/diligence_fullscreen_sidebar.js',
             'diligence_learning/static/src/js/diligence_multitype_quiz.js',
             'diligence_learning/static/src/js/diligence_quiz_create.js',
+            'diligence_learning/static/src/js/payment_loading.js',
             'diligence_learning/static/src/xml/diligence_quiz.xml',
             'diligence_learning/static/src/xml/diligence_fullscreen_descriptions.xml',
             'diligence_learning/static/src/xml/diligence_quiz_create.xml',
@@ -115,6 +121,7 @@
             'diligence_learning/static/src/scss/profile_page.scss',
         ],
         'web.assets_frontend_lazy': [
+            'diligence_learning/static/src/js/coaching_booking.js',
             'diligence_learning/static/lib/plyr/plyr.css',
             'diligence_learning/static/lib/plyr/plyr.min.js',
             'diligence_learning/static/lib/hls/hls.min.js',

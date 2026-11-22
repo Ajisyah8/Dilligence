@@ -1,0 +1,40 @@
+<odoo>
+    <record id="event_registration_tree_participant_type" model="ir.ui.view">
+        <field name="name">event.registration.list.participant.type</field>
+        <field name="model">event.registration</field>
+        <field name="inherit_id" ref="event.view_event_registration_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='email']" position="after">
+                <field name="diligence_participant_type" optional="show" widget="badge"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="event_registration_form_participant_type" model="ir.ui.view">
+        <field name="name">event.registration.form.participant.type</field>
+        <field name="model">event.registration</field>
+        <field name="inherit_id" ref="event.view_event_registration_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='company_name']" position="after">
+                <field name="diligence_participant_type"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="event_registration_search_participant_type" model="ir.ui.view">
+        <field name="name">event.registration.search.participant.type</field>
+        <field name="model">event.registration</field>
+        <field name="inherit_id" ref="event.view_registration_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search/field[@name='partner_id']" position="after">
+                <field name="diligence_participant_type"/>
+            </xpath>
+            <xpath expr="//search/filter[@name='taken']" position="after">
+                <separator/>
+                <filter name="diligence_students" string="Students" domain="[('diligence_participant_type', '=', 'student')]"/>
+                <filter name="diligence_general_public" string="General Public" domain="[('diligence_participant_type', '=', 'general')]"/>
+            </xpath>
+            <xpath expr="//search/group/filter[@name='partner']" position="before">
+                <filter name="group_by_diligence_participant_type" string="Participant Type" domain="[]" context="{'group_by': 'diligence_participant_type'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

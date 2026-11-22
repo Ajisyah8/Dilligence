@@ -1,0 +1,33 @@
+.diligence-payment-spinner {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border: 0.15em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    vertical-align: -0.12em;
+    animation: diligence-payment-spin 0.7s linear infinite;
+}
+
+.diligence-payment-proof-submit:disabled .diligence-payment-spinner {
+    margin-right: 0.45em;
+}
+
+button.diligence-payment-approval-button:disabled::before {
+    content: "";
+    display: inline-block;
+    width: 0.9em;
+    height: 0.9em;
+    margin-right: 0.45em;
+    border: 0.14em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    vertical-align: -0.08em;
+    animation: diligence-payment-spin 0.7s linear infinite;
+}
+
+@keyframes diligence-payment-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

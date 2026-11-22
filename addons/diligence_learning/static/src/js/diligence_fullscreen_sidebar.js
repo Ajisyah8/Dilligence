@@ -32,16 +32,10 @@ function syncDiligenceFullscreenCompletionButton() {
         doneIcon.className = 'o_wslides_slide_completed fa fa-check-circle fa-fw text-success fa-lg';
         doneIcon.title = 'Completed';
     }
-    if (isCompleted) {
-        if (button.hasAttribute('href')) button.removeAttribute('href');
-        if (button.getAttribute('aria-disabled') !== 'true') button.setAttribute('aria-disabled', 'true');
-        if (label && label.textContent !== 'Completed') label.textContent = 'Completed';
-    } else {
-        const href = `/diligence/slides/slide/${slideId}/set_completed`;
-        if (button.getAttribute('href') !== href) button.setAttribute('href', href);
-        if (button.hasAttribute('aria-disabled')) button.removeAttribute('aria-disabled');
-        if (label && label.textContent !== 'Mark as Completed') label.textContent = 'Mark as Completed';
-    }
+    const href = `/diligence/slides/slide/${slideId}/${isCompleted ? 'set_uncompleted' : 'set_completed'}`;
+    if (button.getAttribute('href') !== href) button.setAttribute('href', href);
+    if (button.hasAttribute('aria-disabled')) button.removeAttribute('aria-disabled');
+    if (label) label.textContent = isCompleted ? 'Mark as Incomplete' : 'Mark as Completed';
 }
 
 /* The native fullscreen player renders the media first, but keeps the lesson
@@ -268,6 +262,7 @@ document.addEventListener('click', async (event) => {
     button.classList.add('is-loading');
 
     try {
+        const isUndo = button.href.includes('/set_uncompleted');
         const response = await fetch(button.href, {
             credentials: 'same-origin',
             headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -277,11 +272,12 @@ document.addEventListener('click', async (event) => {
         }
 
         button.classList.remove('is-loading');
-        button.classList.add('is-completed');
-        button.removeAttribute('href');
+        button.classList.toggle('is-completed', !isUndo);
+        button.classList.remove('is-loading');
+        button.href = `/diligence/slides/slide/${button.dataset.slideId}/${isUndo ? 'set_completed' : 'set_uncompleted'}`;
         const label = button.querySelector('span');
         if (label) {
-            label.textContent = 'Completed';
+            label.textContent = isUndo ? 'Mark as Completed' : 'Mark as Incomplete';
         }
 
         const slideId = button.dataset.slideId;
@@ -290,11 +286,14 @@ document.addEventListener('click', async (event) => {
         );
         const doneIcon = sidebarItem?.querySelector('.o_wslides_sidebar_done_button i');
         if (doneIcon) {
-            doneIcon.className = 'o_wslides_slide_completed fa fa-check-circle fa-fw text-success fa-lg';
-            doneIcon.title = 'Completed';
+            doneIcon.className = isUndo
+                ? 'fa fa-circle-thin fa-fw fa-lg'
+                : 'o_wslides_slide_completed fa fa-check-circle fa-fw text-success fa-lg';
+            doneIcon.title = isUndo ? 'Mark as done' : 'Completed';
         }
         const doneContainer = sidebarItem?.querySelector('.o_wslides_sidebar_done_button');
-        doneContainer?.setAttribute('data-completed', 'true');
+        doneContainer?.setAttribute('data-completed', String(!isUndo));
+        sidebarItem?.setAttribute('data-completed', String(!isUndo));
         syncDiligenceFullscreenCompletionButton();
     } catch (error) {
         button.removeAttribute('aria-disabled');

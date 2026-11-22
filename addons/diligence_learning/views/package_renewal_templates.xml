@@ -20,7 +20,7 @@
                         <div t-elif="saved_choice == 'not_continue'" class="alert alert-info" role="status">
                             <span t-translation="yes">Your choice and reason have been recorded. No group removal was needed for this test or package. Your course access remains active until its expiry date.</span>
                         </div>
-                        <div t-elif="saved_choice == 'unavailable'" class="alert alert-warning" role="alert">
+                        <div t-elif="saved_choice == 'unavailable' and intent != 'change_package'" class="alert alert-warning" role="alert">
                             <span t-translation="yes">This package cannot be purchased right now. Please contact Diligence Academy for help.</span>
                         </div>
                         <div t-elif="order.diligence_renewal_status == 'renewed'" class="alert alert-success" role="status">
@@ -28,6 +28,9 @@
                         </div>
                         <div t-elif="expired" class="alert alert-warning" role="alert">
                             <span t-translation="yes">This access period has ended. Please visit the website to purchase a package again.</span>
+                        </div>
+                        <div t-elif="order.diligence_renewal_status == 'not_continue'" class="alert alert-info" role="status">
+                            <span t-translation="yes">Your choice not to continue has been recorded. This decision is final for this access period. Your current course access remains available until its expiry date.</span>
                         </div>
                         <div t-elif="intent == 'continue'">
                             <p t-translation="yes">You chose to continue. Confirm below to open checkout for the same package. Your access continues after payment is confirmed.</p>
@@ -38,6 +41,28 @@
                                 <button type="submit" class="btn btn-primary" t-translation="yes">Confirm and go to checkout</button>
                             </form>
                         </div>
+                        <div t-elif="intent == 'change_package'">
+                            <p t-translation="yes">Choose a package to switch to. The selected package is charged at its full current price; no prorated credit is applied.</p>
+                            <div t-if="saved_choice == 'unavailable'" class="alert alert-warning" role="alert" t-translation="yes">That package is unavailable. Please choose another package.</div>
+                            <div t-if="packages" class="row g-3">
+                                <div class="col-12 col-md-6" t-foreach="packages" t-as="package">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h2 class="h5" t-out="package.name"/>
+                                            <p class="mb-3" t-field="package.list_price" t-options="{'widget': 'monetary', 'display_currency': package.currency_id}"/>
+                                            <form action="/diligence/package-renewal/respond" method="post">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <input type="hidden" name="token" t-att-value="order.diligence_renewal_token"/>
+                                                <input type="hidden" name="choice" value="change_package"/>
+                                                <input type="hidden" name="package_id" t-att-value="package.id"/>
+                                                <button type="submit" class="btn btn-primary" t-translation="yes">Choose and go to checkout</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div t-else="" class="alert alert-info" t-translation="yes">There are no packages available right now.</div>
+                        </div>
                         <div t-elif="intent == 'not_continue'">
                             <p t-translation="yes">You chose not to continue. Please select a reason. Your current access remains available until its expiry date.</p>
                             <div t-if="request.params.get('invalid_reason')" class="alert alert-warning" role="alert" t-translation="yes">Please select a reason, enter a valid WhatsApp number, and add a short note if you choose Other.</div>
@@ -46,8 +71,8 @@
                                 <input type="hidden" name="token" t-att-value="order.diligence_renewal_token"/>
                                 <input type="hidden" name="choice" value="not_continue"/>
                                 <label for="renewal_whatsapp_phone" class="form-label" t-translation="yes">WhatsApp number in the group</label>
-                                <input id="renewal_whatsapp_phone" name="whatsapp_phone" type="tel" class="form-control mb-3" required="required" autocomplete="tel" t-att-value="whatsapp_phone" placeholder="e.g. +62 812 3456 7890"/>
-                                <div class="form-text mb-3" t-translation="yes">Check that this is the number you use in the package WhatsApp group. You can correct it if needed.</div>
+                                <input id="renewal_whatsapp_phone" type="tel" class="form-control mb-3" readonly="readonly" autocomplete="tel" t-att-value="whatsapp_phone"/>
+                                <div class="form-text mb-3" t-translation="yes">This number is taken from your account and cannot be changed here. If it is incorrect, update your account phone number or contact the administrator before continuing.</div>
                                 <label for="renewal_reason" class="form-label" t-translation="yes">Why are you not continuing?</label>
                                 <select id="renewal_reason" name="reason" class="form-select mb-3" required="required">
                                     <option value="" t-translation="yes">Select a reason</option>
@@ -66,6 +91,7 @@
                             <div class="d-flex flex-wrap gap-2 mt-4">
                                 <a t-att-href="'/diligence/package-renewal/%s?intent=continue' % order.diligence_renewal_token" class="btn btn-primary" t-translation="yes">Continue and go to checkout</a>
                                 <a t-att-href="'/diligence/package-renewal/%s?intent=not_continue' % order.diligence_renewal_token" class="btn btn-outline-secondary" t-translation="yes">I will not continue</a>
+                                <a t-att-href="'/diligence/package-renewal/%s?intent=change_package' % order.diligence_renewal_token" class="btn btn-outline-primary" t-translation="yes">Change package</a>
                             </div>
                             <p class="small text-muted mt-3 mb-0" t-translation="yes">If you do not continue, your course access will remain available until the expiry date shown above.</p>
                         </div>

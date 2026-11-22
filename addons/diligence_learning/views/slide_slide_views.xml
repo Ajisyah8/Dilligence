@@ -5,12 +5,6 @@
         <field name="inherit_id" ref="website_slides.view_slide_slide_form"/>
         <field name="arch" type="xml">
             <xpath expr="//page[@name='quiz']//group[@name='quiz_details']" position="inside">
-                <group string="Diligence quiz settings" invisible="slide_category != 'quiz'">
-                    <field name="quiz_passing_score"/>
-                    <field name="quiz_max_attempts"/>
-                    <field name="quiz_randomize_questions"/>
-                    <field name="quiz_randomize_answers"/>
-                </group>
                 <group string="External Quiz Form" invisible="slide_category != 'quiz'">
                     <field name="diligence_external_quiz_url" widget="url"
                            placeholder="https://forms.gle/..."/>
@@ -19,6 +13,14 @@
                     <div class="text-muted" colspan="2">
                         Paste a Google Form or another external quiz link. Learners can open it from this quiz.
                     </div>
+                </group>
+            </xpath>
+            <xpath expr="//page[@name='quiz']//group[@name='questions']" position="before">
+                <group string="Diligence quiz settings" invisible="is_category">
+                    <field name="quiz_passing_score"/>
+                    <field name="quiz_max_attempts"/>
+                    <field name="quiz_randomize_questions"/>
+                    <field name="quiz_randomize_answers"/>
                 </group>
             </xpath>
             <xpath expr="//page[@name='quiz']" position="attributes">
@@ -144,6 +146,7 @@
         <xpath expr="//div[@id='lessonQuiz']" position="attributes">
             <attribute name="class" add="o_diligence_multitype_quiz" separator=" "/>
             <attribute name="data-diligence-multitype">1</attribute>
+            <attribute name="t-att-data-diligence-attempts-remaining">diligence_quiz_attempts_remaining</attribute>
         </xpath>
     </template>
 

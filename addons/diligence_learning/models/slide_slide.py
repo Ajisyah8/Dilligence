@@ -85,7 +85,10 @@ class SlideSlide(models.Model):
         return True
 
     quiz_passing_score = fields.Float('Quiz passing score (%)', default=70.0)
-    quiz_max_attempts = fields.Integer('Maximum quiz attempts', default=0)
+    quiz_max_attempts = fields.Integer(
+        'Maximum quiz attempts', default=0,
+        help='Maximum submissions allowed per learner. Set to 0 for unlimited attempts.',
+    )
     quiz_randomize_questions = fields.Boolean('Randomize questions')
     quiz_randomize_answers = fields.Boolean('Randomize answers')
 

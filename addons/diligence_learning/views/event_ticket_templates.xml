@@ -1,0 +1,12 @@
+<odoo>
+    <template id="event_report_template_ticket_images" inherit_id="event.event_report_template_full_page_ticket">
+        <xpath expr="//h2[@t-field='event.name']" position="before">
+            <img t-if="event.organizer_id.image_256 or event.company_id.logo"
+                 t-att-src="image_data_uri(event.organizer_id.image_256 or event.company_id.logo)"
+                 alt="Diligence Academy" style="display:block;max-width:110px;max-height:64px;margin-bottom:12px;"/>
+        </xpath>
+        <xpath expr="//div[hasclass('o_event_full_page_ticket_barcode_container')]//img[contains(@t-attf-src, '/report/barcode/QR/')][1]" position="attributes">
+            <attribute name="t-attf-src">/diligence/event/qr/{{attendee.barcode if attendee and attendee.barcode else '12345678901234567890'}}?width=152&amp;height=152</attribute>
+        </xpath>
+    </template>
+</odoo>

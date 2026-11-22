@@ -90,18 +90,27 @@ function ensureRetrySubmitButton(root) {
     if (!validation) return;
     validation.classList.remove('d-none', 'bg-100', 'border-bottom');
     validation.classList.add('diligence-quiz-retry-validation');
-    if (validation.querySelector('.o_wslides_js_lesson_quiz_submit')) return;
-    validation.innerHTML = `
-        <div class="d-flex flex-wrap align-items-center gap-3">
-            <button type="button" class="btn btn-primary text-uppercase fw-bold o_wslides_js_lesson_quiz_submit">
-                Submit answers
-            </button>
-            <div class="d-none text-danger o_wslides_js_quiz_submit_error">
-                <i class="fa fa-close me-1"></i>
-                <span class="o_wslides_js_quiz_submit_error_text"></span>
+    let button = validation.querySelector('.o_wslides_js_lesson_quiz_submit');
+    if (!button) {
+        validation.innerHTML = `
+            <div class="d-flex flex-wrap align-items-center gap-3">
+                <button type="button" class="btn btn-primary text-uppercase fw-bold o_wslides_js_lesson_quiz_submit">
+                    Submit answers
+                </button>
+                <div class="d-none text-danger o_wslides_js_quiz_submit_error">
+                    <i class="fa fa-close me-1"></i>
+                    <span class="o_wslides_js_quiz_submit_error_text"></span>
+                </div>
             </div>
-        </div>
-    `;
+        `;
+        button = validation.querySelector('.o_wslides_js_lesson_quiz_submit');
+    }
+    // The result renderer disables and relabels the original Odoo button.
+    // Reusing it without restoring these properties made "Try Again" appear
+    // to work while leaving the next submission button disabled.
+    button.disabled = false;
+    button.textContent = 'Submit answers';
+    validation.querySelector('.o_diligence_quiz_error')?.remove();
 }
 
 function maintainQuizControls(root) {
@@ -300,11 +309,13 @@ function showCompletedNativeAnswerKeys(root) {
     });
     const validation = root.querySelector('.o_wslides_js_lesson_quiz_validation');
     if (validation && !validation.querySelector('.o_diligence_quiz_retry')) {
+        const remaining = Number(root.dataset.diligenceAttemptsRemaining ?? -1);
+        const canRetry = remaining === -1 || remaining > 0;
         validation.classList.remove('d-none', 'bg-100', 'border-bottom');
         validation.innerHTML = `
             <div class="d-flex flex-wrap align-items-center gap-3">
                 <div class="alert alert-success mb-0 py-2">Quiz completed.</div>
-                <button type="button" class="btn btn-outline-primary o_diligence_quiz_retry">Try Again</button>
+                ${canRetry ? `<button type="button" class="btn btn-outline-primary o_diligence_quiz_retry">Try Again</button><span class="small">${remaining === -1 ? '' : `(${remaining} attempt(s) remaining)`}</span>` : '<span class="small text-muted">Maximum attempts reached.</span>'}
             </div>
         `;
     }
@@ -361,6 +372,14 @@ document.addEventListener('click', async (event) => {
         const text = question.querySelector('.o_diligence_quiz_text_answer');
         return !hasChoice && !(text && text.value.trim());
     })) {
+        const validation = root.querySelector('.o_wslides_js_lesson_quiz_validation');
+        if (validation) {
+            validation.querySelector('.o_diligence_quiz_error')?.remove();
+            const message = document.createElement('div');
+            message.className = 'alert alert-danger mb-3 o_diligence_quiz_error';
+            message.textContent = 'Please answer all required questions before checking your answers.';
+            validation.prepend(message);
+        }
         return;
     }
     button.disabled = true;
@@ -374,16 +393,33 @@ document.addEventListener('click', async (event) => {
             const validation = root.querySelector('.o_wslides_js_lesson_quiz_validation');
             const errorText = result.error === 'quiz_attempt_limit'
                 ? 'Maximum quiz attempts reached. Contact your teacher to reopen this quiz.'
-                : 'The quiz could not be submitted. Please try again.';
+                : result.error === 'required_question'
+                    ? 'Please answer all required questions before checking your answers.'
+                    : result.error === 'quiz_access_denied' || result.error === 'public_user'
+                        ? 'Please sign in with an enrolled student account to submit this quiz.'
+                        : 'The quiz could not be submitted. Please try again.';
             if (validation) {
-                validation.insertAdjacentHTML('afterbegin', `<div class="alert alert-danger mb-3 o_diligence_quiz_error">${errorText}</div>`);
+                validation.querySelector('.o_diligence_quiz_error')?.remove();
+                const error = document.createElement('div');
+                error.className = 'alert alert-danger mb-3 o_diligence_quiz_error';
+                error.textContent = errorText;
+                validation.prepend(error);
             }
             return;
         }
         delete root.dataset.diligenceRetryMode;
         showResult(root, result);
-    } catch {
+    } catch (error) {
         button.disabled = false;
+        const validation = root.querySelector('.o_wslides_js_lesson_quiz_validation');
+        if (validation) {
+            validation.querySelector('.o_diligence_quiz_error')?.remove();
+            const message = document.createElement('div');
+            message.className = 'alert alert-danger mb-3 o_diligence_quiz_error';
+            message.textContent = 'Could not check your answers. Please try again, and contact your teacher if the problem continues.';
+            validation.prepend(message);
+        }
+        console.error('Diligence quiz submission failed', error);
     }
 }, true);
 

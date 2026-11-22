@@ -10,7 +10,7 @@
                     name="action_diligence_verify_payment"
                     type="object"
                     string="Verify Bank Transfer"
-                    class="oe_highlight"
+                    class="oe_highlight diligence-payment-approval-button"
                     groups="account.group_account_invoice"
                     invisible="provider_code != 'custom' or provider_id.custom_mode != 'wire_transfer' or state != 'pending'"
                 />

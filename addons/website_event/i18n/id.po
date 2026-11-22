@@ -1498,7 +1498,7 @@ msgstr "Acara-Acara yang Terdaftar"
 #: model_terms:ir.ui.view,arch_db:website_event.modal_ticket_registration
 #: model_terms:ir.ui.view,arch_db:website_event.navbar
 msgid "Registration"
-msgstr "Registrasi rawat inap"
+msgstr "Daftar"
 
 #. module: website_event
 #: model_terms:ir.ui.view,arch_db:website_event.registration_complete

@@ -13,7 +13,7 @@
                     <div t-if="tx.provider_id.sudo().qris_instructions"
                          t-out="tx.provider_id.sudo().qris_instructions" class="text-start mb-3"/>
                     <form action="/payment/qris_static/upload" method="post"
-                          enctype="multipart/form-data" class="text-start">
+                          enctype="multipart/form-data" class="text-start" data-diligence-payment-upload="1">
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <label for="qris_paid_amount" class="form-label">Nominal pembayaran</label>
                         <input id="qris_paid_amount" name="paid_amount" type="number" step="0.01"
@@ -21,7 +21,7 @@
                         <label for="qris_proof_file" class="form-label">Upload bukti pembayaran</label>
                         <input id="qris_proof_file" name="proof_file" type="file"
                                class="form-control" accept="image/*,application/pdf" required="required"/>
-                        <button type="submit" class="btn btn-primary mt-3 w-100">
+                        <button type="submit" class="btn btn-primary mt-3 w-100 diligence-payment-proof-submit">
                             Kirim Bukti Pembayaran
                         </button>
                     </form>

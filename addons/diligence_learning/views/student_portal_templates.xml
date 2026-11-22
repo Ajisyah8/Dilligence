@@ -73,7 +73,7 @@
                                         </div>
                                         <div t-else="" class="text-muted small" t-translation="yes">No quizzes in this course yet.</div>
                                     </div>
-                                    <a class="btn btn-sm btn-outline-primary mt-3 align-self-start" t-att-href="course['membership'].channel_id.website_absolute_url" t-translation="yes">Continue learning</a>
+                                    <a class="btn btn-sm btn-outline-primary mt-3 align-self-start" t-att-href="course['membership'].channel_id.website_url" t-translation="yes">Continue learning</a>
                                 </div>
                             </t>
                             <div t-if="not dashboard_courses" class="diligence-dashboard-card text-muted" t-translation="yes">There are no active courses on this account yet.</div>
@@ -222,6 +222,86 @@
                 <div t-if="not orders" class="alert alert-info" t-translation="yes">
                     <span t-translation="yes">There is no confirmed Consultation package purchase on this account.</span>
                 </div>
+                <div t-if="request.params.get('booking') == 'success'" class="alert alert-success" role="status" t-translation="yes">Your coaching slot has been booked.</div>
+                <div t-if="request.params.get('booking') == 'full'" class="alert alert-warning" role="alert" t-translation="yes">That slot has just filled up. Please choose another available time.</div>
+                <div t-if="request.params.get('booking') == 'participants_required'" class="alert alert-warning" role="alert" t-translation="yes">Enter a name or student code for each participant.</div>
+                <div t-if="request.params.get('booking') in ('unavailable', 'already_booked', 'package_required', 'invalid')" class="alert alert-warning" role="alert" t-translation="yes">This slot is unavailable for your account. Please refresh and choose an available slot.</div>
+                <section t-if="has_eligible_consultation_package" class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h4 t-translation="yes">Book a Coaching Session</h4>
+                        <p t-if="available_coaching_slots" class="text-muted" t-translation="yes">Choose an available date, then select a coaching time. A full slot cannot be booked.</p>
+                        <div t-if="not available_coaching_slots" class="alert alert-info mb-0" role="status" t-translation="yes">
+                            There are no open coaching slots available for this package right now. Your booked slot is listed below; the coach or administrator can open another time for you.
+                        </div>
+                        <div t-if="available_coaching_slots" class="row g-4 diligence-coaching-calendar" data-diligence-coaching-calendar="1">
+                            <div class="col-12 col-lg-5">
+                                <div class="diligence-coaching-calendar-panel">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" data-calendar-prev="" aria-label="Previous month">‹</button>
+                                        <h5 class="mb-0 text-capitalize" data-calendar-month=""></h5>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" data-calendar-next="" aria-label="Next month">›</button>
+                                    </div>
+                                    <div class="diligence-coaching-calendar-grid" data-calendar-grid="" role="grid" aria-label="Available coaching dates"></div>
+                                    <div class="small text-muted mt-3" t-translation="yes">Highlighted dates have available coaching slots.</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-7">
+                                <h5 class="mb-1" data-calendar-selected-date="" t-translation="yes">Choose a date</h5>
+                                <p class="small text-muted mb-3" data-calendar-slot-count=""></p>
+                                <div class="d-grid gap-3" data-calendar-slot-list="">
+                                    <div class="diligence-coaching-slot border rounded p-3" t-foreach="available_coaching_slots" t-as="slot"
+                                         t-att-data-slot-start="slot.start_datetime.isoformat()">
+                                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                                            <div>
+                                                <strong t-out="slot.name"/><br/>
+                                                <span t-field="slot.start_datetime"/><span> – </span><span t-field="slot.end_datetime"/><br/>
+                                                <span class="small text-muted"><span t-translation="yes">Coach:</span> <t t-out="slot.coach_partner_id.name or slot.coach_id.partner_id.name or 'Diligence Academy'"/></span>
+                                            </div>
+                                            <span class="badge rounded-pill text-bg-info"><t t-out="slot.seats_available"/> <span t-translation="yes">seats left</span></span>
+                                        </div>
+                                        <form action="/my/coaching/book" method="post" class="diligence-coaching-booking-form">
+                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                            <input type="hidden" name="session_id" t-att-value="slot.id"/>
+                                            <label class="form-label small" t-translation="yes">Number of participants</label>
+                                            <select class="form-select form-select-sm mb-2 diligence-participant-count" name="participant_count">
+                                                <option t-foreach="range(1, min(slot.seats_available, 10) + 1)" t-as="participant_total"
+                                                        t-att-value="participant_total" t-out="participant_total"/>
+                                            </select>
+                                            <div class="diligence-participant-row mb-2" data-participant-index="1">
+                                                <label class="form-label small mb-1"><span t-translation="yes">Participant</span> 1</label>
+                                                <input class="form-control form-control-sm mb-1" name="participant_name_1" type="text"
+                                                       t-att-value="partner.name" placeholder="Full name"/>
+                                                <input class="form-control form-control-sm" name="student_code_1" type="text" placeholder="Student code (optional)"/>
+                                            </div>
+                                            <div t-foreach="range(2, min(slot.seats_available, 10) + 1)" t-as="participant_index"
+                                                 class="diligence-participant-row mb-2" t-att-data-participant-index="participant_index" style="display:none">
+                                                <label class="form-label small mb-1"><span t-translation="yes">Participant</span> <t t-out="participant_index"/></label>
+                                                <input class="form-control form-control-sm mb-1" t-att-name="'participant_name_%s' % participant_index"
+                                                       type="text" placeholder="Full name"/>
+                                                <input class="form-control form-control-sm" t-att-name="'student_code_%s' % participant_index"
+                                                       type="text" placeholder="Student code (optional)"/>
+                                            </div>
+                                            <div class="small text-muted mb-2" t-translation="yes">For every participant, enter a name or student code.</div>
+                                            <button class="btn btn-primary btn-sm" type="submit" t-translation="yes">Book this time</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="alert alert-light border mt-2 mb-0" data-calendar-no-slots="" t-translation="yes">Select a highlighted date to see its available times.</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section t-if="booked_coaching_slots" class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h4 t-translation="yes">My Booked Coaching Sessions</h4>
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item px-0" t-foreach="booked_coaching_slots" t-as="slot">
+                                <strong t-out="slot.name"/> · <span t-field="slot.start_datetime"/>
+                                <a t-if="slot.meeting_url" class="btn btn-sm btn-outline-primary ms-2" t-att-href="slot.meeting_url" target="_blank" rel="noopener" t-translation="yes">Join Zoom</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
                 <div t-foreach="orders" t-as="order" class="card shadow-sm mb-3">
                     <div class="card-body">
                         <div class="d-flex justify-content-between flex-wrap gap-2">

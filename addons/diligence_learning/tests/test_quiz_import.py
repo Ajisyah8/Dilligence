@@ -66,6 +66,14 @@ class TestDiligenceQuizImport(TransactionCase):
         )
         self.assertEqual(values[0]['question_type'], 'single_choice')
 
+    def test_import_preserves_worksheet_prompt_exactly(self):
+        headers = ['Question', 'Question Type', 'Accepted Answers']
+        rows = [['Ini adalah apa? =', 'short_answer', 'zhè shì shénme']]
+        values = self.env['slide.question']._prepare_questions_from_xlsx(
+            self.slide, self._xlsx(headers, rows),
+        )
+        self.assertEqual(values[0]['question'], 'Ini adalah apa? =')
+
     def test_short_answer_requires_accepted_answer(self):
         headers = ['Question', 'Question Type']
         rows = [['Missing key', 'short_answer']]
@@ -180,10 +188,10 @@ class TestDiligenceQuizImport(TransactionCase):
         self.assertEqual(sheet['J2'].value, 'TRUE')
         self.assertEqual(sheet['U2'].value, 'FALSE')
 
-    def test_number_only_prompts_get_a_useful_audio_fallback(self):
+    def test_number_only_prompts_are_preserved_for_audio_and_regular_quizzes(self):
         question = self.env['slide.question'].create({
             'slide_id': self.slide.id,
-            'question': '1.',
+            'question': '1 =',
             'question_type': 'short_answer',
             'sequence': 1,
             'short_answer_variants': 'ni hao',
@@ -195,11 +203,11 @@ class TestDiligenceQuizImport(TransactionCase):
         })
         self.assertEqual(
             question._diligence_display_question(audio_slide, 1),
-            'Listen to the audio and enter your answer for item 1.',
+            '1 =',
         )
         self.assertEqual(
             question._diligence_display_question(self.slide, 1),
-            'Enter your answer for item 1.',
+            '1 =',
         )
 
     def test_legacy_short_answer_keys_in_answer_lines_are_graded_and_exported(self):
@@ -214,7 +222,7 @@ class TestDiligenceQuizImport(TransactionCase):
             ],
         })
 
-        self.assertEqual(question._diligence_display_question(self.slide, 1), 'Ini adalah apa?')
+        self.assertEqual(question._diligence_display_question(self.slide, 1), 'Ini adalah apa? =')
         self.assertTrue(question._diligence_short_answer_is_correct('zhe shi shen me'))
         workbook = load_workbook(io.BytesIO(self.slide._build_quiz_questions_xlsx()), data_only=True)
         self.assertEqual(workbook['Quiz Questions']['G2'].value, 'Zhe shi shen me?|zhe shi shen me')

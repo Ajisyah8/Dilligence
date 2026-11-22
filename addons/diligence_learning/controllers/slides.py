@@ -339,6 +339,27 @@ class DiligenceWebsiteSlides(WebsiteSlides):
         target = next_slide or slide
         return request.redirect('/slides/slide/%s' % request.env['ir.http']._slug(target))
 
+    @http.route(
+        '/diligence/slides/slide/<int:slide_id>/set_uncompleted',
+        type='http', auth='user', website=True,
+    )
+    def diligence_slide_set_uncompleted(self, slide_id, **kwargs):
+        """Allow a learner or authorised course manager to reopen a lesson."""
+        slide = request.env['slide.slide'].browse(slide_id).exists()
+        if not slide or not slide.active:
+            raise werkzeug.exceptions.NotFound()
+        if not (slide.env.user._is_admin() or slide.channel_id.is_member or slide.channel_id.can_publish):
+            raise werkzeug.exceptions.Forbidden()
+        if slide.slide_category == 'quiz' or slide.question_ids:
+            raise werkzeug.exceptions.Forbidden()
+
+        partner_progress = request.env['slide.slide.partner'].sudo().search([
+            ('slide_id', '=', slide.id),
+            ('partner_id', '=', request.env.user.partner_id.id),
+        ])
+        partner_progress.write({'completed': False})
+        return request.redirect('/slides/slide/%s' % request.env['ir.http']._slug(slide))
+
     @http.route('/slides/slide/quiz/question_add_or_update', type='jsonrpc', methods=['POST'], auth='user', website=True)
     def slide_quiz_question_add_or_update(self, slide_id, question, sequence, answer_ids,
                                            existing_question_id=None, question_type='single_choice'):
@@ -389,7 +410,13 @@ class DiligenceWebsiteSlides(WebsiteSlides):
     def _get_slide_quiz_data(self, slide):
         values = super()._get_slide_quiz_data(slide)
         questions = []
-        for question in slide.question_ids:
+        # Answer records are intentionally not readable by learner accounts.
+        # This endpoint has already authenticated the learner and checked
+        # access to the slide above, so read the grading key as sudo here.
+        # Otherwise normal students hit an ACL error while grading/rendering
+        # feedback and the browser receives no result.
+        quiz_questions = slide.sudo().question_ids
+        for question in quiz_questions:
             item = next((value for value in values['slide_questions'] if value['id'] == question.id), None)
             if not item:
                 continue
@@ -434,10 +461,15 @@ class DiligenceWebsiteSlides(WebsiteSlides):
                 or slide.is_preview):
             return {'error': 'quiz_access_denied'}
 
+        # Learners do not have direct read access to slide.answer. Access to
+        # this slide was checked above; use elevated records only for grading
+        # and only return the answer key after this submission.
+        quiz_questions = slide.sudo().question_ids
+
         # Validate required answers before creating an attempt. This prevents
         # an accidental empty submit from consuming an attempt or marking a
         # quiz as failed.
-        for question in slide.question_ids:
+        for question in quiz_questions:
             raw = payload.get(str(question.id), payload.get(question.id, {})) or {}
             if isinstance(raw, list):
                 raw = {'answer_ids': raw}
@@ -455,13 +487,13 @@ class DiligenceWebsiteSlides(WebsiteSlides):
             'passing_score': slide.quiz_passing_score,
             'started_at': fields.Datetime.now(),
         })
-        total_weight = sum(slide.question_ids.mapped('weight')) or 1.0
+        total_weight = sum(quiz_questions.mapped('weight')) or 1.0
         earned = 0.0
         pending_review = False
         auto_question_count = 0
         correct_question_count = 0
         result_answers = {}
-        for question in slide.question_ids:
+        for question in quiz_questions:
             raw = payload.get(str(question.id), payload.get(question.id, {})) or {}
             if isinstance(raw, list):
                 raw = {'answer_ids': raw}
@@ -603,6 +635,14 @@ class DiligenceWebsiteSlides(WebsiteSlides):
         values = self._get_slide_detail(slide)
         if slide.question_ids:
             values.update(self._get_slide_quiz_data(slide))
+            partner = request.env.user.partner_id.commercial_partner_id
+            attempt_count = request.env['diligence.quiz.attempt'].sudo().search_count([
+                ('slide_id', '=', slide.id), ('partner_id', '=', partner.id),
+            ])
+            values['diligence_quiz_attempts_remaining'] = (
+                max(0, slide.quiz_max_attempts - attempt_count)
+                if slide.quiz_max_attempts else -1
+            )
         values['channel_progress'] = self._get_channel_progress(slide.channel_id, include_quiz=True)
         values['category_data'] = self._prepare_collapsed_categories(values['category_data'], slide, False)
         values.update({

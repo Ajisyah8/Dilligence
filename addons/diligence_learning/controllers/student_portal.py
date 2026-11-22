@@ -210,15 +210,85 @@ class DiligenceStudentPortal(CustomerPortal):
             ('X-Content-Type-Options', 'nosniff'),
         ])
 
-    @http.route('/my/consultations', type='http', auth='user', website=True)
+    @http.route(['/my/consultation', '/my/consultations'], type='http', auth='user', website=True)
     def my_consultations(self, **kwargs):
         partner = request.env.user.partner_id.commercial_partner_id
         orders = request.env['sale.order'].sudo().search([
             ('partner_id', 'child_of', partner.id),
             ('state', 'in', ('sale', 'done')),
             ('order_line.product_template_id.diligence_consultation', '=', True),
-        ], order='date_order desc')
+        ], order='date_order desc').filtered(lambda order: order._diligence_has_valid_package_payment())
+        now = fields.Datetime.now()
+        active_orders = orders.filtered(lambda order: not order.diligence_access_expires_at or order.diligence_access_expires_at > now)
+        eligible_packages = active_orders.mapped('order_line.product_template_id').filtered('diligence_consultation')
+        attendee_domain = [
+            '&', '|', ('partner_id', '=', partner.id), ('booking_partner_id', '=', partner.id),
+            ('state', '!=', 'cancelled'),
+        ]
+        booked_slots = request.env['diligence.session.attendee'].sudo().search(attendee_domain).mapped('session_id')
+        available_slots = request.env['diligence.session'].get_student_bookable_slots(
+            partner, eligible_packages, now=now,
+        )
         return request.render('diligence_learning.portal_my_consultations', {
             'partner': partner,
             'orders': orders,
+            'has_eligible_consultation_package': bool(eligible_packages),
+            'available_coaching_slots': available_slots,
+            'booked_coaching_slots': booked_slots.filtered(lambda slot: slot.state == 'scheduled'),
         })
+
+    @http.route('/my/coaching/book', type='http', auth='user', website=True,
+                methods=['POST'], csrf=True, sitemap=False)
+    def book_coaching_slot(self, session_id=None, **post):
+        partner = request.env.user.partner_id.commercial_partner_id
+        try:
+            session_id = int(session_id)
+            participant_count = int(post.get('participant_count') or 1)
+        except (TypeError, ValueError):
+            return request.redirect('/my/consultations?booking=invalid')
+
+        Slot = request.env['diligence.session'].sudo()
+        slot = Slot.browse(session_id).exists()
+        if not slot:
+            return request.redirect('/my/consultations?booking=unavailable')
+        request.env.cr.execute('SELECT id FROM diligence_session WHERE id = %s FOR UPDATE', [slot.id])
+        slot.invalidate_recordset(['state', 'student_booking_open', 'start_datetime', 'capacity', 'attendee_ids', 'attendee_count', 'seats_available'])
+        if (not slot.student_booking_open or slot.state != 'scheduled'
+                or slot.session_type != 'one_on_one' or slot.start_datetime <= fields.Datetime.now()):
+            return request.redirect('/my/consultations?booking=unavailable')
+
+        orders = request.env['sale.order'].sudo().search([
+            ('partner_id', 'child_of', partner.id), ('state', 'in', ('sale', 'done')),
+            ('order_line.product_template_id', '=', slot.package_id.id),
+            ('order_line.product_template_id.diligence_consultation', '=', True),
+        ]).filtered(lambda order: order._diligence_has_valid_package_payment()
+                    and (not order.diligence_access_expires_at or order.diligence_access_expires_at > fields.Datetime.now()))
+        if not orders:
+            return request.redirect('/my/consultations?booking=package_required')
+        Attendee = request.env['diligence.session.attendee'].sudo()
+        already_booked = Attendee.search_count([
+            '&', '&', ('session_id', '=', slot.id), ('state', '!=', 'cancelled'),
+            '|', ('booking_partner_id', '=', partner.id), ('partner_id', '=', partner.id),
+        ])
+        if already_booked:
+            return request.redirect('/my/consultations?booking=already_booked')
+        if participant_count < 1 or participant_count > min(slot.seats_available, 10):
+            return request.redirect('/my/consultations?booking=full')
+        participant_vals = []
+        for index in range(1, participant_count + 1):
+            name = (post.get('participant_name_%s' % index) or '').strip()
+            code = (post.get('student_code_%s' % index) or '').strip()
+            if index == 1 and not name and not code:
+                name = partner.name or ''
+            if not name and not code:
+                return request.redirect('/my/consultations?booking=participants_required')
+            participant_vals.append({
+                'session_id': slot.id,
+                'partner_id': partner.id if index == 1 else False,
+                'booking_partner_id': partner.id,
+                'participant_name': name or ('Student %s' % code),
+                'student_code': code or False,
+                'sale_order_id': orders[0].id,
+            })
+        Attendee.create(participant_vals)
+        return request.redirect('/my/consultations?booking=success')

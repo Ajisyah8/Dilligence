@@ -2771,6 +2771,18 @@ body .diligence-fullscreen-viewer .o_wslides_fs_sidebar_section_slides.collapse.
         background-color: #234153 !important;
         border-color: #3b687d !important;
     }
+
+    .o_diligence_question-incorrect .o_diligence_answer-key {
+        color: #fff !important;
+        background-color: #8b2f3a !important;
+        border-color: #c65360 !important;
+    }
+
+    .o_diligence_question-correct .o_diligence_answer-key {
+        color: #103c2b !important;
+        background-color: #d7f0e3 !important;
+        border-color: #70b892 !important;
+    }
 }
 
 /* Fullscreen lessons use the dark learning-player skin.  These overrides
@@ -2901,6 +2913,20 @@ body .diligence-fullscreen-viewer .o_diligence_answer-status.is-incorrect {
 
 body .diligence-fullscreen-viewer .o_diligence_answer-key > div {
     color: #edf5f8 !important;
+}
+
+body .diligence-fullscreen-viewer .o_diligence_question-incorrect .o_diligence_answer-key,
+body .diligence-fullscreen-viewer .o_diligence_question-incorrect .o_diligence_answer-key > div {
+    color: #ffffff !important;
+    background-color: #8b2f3a !important;
+    border-color: #c65360 !important;
+}
+
+body .diligence-fullscreen-viewer .o_diligence_question-correct .o_diligence_answer-key,
+body .diligence-fullscreen-viewer .o_diligence_question-correct .o_diligence_answer-key > div {
+    color: #103c2b !important;
+    background-color: #d7f0e3 !important;
+    border-color: #70b892 !important;
 }
 
 body .diligence-fullscreen-viewer .o_diligence_answer-selected {

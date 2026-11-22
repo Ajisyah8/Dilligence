@@ -30,3 +30,5 @@ from . import survey_invite
 from . import placement_test
 from . import bulk_upload
 from . import contact_import
+from . import event_registration_import
+from . import event_registration
