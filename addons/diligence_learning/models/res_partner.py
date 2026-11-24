@@ -6,6 +6,8 @@ class ResPartner(models.Model):
 
     diligence_contact_segment = fields.Selection([
         ('student', 'Student'),
+        ('active_student', 'Active Student'),
+        ('teacher', 'Teacher'),
         ('customer', 'Customer'),
         ('newsletter', 'Newsletter Subscriber'),
         ('referral_non_student', 'Referral - Non Student'),
@@ -196,6 +198,22 @@ class ResPartner(models.Model):
             self.sudo().with_context(diligence_syncing_segments=True).write({
                 'diligence_contact_segment_ids': [(4, segment.id) for segment in segments],
             })
+        return self
+
+    def _diligence_set_primary_contact_segment(self, code):
+        """Replace the generic audience tag while preserving course-specific tags."""
+        self.ensure_one()
+        Segment = self.env['diligence.contact.segment'].sudo()
+        target = Segment.search([('code', '=', code), ('active', '=', True)], limit=1)
+        if not target:
+            return self
+        generic = Segment.search([('code', 'in', ['student', 'active_student'])])
+        kept = self.diligence_contact_segment_ids - generic
+        self.sudo().with_context(diligence_syncing_segments=True).write({
+            'diligence_contact_segment': code,
+            'diligence_contact_segment_id': target.id,
+            'diligence_contact_segment_ids': [(6, 0, (kept | target).ids)],
+        })
         return self
 
     def unlink(self):

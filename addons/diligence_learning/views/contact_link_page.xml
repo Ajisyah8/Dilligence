@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="diligence_contact_link_hub_view" name="Diligence Contact Link Hub">
+        <t t-call="website.layout">
+            <t t-set="params" t-value="request.env['ir.config_parameter'].sudo()"/>
+            <t t-set="wa_service" t-value="request.env['diligence.whatsapp.service'].sudo()"/>
+            <t t-set="course_phone" t-value="wa_service.normalize_number(params.get_param('diligence.contact_hub.course_phone'))"/>
+            <t t-set="payment_phone" t-value="wa_service.normalize_number(params.get_param('diligence.contact_hub.payment_phone'))"/>
+            <t t-set="video_phone" t-value="wa_service.normalize_number(params.get_param('diligence.contact_hub.video_phone'))"/>
+            <t t-set="study_phone" t-value="wa_service.normalize_number(params.get_param('diligence.contact_hub.study_phone'))"/>
+            <div id="wrap" class="oe_structure diligence-contact-hub">
+                <style>
+                    .diligence-contact-hub { min-height: calc(100vh - 160px); padding: 56px 16px 72px; background: linear-gradient(180deg,#f5f8f7 0%,#fff 70%); }
+                    .diligence-contact-hub .hub-card { border: 1px solid #e3e9e7; border-radius: 18px; background: #fff; box-shadow: 0 8px 28px rgba(16,47,58,.07); transition: transform .18s ease, box-shadow .18s ease; }
+                    .diligence-contact-hub a.hub-card:hover { transform: translateY(-3px); box-shadow: 0 14px 34px rgba(16,47,58,.12); }
+                    .diligence-contact-hub .hub-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 14px; color: #11687d; background: #e9f5f4; font-size: 21px; }
+                    .diligence-contact-hub .hub-arrow { color: #11687d; }
+                    .diligence-contact-hub .hub-disabled { opacity: .58; }
+                    @media (max-width: 575px) { .diligence-contact-hub { padding-top: 36px; } }
+                    body:has(.diligence-contact-hub) .academy-floating-cta { display: none !important; }
+                </style>
+                <section class="container" style="max-width:760px">
+                    <div class="text-center mb-4">
+                        <span class="text-uppercase fw-bold text-primary" style="letter-spacing:.12em">DILIGENCE ACADEMY</span>
+                        <h1 class="display-5 fw-bold mt-3 mb-2" style="color:#102f3a">Ada yang bisa kami bantu?</h1>
+                        <p class="lead text-muted mb-0">Pilih tim yang sesuai. Anda akan langsung terhubung melalui WhatsApp.</p>
+                    </div>
+                    <div class="d-grid gap-3 mt-4">
+                        <a t-if="course_phone" t-att-href="'https://wa.me/' + course_phone + '?text=Halo+saya+ingin+bertanya+tentang+kursus+di+Tanjungpinang.'" class="hub-card text-decoration-none text-reset p-3 p-md-4" target="_blank" rel="noopener">
+                            <div class="d-flex align-items-center gap-3"><span class="hub-icon"><i class="fa fa-graduation-cap"/></span><span class="flex-grow-1"><strong class="d-block fs-5">Admin Kursus — Tanjungpinang</strong><small class="text-muted">Informasi kelas dan program kursus</small></span><i class="fa fa-arrow-right hub-arrow"/></div>
+                        </a>
+                        <div t-else="" class="hub-card hub-disabled p-3 p-md-4"><strong>Admin Kursus — Tanjungpinang</strong><small class="d-block text-muted">Nomor WhatsApp belum diatur.</small></div>
+
+                        <a t-if="payment_phone" t-att-href="'https://wa.me/' + payment_phone + '?text=Halo+saya+ingin+bertanya+tentang+pembayaran.'" class="hub-card text-decoration-none text-reset p-3 p-md-4" target="_blank" rel="noopener">
+                            <div class="d-flex align-items-center gap-3"><span class="hub-icon"><i class="fa fa-credit-card"/></span><span class="flex-grow-1"><strong class="d-block fs-5">Admin Pembayaran — Tanjungpinang</strong><small class="text-muted">Bantuan pembayaran dan konfirmasi transaksi</small></span><i class="fa fa-arrow-right hub-arrow"/></div>
+                        </a>
+                        <div t-else="" class="hub-card hub-disabled p-3 p-md-4"><strong class="d-block fs-5">Admin Pembayaran — Tanjungpinang</strong><small class="text-muted">Nomor WhatsApp akan diaktifkan setelah diatur oleh admin.</small></div>
+
+                        <a t-if="video_phone" t-att-href="'https://wa.me/' + video_phone + '?text=Halo+saya+ingin+bertanya+tentang+video+course.'" class="hub-card text-decoration-none text-reset p-3 p-md-4" target="_blank" rel="noopener">
+                            <div class="d-flex align-items-center gap-3"><span class="hub-icon"><i class="fa fa-play-circle"/></span><span class="flex-grow-1"><strong class="d-block fs-5">Website &amp; Video Course</strong><small class="text-muted">Bantuan akun, pembelian, dan akses materi — Ms Sofia</small></span><i class="fa fa-arrow-right hub-arrow"/></div>
+                        </a>
+                        <div t-else="" class="hub-card hub-disabled p-3 p-md-4"><strong>Website &amp; Video Course</strong><small class="d-block text-muted">Nomor WhatsApp belum diatur.</small></div>
+
+                        <a t-if="study_phone" t-att-href="'https://wa.me/' + study_phone + '?text=Halo+saya+ingin+bertanya+tentang+beasiswa+China+Cambridge+atau+TOEFL.'" class="hub-card text-decoration-none text-reset p-3 p-md-4" target="_blank" rel="noopener">
+                            <div class="d-flex align-items-center gap-3"><span class="hub-icon"><i class="fa fa-globe"/></span><span class="flex-grow-1"><strong class="d-block fs-5">Beasiswa China, Cambridge &amp; TOEFL</strong><small class="text-muted">Informasi studi dan ujian sertifikasi — Miss Diana</small></span><i class="fa fa-arrow-right hub-arrow"/></div>
+                        </a>
+                        <div t-else="" class="hub-card hub-disabled p-3 p-md-4"><strong>Beasiswa China, Cambridge &amp; TOEFL</strong><small class="d-block text-muted">Nomor WhatsApp belum diatur.</small></div>
+                    </div>
+                    <p class="text-center text-muted small mt-4 mb-0">Diligence Academy · Tanjungpinang</p>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <record id="page_diligence_contact_link_hub" model="website.page">
+        <field name="name">Contact Diligence Academy</field>
+        <field name="url">/link</field>
+        <field name="is_published">True</field>
+        <field name="website_indexed">False</field>
+        <field name="website_meta_description">Pilih tim Diligence Academy yang tepat dan hubungi kami langsung melalui WhatsApp.</field>
+        <field name="view_id" ref="diligence_contact_link_hub_view"/>
+    </record>
+</odoo>

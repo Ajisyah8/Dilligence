@@ -1,6 +1,6 @@
 {
     'name': 'Diligence Learning Packages',
-    'version': '1.0.70',
+    'version': '1.0.77',
     'summary': 'Learning packages, bundle access, community, coaching, and referrals',
     'category': 'Website/eLearning',
     'author': 'Project ADS',
@@ -88,6 +88,7 @@
         'views/whatsapp_views.xml',
         'views/whatsapp_settings_views.xml',
         'views/whatsapp_campaign_views.xml',
+        'views/contact_link_page.xml',
         'views/seo_views.xml',
         'views/account_coa_menu.xml',
     ],

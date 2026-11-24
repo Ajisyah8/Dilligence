@@ -15,3 +15,4 @@ from . import test_standalone_course_product
 from . import test_package_renewal
 from . import test_coaching_capacity_and_event_type
 from . import test_website_sync
+from . import test_whatsapp_campaign

@@ -47,6 +47,26 @@
                             </div>
                         </div></div>
                     </div>
+                    <h2>Contact Link Page</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box"><div class="o_setting_right_pane">
+                            <label for="diligence_contact_course_phone" string="Course Admin (Tanjungpinang)" class="d-block mb-1"/>
+                            <field name="diligence_contact_course_phone" placeholder="628..." class="w-100"/>
+                        </div></div>
+                        <div class="col-12 col-lg-6 o_setting_box"><div class="o_setting_right_pane">
+                            <label for="diligence_contact_payment_phone" string="Payment Admin (Tanjungpinang)" class="d-block mb-1"/>
+                            <field name="diligence_contact_payment_phone" placeholder="628..." class="w-100"/>
+                            <div class="text-muted">Jika kosong, tombol pembayaran di halaman kontak tidak aktif.</div>
+                        </div></div>
+                        <div class="col-12 col-lg-6 o_setting_box"><div class="o_setting_right_pane">
+                            <label for="diligence_contact_video_phone" string="Video Courses (Ms Sofia)" class="d-block mb-1"/>
+                            <field name="diligence_contact_video_phone" placeholder="628..." class="w-100"/>
+                        </div></div>
+                        <div class="col-12 col-lg-6 o_setting_box"><div class="o_setting_right_pane">
+                            <label for="diligence_contact_study_phone" string="China Study / Exams (Ms Diana)" class="d-block mb-1"/>
+                            <field name="diligence_contact_study_phone" placeholder="628..." class="w-100"/>
+                        </div></div>
+                    </div>
                     <h2>Message Templates</h2>
                     <div class="row mt16 o_settings_container">
                         <div class="col-12 col-lg-6 o_setting_box"><div class="o_setting_right_pane">

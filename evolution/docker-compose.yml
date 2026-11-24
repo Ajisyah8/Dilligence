@@ -31,6 +31,8 @@ services:
       VIRTUAL_PORT: 8080
       LETSENCRYPT_HOST: wa.diligence.arusdigital.cloud
       LETSENCRYPT_EMAIL: gilaorgila@gmail.com
+      WEBSOCKET_ENABLED: "true"
+      WEBSOCKET_ALLOWED_HOSTS: "172.18.0.13,::ffff:172.18.0.13"
     networks:
       - proxy_default
       - default

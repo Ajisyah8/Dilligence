@@ -190,6 +190,7 @@ class SaleOrder(models.Model):
             access_products = order._diligence_course_access_products()
             if not access_products:
                 continue
+            order.partner_id.commercial_partner_id._diligence_set_primary_contact_segment('active_student')
             package_products = access_products.filtered(lambda product: product._diligence_is_package())
             renewal_package = package_products[:1]
             if renewal_package and renewal_package.diligence_access_duration_days and not order.diligence_access_expires_at:

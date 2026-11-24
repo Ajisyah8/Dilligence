@@ -128,7 +128,8 @@ class DiligenceWhatsAppService(models.AbstractModel):
     @api.model
     def render_message(self, template, partner=None, **values):
         """Render a configured message without leaking configuration values."""
-        values = dict(values, name=partner.name if partner else '')
+        values = dict(values)
+        values.setdefault('name', partner.name if partner else '')
         try:
             return (template or '') % values
         except (KeyError, TypeError, ValueError):
@@ -236,6 +237,26 @@ class ResConfigSettings(models.TransientModel):
         string="Free Interview WhatsApp Number",
         config_parameter="diligence.whatsapp_number",
         help="Use international format, for example 628123456789. Spaces, +, and a leading 0 are normalized automatically.",
+    )
+    diligence_contact_course_phone = fields.Char(
+        string='Contact Hub: Course Admin (Tanjungpinang)',
+        config_parameter='diligence.contact_hub.course_phone',
+        help='WhatsApp number for course inquiries in Tanjungpinang, in international format.',
+    )
+    diligence_contact_payment_phone = fields.Char(
+        string='Contact Hub: Payment Admin (Tanjungpinang)',
+        config_parameter='diligence.contact_hub.payment_phone',
+        help='WhatsApp number for payment support. Leave empty to keep this contact button inactive.',
+    )
+    diligence_contact_video_phone = fields.Char(
+        string='Contact Hub: Video Courses (Ms Sofia)',
+        config_parameter='diligence.contact_hub.video_phone',
+        help='WhatsApp number for website video course support.',
+    )
+    diligence_contact_study_phone = fields.Char(
+        string='Contact Hub: China Study / Exams (Ms Diana)',
+        config_parameter='diligence.contact_hub.study_phone',
+        help='WhatsApp number for China study, Cambridge, and TOEFL inquiries.',
     )
     diligence_whatsapp_send_on_payment = fields.Boolean(string='Send Payment Confirmation', config_parameter='diligence.whatsapp.send_on_payment')
     diligence_whatsapp_campaign_batch_limit = fields.Integer(
